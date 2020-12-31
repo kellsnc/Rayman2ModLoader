@@ -9,6 +9,14 @@
 
 // add headers that you want to pre-compile here
 #include "framework.h"
+#include <ShellAPI.h>
+#include <string>
+
 #include "include/Rayman2ModLoader.h"
+#include "IniFile.hpp"
+
+#include "loader.h"
+#include "cheatcodes.h"
+#include "mods.h"
 
 #endif //PCH_H

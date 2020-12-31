@@ -36,12 +36,33 @@
     <ClInclude Include="include\Rayman2Variables.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Rayman2Enums.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mods.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cheatcodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cheatcodes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mods.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
