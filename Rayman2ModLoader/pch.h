@@ -12,13 +12,16 @@
 #include <ShellAPI.h>
 #include <string>
 #include <vector>
+#include <sstream>
 
 #include "include/Rayman2ModLoader.h"
 #include "IniFile.hpp"
 #include "CodeParser.hpp"
+#include "TextConv.hpp"
 
 #include "Trampoline.h"
 
+#include "output.h"
 #include "loader.h"
 #include "events.h"
 

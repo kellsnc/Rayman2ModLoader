@@ -18,13 +18,10 @@ struct HelperFunctions {
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);
-
 typedef void(__cdecl* ModEvent)();
 
-struct ModInfo
-{
+struct ModInfo {
 	int Version;
-	ModInitFunc Init;
 };
 
 #endif

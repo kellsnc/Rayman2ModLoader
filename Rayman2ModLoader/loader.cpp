@@ -53,11 +53,14 @@ void InitModLoader() {
     const IniFile* config = new IniFile(ConfigPath);
     const IniGroup* loaderconfig = config->getGroup("Rayman2ModLoader");
 
-    if (loaderconfig) {
+    if (loaderconfig != nullptr) {
         DLLName = loaderconfig->getString("GlideDLL", DLLName);
         APIName = loaderconfig->getString("GlideAPI", APIName);
         ModsPath = loaderconfig->getWString("ModsPath", ModsPath);
         CodesPath = loaderconfig->getWString("CodesPath", CodesPath);
+
+        // Init debug output system
+        InitOutput(loaderconfig);
 
         // Check main codes
         if (IsPathAbsolute(&CodesPath) == false) { CodesPath = GamePath + L"\\" + CodesPath; }
@@ -66,7 +69,7 @@ void InitModLoader() {
         
         // Check mods
         if (IsPathAbsolute(&ModsPath) == false) { ModsPath = GamePath + L"\\" + ModsPath; }
-        std::string modlist = loaderconfig->getString("Mods", "");
+        std::wstring modlist = loaderconfig->getWString("Mods", L"");
         bool loadmods = modlist.empty() == false;
 
         // Set up function hooks
@@ -76,12 +79,12 @@ void InitModLoader() {
 
         // Load the Mod Manager main codes
         if (loadcodes) {
-            InitCodes(&codeslist, CodesPath);
+            InitCodes(&codeslist, &CodesPath);
         }
 
         // Load mods DLL and custom codes
         if (loadmods) {
-            InitMods(&modlist, ModsPath);
+            InitMods(&modlist, &ModsPath);
         }
     }
     else {
@@ -101,4 +104,6 @@ void LoaderInit() {
     GetGamePath();
     GetConfigPath();
     InitModLoader();
+
+    ExitProcess(1);
 }
