@@ -6,6 +6,7 @@
 #endif
 
 #include "MemAccess.h"
+#include "Rayman2ModInfo.h"
 #include "Rayman2Enums.h"
 #include "Rayman2Variables.h"
 #include "Rayman2Functions.h"

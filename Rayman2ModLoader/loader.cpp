@@ -1,6 +1,6 @@
 /*
  * Rayman2 Mod Loader.
- * Main Loader, reads config & pass to Mod Loader & CheatCode Loader
+ * Main Loader, reads config & pass to event system
  */
 
 #include "pch.h"
@@ -34,12 +34,14 @@ void GetConfigPath() {
     int argc;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
+    // Attempt to get an ini location from the command line, otherwise keep default
     for (int i = 1; i < argc; i++) {
         if (!wcscmp(argv[i], L"-loaderini")) {
             ConfigPath = argv[++i];
         }
     }
 
+    // Make path absolute if relative
     if (IsPathAbsolute(&ConfigPath) == false) {
         ConfigPath = GamePath + L"\\" + ConfigPath;
     }
@@ -47,7 +49,7 @@ void GetConfigPath() {
     ConfigPath = ConfigPath;
 }
 
-void ReadConfig() {
+void InitModLoader() {
     const IniFile* config = new IniFile(ConfigPath);
     const IniGroup* loaderconfig = config->getGroup("Rayman2ModLoader");
 
@@ -57,27 +59,28 @@ void ReadConfig() {
         ModsPath = loaderconfig->getWString("ModsPath", ModsPath);
         CodesPath = loaderconfig->getWString("CodesPath", CodesPath);
 
-        // Load codes
+        // Check main codes
+        if (IsPathAbsolute(&CodesPath) == false) { CodesPath = GamePath + L"\\" + CodesPath; }
+        std::string codeslist = loaderconfig->getString("Codes", "");
+        bool loadcodes = codeslist.empty() == false;
+        
+        // Check mods
+        if (IsPathAbsolute(&ModsPath) == false) { ModsPath = GamePath + L"\\" + ModsPath; }
+        std::string modlist = loaderconfig->getString("Mods", "");
+        bool loadmods = modlist.empty() == false;
 
-        if (IsPathAbsolute(&CodesPath) == false) {
-            CodesPath = GamePath + L"\\" + CodesPath;
+        // Set up function hooks
+        if (loadcodes || loadmods) {
+            InitEvents();
         }
 
-        std::string codeslist = loaderconfig->getString("Codes", "");
-
-        if (codeslist.empty() == false) {
+        // Load the Mod Manager main codes
+        if (loadcodes) {
             InitCodes(&codeslist, CodesPath);
         }
 
-        // Load mods
-
-        if (IsPathAbsolute(&ModsPath) == false) {
-            ModsPath = GamePath + L"\\" + ModsPath;
-        }
-
-        std::string modlist = loaderconfig->getString("Mods", "");
-
-        if (modlist.empty() == false) {
+        // Load mods DLL and custom codes
+        if (loadmods) {
             InitMods(&modlist, ModsPath);
         }
     }
@@ -97,7 +100,5 @@ void ReadConfig() {
 void LoaderInit() {
     GetGamePath();
     GetConfigPath();
-    ReadConfig();
-
-    ExitProcess(1);
+    InitModLoader();
 }

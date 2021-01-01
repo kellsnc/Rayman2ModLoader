@@ -42,11 +42,11 @@
     <ClInclude Include="include\Rayman2Enums.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="mods.h">
+    <ClInclude Include="events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cheatcodes.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Rayman2ModInfo.h">
+      <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -59,10 +59,7 @@
     <ClCompile Include="loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cheatcodes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mods.cpp">
+    <ClCompile Include="events.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

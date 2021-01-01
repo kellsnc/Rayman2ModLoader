@@ -11,12 +11,13 @@
 #include "framework.h"
 #include <ShellAPI.h>
 #include <string>
+#include <vector>
 
 #include "include/Rayman2ModLoader.h"
 #include "IniFile.hpp"
+#include "CodeParser.hpp"
 
 #include "loader.h"
-#include "cheatcodes.h"
-#include "mods.h"
+#include "events.h"
 
 #endif //PCH_H
