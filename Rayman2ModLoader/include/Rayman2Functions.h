@@ -1,6 +1,6 @@
 /*
- * Rayman2 Mod Loader.
- * Function pointers
+ * Rayman2 Mod Loader
+ * Rayman2 function pointers
  */
 
 #ifndef RAYMAN2MODLOADER_FUNCTIONS_H

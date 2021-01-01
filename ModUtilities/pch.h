@@ -9,17 +9,5 @@
 
 // add headers that you want to pre-compile here
 #include "framework.h"
-#include <ShellAPI.h>
-#include <string>
-#include <vector>
-
-#include "include/Rayman2ModLoader.h"
-#include "IniFile.hpp"
-#include "CodeParser.hpp"
-
-#include "Trampoline.h"
-
-#include "loader.h"
-#include "events.h"
 
 #endif //PCH_H

@@ -1,6 +1,6 @@
 /*
- * Rayman2 Mod Loader.
- * Variable pointers
+ * Rayman2 Mod Loader
+ * Rayman2 variables
  */
 
 #define PATH_MAX 256

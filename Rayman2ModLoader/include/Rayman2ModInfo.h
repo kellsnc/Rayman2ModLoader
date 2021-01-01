@@ -1,5 +1,5 @@
 /*
- * Rayman2 Mod Loader.
+ * Rayman2 Mod Loader
  * Mod metadata structures
  */
 

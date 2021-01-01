@@ -5,26 +5,28 @@
 
 #include "pch.h"
 
-std::vector<ModEvent> modFrameEvents;
-CodeParser codeParser;
+static std::vector<ModEvent> modFrameEvents;
+static CodeParser codeParser;
 
-void RaiseEvents(const std::vector<ModEvent>& eventList)
-{
-	for (auto& i : eventList)
+static Trampoline* OnFrame_t = nullptr;
+
+void RaiseEvents(const std::vector<ModEvent>& eventList) {
+	for (auto& i : eventList) {
 		i();
+	}
 }
 
 void RegisterEvent(std::vector<ModEvent>& eventList, HMODULE module, const char* name) {
 	const auto modEvent = reinterpret_cast<const ModEvent>(GetProcAddress(module, name));
 
-	if (modEvent != nullptr)
-	{
+	if (modEvent != nullptr) {
 		eventList.push_back(modEvent);
 	}
 }
 
-void __cdecl OnFrame() {
+void __cdecl OnFrame_r() {
 	codeParser.processCodeList();
+	RaiseEvents(modFrameEvents);
 }
 
 void InitMods(const std::string* list, const std::wstring path) {
@@ -36,5 +38,5 @@ void InitCodes(const std::string* list, const std::wstring path) {
 }
 
 void InitEvents() {
-	
+	OnFrame_t = new Trampoline(0x402580, 0x402586, OnFrame_r);
 }

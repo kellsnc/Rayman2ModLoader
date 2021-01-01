@@ -1,6 +1,6 @@
 /*
- * Rayman2 Mod Loader.
- * Enums
+ * Rayman2 Mod Loader
+ * Rayman2 enums
  */
 
 #ifndef RAYMAN2MODLOADER_ENUMS_H

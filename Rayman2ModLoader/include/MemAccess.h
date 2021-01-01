@@ -1,6 +1,6 @@
 /*
- * Rayman2 Mod Loader.
- * Memory access inline functions.
+ * Rayman2 Mod Loader
+ * Memory access inline functions
  * Courtesy of MainMemory
  */
 

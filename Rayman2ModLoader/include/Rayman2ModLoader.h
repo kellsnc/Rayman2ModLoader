@@ -1,3 +1,7 @@
+/*
+ * Rayman2 Mod Loader
+ */
+
 #ifndef RAYMAN2MODLOADER_H
 #define RAYMAN2MODLOADER_H
 
