@@ -13,6 +13,12 @@ struct HelperFunctions {
 	// The version of the structure.
 	int Version;
 
+	// Print to Mod Loader console / file
+	void(__cdecl* PrintDebug)(const char* Format, ...);
+
+	// Sets the title of the main window
+	void(__cdecl* SetWindowTitle)(const char* title);
+
 	// Returns the path where main game save files are stored.
 	const char* (__cdecl* GetMainSavePath)();
 };

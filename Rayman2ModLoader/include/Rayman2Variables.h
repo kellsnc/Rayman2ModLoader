@@ -8,6 +8,7 @@
 #ifndef RAYMAN2MODLOADER_VARS_H
 #define RAYMAN2MODLOADER_VARS_H
 
+DataPointer(HWND, WindowHandle, 0x49F080);
 DataPointer(int, OptionTexturesMem, 0x4A077C);
 DataPointer(int, OptionParticuleRate, 0x4A1234);
 DataArray(char, cmdline, 0x4E0DA0, PATH_MAX);

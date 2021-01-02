@@ -1,5 +1,6 @@
 #pragma once
 
-void InitMods(std::wstring* list, const std::wstring* path);
-void InitCodes(std::string* list, const std::wstring* path);
+extern std::vector<ModEvent> modFrameEvents;
+
+void RegisterEvent(std::vector<ModEvent>& eventList, HMODULE module, const char* name);
 void InitEvents();

@@ -10,8 +10,7 @@ static bool DebugConsole = false;
 static FILE* DebugFile = nullptr;
 static FILE* ConsoleStream = nullptr;
 
-// Todo: find the function in the executable
-int __cdecl PrintDebug(const char* Format, ...) {
+void __cdecl PrintDebug(const char* Format, ...) {
 	va_list ap;
 	va_start(ap, Format);
 	int result = vsnprintf(nullptr, 0, Format, ap) + 1;
@@ -27,17 +26,11 @@ int __cdecl PrintDebug(const char* Format, ...) {
 	}
 
 	if (DebugFile) {
-		char* utf8 = SJIStoUTF8(buf);
-
-		if (utf8) {
-			fputs(utf8, DebugFile);
-			fflush(DebugFile);
-			delete[] utf8;
-		}
+		fputs(buf, DebugFile);
+		fflush(DebugFile);
 	}
 
 	delete[] buf;
-	return result;
 }
 
 void InitOutput(const IniGroup* loaderconfig) {

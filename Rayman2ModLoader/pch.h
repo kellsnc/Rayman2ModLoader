@@ -24,5 +24,7 @@
 #include "output.h"
 #include "loader.h"
 #include "events.h"
+#include "modhelpers.h"
+#include "mods.h"
 
 #endif //PCH_H
