@@ -1,13 +1,13 @@
 /*
  * Rayman2 Mod Loader.
- * Event system (codes, mods)
+ * Event system (run codes and mod dll exports)
  */
 
 #include "pch.h"
 
 std::vector<ModEvent> modFrameEvents;
+CodeParser codeParser;
 
-static CodeParser codeParser;
 static Trampoline* OnFrame_t = nullptr;
 
 void RaiseEvents(const std::vector<ModEvent>& eventList) {

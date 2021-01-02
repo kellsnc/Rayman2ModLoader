@@ -1,3 +1,8 @@
+/*
+ * Rayman2 Mod Loader.
+ * Initialize mods
+ */
+
 #include "pch.h"
 
 static std::vector<std::pair<std::wstring, std::wstring>> loadErrors;
@@ -76,6 +81,10 @@ void InitSingleMod(std::wstring modpath, std::wstring* foldername) {
 		if (modinfo->hasKeyNonEmpty("DLLFile")) {
 			InitModDLL(&modpath, modpath + L'\\' + modinfo->getWString("DLLFile"), &modname);
 		}
+
+		if (modinfo->hasKeyNonEmpty("WindowTitle")) {
+			helperFunctions.SetWindowTitle(modinfo->getString("WindowTitle", "Rayman II").c_str());
+		}
 	}
 	else {
 		std::string s(modpath.begin(), modpath.end());
@@ -86,9 +95,12 @@ void InitSingleMod(std::wstring modpath, std::wstring* foldername) {
 
 void InitMods(std::wstring* list, const std::wstring* path) {
 	PrintDebug("[ModLoader] Loading mods... \n");
+	int count = 0;
 
 	// Parse the list of mod
 	while (1) {
+		++count;
+
 		std::string::size_type separator = list->find_first_of(L",");
 
 		if (separator != std::string::npos) {
@@ -102,11 +114,15 @@ void InitMods(std::wstring* list, const std::wstring* path) {
 			InitSingleMod(*path + L"\\" + *list, list);
 			break;
 		}
+
+		// failsafe
+		if (count > 9099) {
+			PrintDebug("Overflow in mod loading loop\n");
+			ExitProcess(1);
+		}
 	}
 
+	PrintDebug("Loaded  %d mods.", count);
+
 	ShowErrors();
-}
-
-void InitCodes(std::string* list, const std::wstring* path) {
-
 }

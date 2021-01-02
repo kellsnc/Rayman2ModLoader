@@ -5,7 +5,11 @@
 
 #include "pch.h"
 
+#include "mods.h"
+#include "codes.h"
+
 std::wstring GamePath;
+std::wstring ModManagerPath;
 std::wstring ConfigPath = L"Rayman2ModLoader.ini";
 std::wstring CodesPath = L"Mods\\CheatCodes.lst";
 std::wstring ModsPath = L"Mods\\";
@@ -47,6 +51,9 @@ void GetConfigPath() {
     }
 
     ConfigPath = ConfigPath;
+    ModManagerPath = ConfigPath;
+    SplitFilename(&ModManagerPath);
+    ModManagerPath = ModManagerPath;
 }
 
 void InitModLoader() {
@@ -62,15 +69,12 @@ void InitModLoader() {
         // Init debug output system
         InitOutput(loaderconfig);
 
-        // Check main codes
-        if (IsPathAbsolute(&CodesPath) == false) { CodesPath = GamePath + L"\\" + CodesPath; }
-        std::string codeslist = loaderconfig->getString("Codes", "");
-        bool loadcodes = codeslist.empty() == false;
-        
         // Check mods
-        if (IsPathAbsolute(&ModsPath) == false) { ModsPath = GamePath + L"\\" + ModsPath; }
+        if (IsPathAbsolute(&ModsPath) == false) { ModsPath = ModManagerPath + L"\\" + ModsPath; }
         std::wstring modlist = loaderconfig->getWString("Mods", L"");
+
         bool loadmods = modlist.empty() == false;
+        bool loadcodes = loaderconfig->getBool("LoadCodes", true);
 
         // Set up function hooks
         if (loadcodes || loadmods) {
@@ -79,7 +83,7 @@ void InitModLoader() {
 
         // Load the Mod Manager main codes
         if (loadcodes) {
-            InitCodes(&codeslist, &CodesPath);
+            InitCodes(&ModsPath);
         }
 
         // Load mods DLL and custom codes

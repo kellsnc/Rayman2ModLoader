@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="codes.h" />
     <ClInclude Include="events.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="modhelpers.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="codes.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="events.cpp" />
     <ClCompile Include="modhelpers.cpp" />
