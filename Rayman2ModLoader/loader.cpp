@@ -108,6 +108,4 @@ void LoaderInit() {
     GetGamePath();
     GetConfigPath();
     InitModLoader();
-
-    ExitProcess(1);
 }

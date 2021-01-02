@@ -29,23 +29,26 @@ extern "C" {
     }
 }
 
+void RestoreGraphicsDLL() {
+    ReadConfig_GraphicsDLLFile(DLLName.c_str()); // Restore the original DLL Name
+    LoadGraphicsDLL(); // Call the original DLL
+}
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
-    switch (ul_reason_for_call)
-    {
+    switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH:
         LoaderInit();
-
+        RestoreGraphicsDLL();
         break;
     case DLL_THREAD_ATTACH:
+        RestoreGraphicsDLL();
+        return FALSE;
     case DLL_THREAD_DETACH:
         break;
     case DLL_PROCESS_DETACH:
         DeleteOutput();
         break;
     }
-
-    ReadConfig_GraphicsDLLFile(DLLName.c_str()); // Restore the original DLL Name
-    LoadGraphicsDLL(); // Call the original DLL
 
     return TRUE;
 }
