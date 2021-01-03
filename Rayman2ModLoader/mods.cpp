@@ -69,7 +69,8 @@ void InitModDLL(const std::wstring* modpath, const std::wstring dll_filename, co
 	}
 }
 
-void InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder) {
+// Load a mod folder, returns 1 if the mod failed to load.
+int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder) {
 	const std::wstring mod_inifile = modpath + L"\\mod.ini";
 
 	const IniFile* config = new IniFile(mod_inifile);
@@ -78,7 +79,7 @@ void InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder
 	if (modinfo != nullptr) {
 		modinfo = modinfo;
 
-		const std::wstring modname = modinfo->getWString("Name", L"Anonymous Mod");
+		const std::wstring modname = modinfo->getWString("Name", foldername->c_str());
 
 		if (modinfo->hasKeyNonEmpty("DLLFile")) {
 			InitModDLL(&modpath, modpath + L'\\' + modinfo->getWString("DLLFile"), &modname);
@@ -121,17 +122,21 @@ void InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder
 		// Check for folder file replacements.
 		ScanModFolder(modpath + L"\\data", loadorder);
 		
+		return 0;
 	}
 	else {
 		std::string s(modpath.begin(), modpath.end());
-		PrintDebug("Could not open file mod.ini in \"%s\".\n", s.c_str());
+		std::string s2(foldername->begin(), foldername->end());
+		PrintDebug("Failed loading mod \"%s\": could not open file mod.ini in \"%s\".\n", s2.c_str(), s.c_str());
 		loadErrors.emplace_back(*foldername, L"mod.ini missing");
+		return 1;
 	}
 }
 
 void InitMods(std::wstring* list, const std::wstring* path) {
 	PrintDebug("[ModLoader] Loading mods... \n");
 	int count = 0;
+	int failedcount = 0;
 
 	// Parse the list of mod
 	while (1) {
@@ -140,12 +145,12 @@ void InitMods(std::wstring* list, const std::wstring* path) {
 		if (separator != std::string::npos) {
 			std::wstring newpath = list->substr(0, separator);
 			
-			InitSingleMod(*path + L"\\" + newpath, &newpath, count);
+			failedcount += InitSingleMod(*path + L"\\" + newpath, &newpath, count);
 
 			*list = list->substr(separator + 1, std::string::npos);
 		}
 		else {
-			InitSingleMod(*path + L"\\" + *list, list, count);
+			failedcount += InitSingleMod(*path + L"\\" + *list, list, count);
 			break;
 		}
 
@@ -153,12 +158,15 @@ void InitMods(std::wstring* list, const std::wstring* path) {
 
 		// failsafe
 		if (count > 999) {
-			PrintDebug("Overflow in mod loading loop\n");
+			PrintDebug("Overflow in mod loading loop.\n");
 			ExitProcess(1);
 		}
 	}
 
-	// Run the detected file replacements
+	// Get the number of mod that loaded succesfully
+	count = count + 1 - failedcount;
+
+	// Run all the detected file replacements
 	if (count > 0) {
 		for (const auto& filereplace : filereplaces) {
 			rayman2_fileMap.addReplaceFile(filereplace.first, filereplace.second);
@@ -169,7 +177,7 @@ void InitMods(std::wstring* list, const std::wstring* path) {
 		}
 	}
 
-	PrintDebug("Loaded %d mod%s", count + 1, count == 0 ? ".\n" : "s.\n");
+	PrintDebug("Loaded %d mod%s", count, count <= 1 ? ".\n" : "s.\n");
 
 	ShowErrors();
 }
