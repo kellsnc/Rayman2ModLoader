@@ -79,7 +79,7 @@ int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder)
 	if (modinfo != nullptr) {
 		modinfo = modinfo;
 
-		const std::wstring modname = modinfo->getWString("Name", foldername->c_str());
+		const std::wstring modname = modinfo->getWString("Name", *foldername);
 
 		if (modinfo->hasKeyNonEmpty("DLLFile")) {
 			InitModDLL(&modpath, modpath + L'\\' + modinfo->getWString("DLLFile"), &modname);
