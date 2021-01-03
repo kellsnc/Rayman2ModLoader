@@ -27,8 +27,7 @@ static void WrongExe() {
 
 static void SetRDataWriteProtection(bool protect) {
     // Reference: https://stackoverflow.com/questions/22588151/how-to-find-data-segment-and-code-segment-range-in-program
-   
-    // SADX module handle. (main executable)
+    
     HMODULE hModule = GetModuleHandle(nullptr);
 
     // Get the PE header.

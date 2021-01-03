@@ -152,7 +152,7 @@ void InitMods(std::wstring* list, const std::wstring* path) {
 		count += 1;
 
 		// failsafe
-		if (count > 9099) {
+		if (count > 999) {
 			PrintDebug("Overflow in mod loading loop\n");
 			ExitProcess(1);
 		}
@@ -169,7 +169,7 @@ void InitMods(std::wstring* list, const std::wstring* path) {
 		}
 	}
 
-	PrintDebug("Loaded  %d mods.", count);
+	PrintDebug("Loaded %d mod%s", count + 1, count == 0 ? ".\n" : "s.\n");
 
 	ShowErrors();
 }

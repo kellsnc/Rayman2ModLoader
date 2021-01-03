@@ -22,5 +22,7 @@ const HelperFunctions helperFunctions = {
 	ModLoaderVer,
 	&PrintDebug,
 	&SetWindowTitle,
-	&GetMainSavePath
+	&GetMainSavePath,
+	&GetReplaceablePath,
+	&_ReplaceFile
 };

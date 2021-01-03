@@ -160,8 +160,6 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 	do
 	{
 		// NOTE: This will hide *all* files starting with '.'.
-		// SADX doesn't use any files starting with '.',
-		// so this won't cause any problems.
 		if (data.cFileName[0] == '.')
 		{
 			continue;

@@ -21,6 +21,16 @@ struct HelperFunctions {
 
 	// Returns the path where main game save files are stored.
 	const char* (__cdecl* GetMainSavePath)();
+
+	// If you've created a file that doesn't exist in the game and want other mods
+	// to be able to replace it, use this function to always return the real path
+	// Example: `GetReplaceablePath("Data\\MyCustomFile.dsb");`
+	const char* (__cdecl* GetReplaceablePath)(const char* path);
+
+	// Replace source file with destination file
+	// Mods will not be able to replace your file unless they name it like the destination file.
+	// Example: `_ReplaceFile("Data\\Game.dsb", "Data\\CustomGame.dsb");`
+	void (__cdecl* _ReplaceFile)(const char* src, const char* dst);
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);
