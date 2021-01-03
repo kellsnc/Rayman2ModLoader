@@ -8,8 +8,6 @@
 std::vector<ModEvent> modFrameEvents;
 CodeParser codeParser;
 
-static Trampoline* OnFrame_t = nullptr;
-
 void RaiseEvents(const std::vector<ModEvent>& eventList) {
 	for (auto& i : eventList) {
 		i();
@@ -24,14 +22,12 @@ void RegisterEvent(std::vector<ModEvent>& eventList, HMODULE module, const char*
 	}
 }
 
-void __cdecl OnFrame_r(tagMSG* msg) {
+void __cdecl OnFrame(int a1) {
 	codeParser.processCodeList();
 	RaiseEvents(modFrameEvents);
-
-	void(__cdecl * Original)(tagMSG * msg) = (void(__cdecl*)(tagMSG * msg))OnFrame_t->Target();
-	Original(msg);
 }
 
 void InitEvents() {
-	OnFrame_t = new Trampoline(0x402580, 0x402586, OnFrame_r);
+	WriteJump((void*)0x402564, OnFrame);
+	WriteJump((void*)0x402570, OnFrame);
 }
