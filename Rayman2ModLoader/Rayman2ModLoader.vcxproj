@@ -161,6 +161,8 @@
   <ItemGroup>
     <ClInclude Include="codes.h" />
     <ClInclude Include="events.h" />
+    <ClInclude Include="filemap.hpp" />
+    <ClInclude Include="replacefiles.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="modhelpers.h" />
     <ClInclude Include="include\MemAccess.h" />
@@ -179,6 +181,8 @@
     <ClCompile Include="codes.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="events.cpp" />
+    <ClCompile Include="filemap.cpp" />
+    <ClCompile Include="replacefiles.cpp" />
     <ClCompile Include="modhelpers.cpp" />
     <ClCompile Include="loader.cpp" />
     <ClCompile Include="mods.cpp" />

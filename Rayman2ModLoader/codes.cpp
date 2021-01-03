@@ -1,3 +1,8 @@
+/**
+ * Rayman2 Mod Loader
+ * Parse Cheatcode files
+ */
+
 #include "pch.h"
 
 void InitCodeFile(const std::wstring path, const char* debug) {

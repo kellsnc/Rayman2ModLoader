@@ -19,12 +19,15 @@
 #include "IniFile.hpp"
 #include "CodeParser.hpp"
 #include "TextConv.hpp"
+#include "FileSystem.h"
 
 #include "Trampoline.h"
+#include "FileMap.hpp"
 
 #include "output.h"
 #include "loader.h"
 #include "events.h"
+#include "replacefiles.h"
 #include "modhelpers.h"
 
 #endif //PCH_H

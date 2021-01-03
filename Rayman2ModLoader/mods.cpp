@@ -6,6 +6,8 @@
 #include "pch.h"
 
 static std::vector<std::pair<std::wstring, std::wstring>> loadErrors;
+static std::unordered_map<std::string, std::string> filereplaces;
+static std::vector<std::pair<std::string, std::string>> fileswaps;
 
 void ShowErrors() {
 	if (!loadErrors.empty()) {
@@ -67,7 +69,7 @@ void InitModDLL(const std::wstring* modpath, const std::wstring dll_filename, co
 	}
 }
 
-void InitSingleMod(std::wstring modpath, std::wstring* foldername) {
+void InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder) {
 	const std::wstring mod_inifile = modpath + L"\\mod.ini";
 
 	const IniFile* config = new IniFile(mod_inifile);
@@ -85,6 +87,40 @@ void InitSingleMod(std::wstring modpath, std::wstring* foldername) {
 		if (modinfo->hasKeyNonEmpty("WindowTitle")) {
 			helperFunctions.SetWindowTitle(modinfo->getString("WindowTitle", "Rayman II").c_str());
 		}
+
+		if (config->hasGroup("IgnoreFiles")) {
+			const IniGroup* group = config->getGroup("IgnoreFiles");
+			auto data = group->data();
+
+			for (const auto& iter : *data) {
+				rayman2_fileMap.addIgnoreFile(iter.first, loadorder);
+				PrintDebug("Ignored file: %s\n", iter.first.c_str());
+			}
+		}
+
+		if (config->hasGroup("ReplaceFiles")) {
+			const IniGroup* group = config->getGroup("ReplaceFiles");
+			auto data = group->data();
+
+			for (const auto& iter : *data) {
+				filereplaces[FileMap::normalizePath(iter.first)] =
+					FileMap::normalizePath(iter.second);
+			}
+		}
+
+		if (config->hasGroup("SwapFiles")) {
+			const IniGroup* group = config->getGroup("SwapFiles");
+			auto data = group->data();
+			
+			for (const auto& iter : *data) {
+				fileswaps.emplace_back(FileMap::normalizePath(iter.first),
+					FileMap::normalizePath(iter.second));
+			}
+		}
+
+		// Check for folder file replacements.
+		ScanModFolder(modpath + L"\\data", loadorder);
+		
 	}
 	else {
 		std::string s(modpath.begin(), modpath.end());
@@ -99,26 +135,37 @@ void InitMods(std::wstring* list, const std::wstring* path) {
 
 	// Parse the list of mod
 	while (1) {
-		++count;
-
 		std::string::size_type separator = list->find_first_of(L",");
 
 		if (separator != std::string::npos) {
 			std::wstring newpath = list->substr(0, separator);
 			
-			InitSingleMod(*path + L"\\" + newpath, &newpath);
+			InitSingleMod(*path + L"\\" + newpath, &newpath, count);
 
 			*list = list->substr(separator + 1, std::string::npos);
 		}
 		else {
-			InitSingleMod(*path + L"\\" + *list, list);
+			InitSingleMod(*path + L"\\" + *list, list, count);
 			break;
 		}
+
+		count += 1;
 
 		// failsafe
 		if (count > 9099) {
 			PrintDebug("Overflow in mod loading loop\n");
 			ExitProcess(1);
+		}
+	}
+
+	// Run the detected file replacements
+	if (count > 0) {
+		for (const auto& filereplace : filereplaces) {
+			rayman2_fileMap.addReplaceFile(filereplace.first, filereplace.second);
+		}
+
+		for (const auto& fileswap : fileswaps) {
+			rayman2_fileMap.swapFiles(fileswap.first, fileswap.second);
 		}
 	}
 
