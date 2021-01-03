@@ -17,6 +17,49 @@ std::wstring ModsPath = L"Mods\\";
 std::string DLLName = "GliVd1";
 std::string APIName = "Glide2";
 
+static void WrongExe() {
+    MessageBox(nullptr, L"This copy of Rayman 2 is not the correct version.\n\n"
+        L"Please obtain the EXE file from GoG or from the original European release.",
+        L"Rayman2 Mod Loader", MB_ICONERROR);
+
+    ExitProcess(1);
+}
+
+static void SetRDataWriteProtection(bool protect) {
+    // Reference: https://stackoverflow.com/questions/22588151/how-to-find-data-segment-and-code-segment-range-in-program
+   
+    // SADX module handle. (main executable)
+    HMODULE hModule = GetModuleHandle(nullptr);
+
+    // Get the PE header.
+    const IMAGE_NT_HEADERS* const pNtHdr = ImageNtHeader(hModule);
+
+    // Section headers are located immediately after the PE header.
+    const auto* pSectionHdr = reinterpret_cast<const IMAGE_SECTION_HEADER*>(pNtHdr + 1);
+
+    // Find the .rdata section.
+    for (unsigned int i = pNtHdr->FileHeader.NumberOfSections; i > 0; i--, pSectionHdr++) {
+        if (strncmp(reinterpret_cast<const char*>(pSectionHdr->Name), ".rdata", sizeof(pSectionHdr->Name)) != 0) {
+            continue;
+        }
+
+        // Found the .rdata section.
+        if (pSectionHdr->VirtualAddress != 0x9C000 || pSectionHdr->Misc.VirtualSize != 0x3000) {
+            WrongExe();
+        }
+
+        const intptr_t vaddr = reinterpret_cast<intptr_t>(hModule) + pSectionHdr->VirtualAddress;
+        DWORD flOldProtect;
+        DWORD flNewProtect = (protect ? PAGE_READONLY : PAGE_WRITECOPY);
+        VirtualProtect(reinterpret_cast<void*>(vaddr), pSectionHdr->Misc.VirtualSize, flNewProtect, &flOldProtect);
+
+        return;
+    }
+
+    // .rdata section not found.
+    WrongExe();
+}
+
 void SplitFilename(std::wstring* str) {
     std::string::size_type slash = str->find_last_of(L"/\\");
     *str = str->substr(0, slash);
@@ -69,7 +112,9 @@ void InitModLoader() {
         // Init debug output system
         InitOutput(loaderconfig);
 
-        // Check mods
+        // Mods and cheat codes can edit read-only memory
+        SetRDataWriteProtection(false);
+
         if (IsPathAbsolute(&ModsPath) == false) { ModsPath = ModManagerPath + L"\\" + ModsPath; }
         std::wstring modlist = loaderconfig->getWString("Mods", L"");
 

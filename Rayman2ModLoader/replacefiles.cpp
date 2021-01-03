@@ -2,7 +2,6 @@
 #include "FileMap.hpp"
 
 #include <cassert>
-#include <DbgHelp.h>
 
 #pragma comment (lib, "Dbghelp.lib")
 
