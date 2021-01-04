@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoaderInfo.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,6 +87,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Rayman2ModManager.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mod-loader-common\ModManagerCommon\ModManagerCommon.csproj">
+      <Project>{4a480502-79b5-4e1e-8d67-16c514bb13cd}</Project>
+      <Name>ModManagerCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

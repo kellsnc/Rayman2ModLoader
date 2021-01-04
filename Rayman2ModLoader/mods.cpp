@@ -41,6 +41,8 @@ void InitModDLL(const std::wstring* modpath, const std::wstring dll_filename, co
 			}
 
 			RegisterEvent(modFrameEvents, module, "OnFrame");
+			RegisterEvent(modBeforeRenderEvents, module, "BeforeRender");
+			RegisterEvent(modAfterRenderEvents, module, "AfterRender");
 		}
 	}
 	else {
