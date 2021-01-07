@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,11 +12,16 @@ namespace Rayman2ModManager
 
 	class Rayman2LoaderInfo : LoaderInfo
 	{
-		public string DllName { get; set; }
-		public string APIName { get; set; }
-		public bool DebugConsole { get; set; }
-		public bool DebugFile { get; set; }
-		public string ModsPath { get; set; }
+		[DefaultValue("GliVd1")]
+		public string DllName { get; set; } = "GliVd1";
+		[DefaultValue("Glide2")]
+		public string APIName { get; set; } = "Glide2";
+		[DefaultValue(false)]
+		public bool DebugConsole { get; set; } = false;
+		[DefaultValue(false)]
+		public bool DebugFile { get; set; } = false;
+		[DefaultValue("Mods")]
+		public string ModsPath { get; set; } = "Mods";
 		public string ModsList { get; set; }
 		public string CodesList { get; set; }
 
