@@ -276,10 +276,17 @@ namespace Rayman2ModManager
             }
 
             ubiIni = GamePath + "\\" + ubiIni;
-            ModsPath = GamePath + "\\" + ModsPath;
 
             ReadLoaderConfig(loaderIniPath);
             ReadGameConfig(ubiIni);
+
+            ModsPath = loaderini.ModsPath;
+
+            if (Path.IsPathRooted(ModsPath) == false)
+            {
+                ModsPath = GamePath + "\\" + ModsPath;
+            }
+
             LoadCodesFile(ModsPath + "\\");
             LoadModList(ModsPath);
         }
