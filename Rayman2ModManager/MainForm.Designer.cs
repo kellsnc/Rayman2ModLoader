@@ -72,7 +72,7 @@ namespace Rayman2ModManager
             this.comboBoxDLL = new System.Windows.Forms.ComboBox();
             this.graphicsDLLLabel = new System.Windows.Forms.Label();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.checkedListBoxMods = new System.Windows.Forms.CheckedListBox();
+            this.checkedListBoxCodes = new System.Windows.Forms.CheckedListBox();
             this.tabControl.SuspendLayout();
             this.modTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMods)).BeginInit();
@@ -315,7 +315,7 @@ namespace Rayman2ModManager
             // 
             // codesTab
             // 
-            this.codesTab.Controls.Add(this.checkedListBoxMods);
+            this.codesTab.Controls.Add(this.checkedListBoxCodes);
             this.codesTab.Location = new System.Drawing.Point(4, 34);
             this.codesTab.Name = "codesTab";
             this.codesTab.Padding = new System.Windows.Forms.Padding(3);
@@ -598,14 +598,14 @@ namespace Rayman2ModManager
             this.graphicsDLLLabel.TabIndex = 0;
             this.graphicsDLLLabel.Text = "Graphics DLL:";
             // 
-            // checkedListBoxMods
+            // checkedListBoxCodes
             // 
-            this.checkedListBoxMods.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBoxMods.FormattingEnabled = true;
-            this.checkedListBoxMods.Location = new System.Drawing.Point(3, 3);
-            this.checkedListBoxMods.Name = "checkedListBoxMods";
-            this.checkedListBoxMods.Size = new System.Drawing.Size(566, 596);
-            this.checkedListBoxMods.TabIndex = 1;
+            this.checkedListBoxCodes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkedListBoxCodes.FormattingEnabled = true;
+            this.checkedListBoxCodes.Location = new System.Drawing.Point(3, 3);
+            this.checkedListBoxCodes.Name = "checkedListBoxCodes";
+            this.checkedListBoxCodes.Size = new System.Drawing.Size(566, 596);
+            this.checkedListBoxCodes.TabIndex = 1;
             // 
             // MainForm
             // 
@@ -685,7 +685,7 @@ namespace Rayman2ModManager
         private System.Windows.Forms.CheckBox checkBoxLog;
         private System.Windows.Forms.CheckBox checkBoxConsole;
         private System.Windows.Forms.ToolTip toolTip;
-        private System.Windows.Forms.CheckedListBox checkedListBoxMods;
+        private System.Windows.Forms.CheckedListBox checkedListBoxCodes;
     }
 }
 

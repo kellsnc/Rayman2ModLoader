@@ -69,6 +69,37 @@ namespace Rayman2ModManager
         CodeList mainCodes;
         List<Code> codes;
 
+        private void SaveCodes()
+        {
+            List<Code> selectedCodes = new List<Code>();
+            List<Code> selectedPatches = new List<Code>();
+
+            loaderini.EnabledCodes.Clear();
+
+            foreach (Code item in checkedListBoxCodes.CheckedIndices.OfType<int>().Select(a => codes[a]))
+            {
+                if (item.Patch)
+                    selectedPatches.Add(item);
+                else
+                    selectedCodes.Add(item);
+
+                loaderini.EnabledCodes.Add(item.Name);
+            }
+
+            CodeList.WriteDatFile(ModsPath + "\\Patches.dat", selectedPatches);
+            CodeList.WriteDatFile(ModsPath + "\\Codes.dat", selectedCodes);
+        }
+
+        private void SaveMods()
+        {
+            loaderini.Mods.Clear();
+
+            foreach (ListViewItem item in modListView.CheckedItems)
+            {
+                loaderini.Mods.Add((string)item.Tag);
+            }
+        }
+
         private void SaveLoaderConfig(string path)
         {
             loaderini.DllName = comboBoxDLL.Text;
@@ -96,6 +127,8 @@ namespace Rayman2ModManager
 
         private void SaveAll()
         {
+            SaveCodes();
+            SaveMods();
             SaveLoaderConfig(loaderIniPath);
             SaveGameConfig(ubiIni);
         }
@@ -242,13 +275,13 @@ namespace Rayman2ModManager
             foreach (Code item in codes.Where(a => a.Required && !loaderini.EnabledCodes.Contains(a.Name)))
                 loaderini.EnabledCodes.Add(item.Name);
 
-            checkedListBoxMods.BeginUpdate();
-            checkedListBoxMods.Items.Clear();
+            checkedListBoxCodes.BeginUpdate();
+            checkedListBoxCodes.Items.Clear();
 
             foreach (Code item in codes)
-                checkedListBoxMods.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
+                checkedListBoxCodes.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
 
-            checkedListBoxMods.EndUpdate();
+            checkedListBoxCodes.EndUpdate();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
