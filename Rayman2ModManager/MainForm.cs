@@ -129,12 +129,17 @@ namespace Rayman2ModManager
             IniSerializer.Serialize(configFile, path);
         }
 
+        void SaveConfigs()
+        {
+            SaveLoaderConfig(loaderIniPath);
+            SaveGameConfig(ubiIni);
+        }
+
         private void SaveAll()
         {
             SaveCodes();
             SaveMods();
-            SaveLoaderConfig(loaderIniPath);
-            SaveGameConfig(ubiIni);
+            SaveConfigs();
         }
 
         private void InstallLoader()
@@ -143,7 +148,7 @@ namespace Rayman2ModManager
             configFile.GameConfig.GLI_DllFile = "modloader";
             buttonInstall.Text = "Uninstall";
             loaderInstalled = true;
-            SaveAll();
+            SaveConfigs();
         }
 
         private void UninstallLoader()
@@ -151,7 +156,7 @@ namespace Rayman2ModManager
             buttonInstall.Text = "Install";
             configFile.GameConfig.GLI_DllFile = loaderini.DllName;
             loaderInstalled = false;
-            SaveAll();
+            SaveConfigs();
         }
 
         private void buttonInstall_Click(object sender, EventArgs e)
@@ -322,6 +327,11 @@ namespace Rayman2ModManager
             if (Path.IsPathRooted(ModsPath) == false)
             {
                 ModsPath = GamePath + "\\" + ModsPath;
+            }
+
+            if (Directory.Exists(ModsPath) == false)
+            {
+                Directory.CreateDirectory(ModsPath);
             }
 
             LoadCodesFile(ModsPath + "\\");
