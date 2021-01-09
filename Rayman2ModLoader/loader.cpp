@@ -126,10 +126,16 @@ void InitModLoader() {
         if (loadcodes) {
             InitCodes(&ModsPath);
         }
+        else {
+            PrintDebug("[ModLoader] Loaded 0 codes\n");
+        }
 
         // Load mods DLL and custom codes
         if (loadmods) {
             InitMods(loaderconfig, &ModsPath);
+        }
+        else {
+            PrintDebug("[ModLoader] Loaded 0 mod\n");
         }
     }
     else {
