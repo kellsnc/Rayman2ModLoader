@@ -135,38 +135,31 @@ int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder)
 	}
 }
 
-void InitMods(std::wstring* list, const std::wstring* path) {
+void InitMods(const IniGroup* loaderconfig, const std::wstring* path) {
 	PrintDebug("[ModLoader] Loading mods... \n");
-	int count = 0;
 	int failedcount = 0;
 
 	// Parse the list of mod
+	int count = 1;
+
 	while (1) {
-		std::string::size_type separator = list->find_first_of(L",");
+		char key[8];
 
-		if (separator != std::string::npos) {
-			std::wstring newpath = list->substr(0, separator);
-			
-			failedcount += InitSingleMod(*path + L"\\" + newpath, &newpath, count);
+		snprintf(key, sizeof(key), "Mod%u", count);
 
-			*list = list->substr(separator + 1, std::string::npos);
-		}
-		else {
-			failedcount += InitSingleMod(*path + L"\\" + *list, list, count);
+		if (!loaderconfig->hasKey(key)) {
 			break;
 		}
 
-		count += 1;
+		std::wstring foldername = loaderconfig->getWString(key);
 
-		// failsafe
-		if (count > 999) {
-			PrintDebug("Overflow in mod loading loop.\n");
-			ExitProcess(1);
-		}
+		failedcount += InitSingleMod(*path + L"\\" + foldername, &foldername, count);
+
+		count += 1;
 	}
 
 	// Get the number of mod that loaded succesfully
-	count = count + 1 - failedcount;
+	count = count - 1 - failedcount;
 
 	// Run all the detected file replacements
 	if (count > 0) {

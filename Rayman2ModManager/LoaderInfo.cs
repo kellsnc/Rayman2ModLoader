@@ -11,17 +11,6 @@ namespace Rayman2ModManager
 {
 	public class Rayman2LoaderInfo : LoaderInfo
 	{
-		[IniName("Rayman2ModLoader")]
-		public LoaderConfig LoaderConfig { get; set; }
-
-		public Rayman2LoaderInfo()
-		{
-			// todo: read lists
-		}
-	}
-
-	public class LoaderConfig
-    {
 		[IniAlwaysInclude]
 		[DefaultValue("GliVd1")]
 		public string DllName { get; set; } = "GliVd1";
@@ -39,8 +28,5 @@ namespace Rayman2ModManager
 		[DefaultValue("Mods")]
 		[IniAlwaysInclude]
 		public string ModsPath { get; set; } = "Mods";
-
-		public string ModsList { get; set; }
-		public string CodesList { get; set; }
 	}
 }

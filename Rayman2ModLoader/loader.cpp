@@ -11,7 +11,6 @@
 std::wstring GamePath;
 std::wstring ModManagerPath;
 std::wstring ConfigPath = L"Rayman2ModLoader.ini";
-std::wstring CodesPath = L"Mods\\CheatCodes.lst";
 std::wstring ModsPath = L"Mods\\";
 
 std::string DLLName = "GliVd1";
@@ -100,13 +99,12 @@ void GetConfigPath() {
 
 void InitModLoader() {
     const IniFile* config = new IniFile(ConfigPath);
-    const IniGroup* loaderconfig = config->getGroup("Rayman2ModLoader");
+    const IniGroup* loaderconfig = config->getGroup("");
 
     if (loaderconfig != nullptr) {
         DLLName = loaderconfig->getString("GlideDLL", DLLName);
         APIName = loaderconfig->getString("GlideAPI", APIName);
         ModsPath = loaderconfig->getWString("ModsPath", ModsPath);
-        CodesPath = loaderconfig->getWString("CodesPath", CodesPath);
 
         // Init debug output system
         InitOutput(loaderconfig);
@@ -115,10 +113,9 @@ void InitModLoader() {
         SetRDataWriteProtection(false);
 
         if (IsPathAbsolute(&ModsPath) == false) { ModsPath = ModManagerPath + L"\\" + ModsPath; }
-        std::wstring modlist = loaderconfig->getWString("ModsList", L"");
 
-        bool loadmods = modlist.empty() == false;
-        bool loadcodes = loaderconfig->getBool("LoadCodes", true);
+        bool loadmods = loaderconfig->hasKey("Mod1");
+        bool loadcodes = loaderconfig->hasKey("Code1");
 
         // Set up function hooks
         if (loadcodes || loadmods) {
@@ -132,7 +129,7 @@ void InitModLoader() {
 
         // Load mods DLL and custom codes
         if (loadmods) {
-            InitMods(&modlist, &ModsPath);
+            InitMods(loaderconfig, &ModsPath);
         }
     }
     else {

@@ -50,7 +50,6 @@ namespace Rayman2ModManager
             this.downmostButton = new System.Windows.Forms.Button();
             this.labelModDescription = new System.Windows.Forms.Label();
             this.codesTab = new System.Windows.Forms.TabPage();
-            this.listView1 = new System.Windows.Forms.ListView();
             this.optionsTab = new System.Windows.Forms.TabPage();
             this.groupBoxDebug = new System.Windows.Forms.GroupBox();
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
@@ -73,6 +72,7 @@ namespace Rayman2ModManager
             this.comboBoxDLL = new System.Windows.Forms.ComboBox();
             this.graphicsDLLLabel = new System.Windows.Forms.Label();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.checkedListBoxMods = new System.Windows.Forms.CheckedListBox();
             this.tabControl.SuspendLayout();
             this.modTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMods)).BeginInit();
@@ -315,7 +315,7 @@ namespace Rayman2ModManager
             // 
             // codesTab
             // 
-            this.codesTab.Controls.Add(this.listView1);
+            this.codesTab.Controls.Add(this.checkedListBoxMods);
             this.codesTab.Location = new System.Drawing.Point(4, 34);
             this.codesTab.Name = "codesTab";
             this.codesTab.Padding = new System.Windows.Forms.Padding(3);
@@ -323,19 +323,6 @@ namespace Rayman2ModManager
             this.codesTab.TabIndex = 1;
             this.codesTab.Text = "Codes";
             this.codesTab.UseVisualStyleBackColor = true;
-            // 
-            // listView1
-            // 
-            this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listView1.CheckBoxes = true;
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(3, 3);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(566, 596);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
             // 
             // optionsTab
             // 
@@ -611,6 +598,15 @@ namespace Rayman2ModManager
             this.graphicsDLLLabel.TabIndex = 0;
             this.graphicsDLLLabel.Text = "Graphics DLL:";
             // 
+            // checkedListBoxMods
+            // 
+            this.checkedListBoxMods.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkedListBoxMods.FormattingEnabled = true;
+            this.checkedListBoxMods.Location = new System.Drawing.Point(3, 3);
+            this.checkedListBoxMods.Name = "checkedListBoxMods";
+            this.checkedListBoxMods.Size = new System.Drawing.Size(566, 596);
+            this.checkedListBoxMods.TabIndex = 1;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -668,7 +664,6 @@ namespace Rayman2ModManager
         private System.Windows.Forms.Button configModButton;
         private System.Windows.Forms.SplitContainer splitContainerMods;
         private System.Windows.Forms.Label labelModDescription;
-        private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.GroupBox graphicGroupBox;
         private System.Windows.Forms.ComboBox comboBoxResolutions;
         private System.Windows.Forms.Label xLabel1;
@@ -690,6 +685,7 @@ namespace Rayman2ModManager
         private System.Windows.Forms.CheckBox checkBoxLog;
         private System.Windows.Forms.CheckBox checkBoxConsole;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.CheckedListBox checkedListBoxMods;
     }
 }
 

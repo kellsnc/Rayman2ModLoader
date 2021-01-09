@@ -20,6 +20,32 @@ namespace Rayman2ModManager
         public MainForm()
         {
             InitializeComponent();
+
+            // WORKAROUND: Windows 7's system fonts don't have
+            // U+2912 or U+2913. Use Cambria instead.
+            // TODO: Check the actual font to see if it has the glyphs.
+            Font boldFont = null;
+            OperatingSystem os = Environment.OSVersion;
+
+            if ((os.Platform == PlatformID.Win32NT || os.Platform == PlatformID.Win32Windows) &&
+                (os.Version.Major < 6 || (os.Version.Major == 6 && os.Version.Minor < 2)))
+            {
+                // Windows 7 or earlier.
+                // TODO: Make sure this font exists.
+                // NOTE: U+2912 and U+2913 are missing in Bold, so use Regular.
+                boldFont = new Font("Cambria", this.Font.Size * 1.25f, FontStyle.Regular);
+            }
+            else
+            {
+                // Newer than Windows 7, or not Windows.
+                // Use the default font.
+                boldFont = new Font(this.Font.FontFamily, this.Font.Size * 1.25f, FontStyle.Bold);
+            }
+
+            upmostButton.Font = boldFont;
+            upButton.Font = boldFont;
+            downButton.Font = boldFont;
+            downmostButton.Font = boldFont;
         }
 
         private static void SetDoubleBuffered(Control control, bool enable)
@@ -31,16 +57,24 @@ namespace Rayman2ModManager
         private Rayman2LoaderInfo loaderini;
         private ConfigFile configFile;
 
-        private const string ubiIni = "ubi.ini";
+        private string GamePath = "";
+        private string ModsPath = "Mods";
+        private string ubiIni = "ubi.ini";
         private string loaderIniPath = "Rayman2ModLoader.ini";
+        private const string lstcodespath = "Codes.lst";
         private bool loaderInstalled = false;
+
+        Dictionary<string, Rayman2ModInfo> mods;
+
+        CodeList mainCodes;
+        List<Code> codes;
 
         private void SaveLoaderConfig(string path)
         {
-            loaderini.LoaderConfig.DllName = comboBoxDLL.Text;
-            loaderini.LoaderConfig.APIName = comboBoxAPI.Text;
-            loaderini.LoaderConfig.DebugConsole = checkBoxConsole.Checked;
-            loaderini.LoaderConfig.DebugFile = checkBoxLog.Checked;
+            loaderini.DllName = comboBoxDLL.Text;
+            loaderini.APIName = comboBoxAPI.Text;
+            loaderini.DebugConsole = checkBoxConsole.Checked;
+            loaderini.DebugFile = checkBoxLog.Checked;
 
             IniSerializer.Serialize(loaderini, path);
         }
@@ -68,7 +102,7 @@ namespace Rayman2ModManager
 
         private void InstallLoader()
         {
-            loaderini.LoaderConfig.DllName = configFile.GameConfig.GLI_DllFile;
+            loaderini.DllName = configFile.GameConfig.GLI_DllFile;
             configFile.GameConfig.GLI_DllFile = "modloader";
             buttonInstall.Text = "Uninstall";
             loaderInstalled = true;
@@ -78,7 +112,7 @@ namespace Rayman2ModManager
         private void UninstallLoader()
         {
             buttonInstall.Text = "Install";
-            configFile.GameConfig.GLI_DllFile = loaderini.LoaderConfig.DllName;
+            configFile.GameConfig.GLI_DllFile = loaderini.DllName;
             loaderInstalled = false;
             SaveAll();
         }
@@ -98,10 +132,10 @@ namespace Rayman2ModManager
         private void ReadLoaderConfig(string path)
         {
             loaderini = File.Exists(path) ? IniSerializer.Deserialize<Rayman2LoaderInfo>(path) : new Rayman2LoaderInfo();
-            checkBoxConsole.Checked = loaderini.LoaderConfig.DebugConsole;
-            checkBoxLog.Checked = loaderini.LoaderConfig.DebugFile;
-            comboBoxDLL.Text = loaderini.LoaderConfig.DllName;
-            comboBoxAPI.Text = loaderini.LoaderConfig.APIName;
+            checkBoxConsole.Checked = loaderini.DebugConsole;
+            checkBoxLog.Checked = loaderini.DebugFile;
+            comboBoxDLL.Text = loaderini.DllName;
+            comboBoxAPI.Text = loaderini.APIName;
         }
 
         private void ReadGameConfig(string path)
@@ -138,12 +172,116 @@ namespace Rayman2ModManager
             }
         }
 
+        private void LoadCodesFile(string path)
+        {
+            try
+            {
+                string codespath = path + lstcodespath;
+                if (File.Exists(codespath))
+                {
+                    mainCodes = CodeList.Load(codespath);
+                }
+                else
+                {
+                    mainCodes = new CodeList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, $"Error loading code list: {ex.Message}", "Rayman2 Mod Loader", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                mainCodes = new CodeList();
+            }
+        }
+
+        private void LoadModList(string path)
+        {
+            upmostButton.Enabled = upButton.Enabled = downButton.Enabled = downmostButton.Enabled = configModButton.Enabled = false;
+            labelModDescription.Text = "Description: No mod selected.";
+            modListView.Items.Clear();
+            mods = new Dictionary<string, Rayman2ModInfo>();
+            codes = new List<Code>(mainCodes.Codes);
+
+            foreach (string filename in Rayman2ModInfo.GetModFiles(new DirectoryInfo(path)))
+            {
+                mods.Add((Path.GetDirectoryName(filename) ?? string.Empty).Substring(path.Length + 1), IniSerializer.Deserialize<Rayman2ModInfo>(filename));
+            }
+
+            modListView.BeginUpdate();
+
+            foreach (string mod in new List<string>(loaderini.Mods))
+            {
+                if (mods.ContainsKey(mod))
+                {
+                    Rayman2ModInfo inf = mods[mod];
+                    modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author, inf.Version }) { Checked = true, Tag = mod });
+                    
+                    if (!string.IsNullOrEmpty(inf.Codes))
+                    {
+                        codes.AddRange(CodeList.Load(Path.Combine(Path.Combine(path, mod), inf.Codes)).Codes);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(this, "Mod \"" + mod + "\" could not be found.\n\nThis mod will be removed from the list.",
+                        Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    loaderini.Mods.Remove(mod);
+                }
+            }
+
+            foreach (KeyValuePair<string, Rayman2ModInfo> inf in mods.OrderBy(x => x.Value.Name))
+            {
+                if (!loaderini.Mods.Contains(inf.Key))
+                {
+                    modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author, inf.Value.Version }) { Tag = inf.Key });
+                }
+            }
+
+            modListView.EndUpdate();
+
+            loaderini.EnabledCodes = new List<string>(loaderini.EnabledCodes.Where(a => codes.Any(c => c.Name == a)));
+            foreach (Code item in codes.Where(a => a.Required && !loaderini.EnabledCodes.Contains(a.Name)))
+                loaderini.EnabledCodes.Add(item.Name);
+
+            checkedListBoxMods.BeginUpdate();
+            checkedListBoxMods.Items.Clear();
+
+            foreach (Code item in codes)
+                checkedListBoxMods.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
+
+            checkedListBoxMods.EndUpdate();
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             SetDoubleBuffered(modListView, true);
 
+            string[] args = Environment.GetCommandLineArgs();
+
+            int i = 0;
+            foreach (string arg in args)
+            {
+                if (arg == "-gamepath")
+                {
+                    GamePath = args[i + 1];
+
+                    break;
+                }
+
+                ++i;
+            }
+
+            if (GamePath == "")
+            {
+                GamePath = Environment.CurrentDirectory;
+            }
+
+            ubiIni = GamePath + "\\" + ubiIni;
+            ModsPath = GamePath + "\\" + ModsPath;
+
             ReadLoaderConfig(loaderIniPath);
             ReadGameConfig(ubiIni);
+            LoadCodesFile(ModsPath + "\\");
+            LoadModList(ModsPath);
         }
 
         private void addModButton_Click(object sender, EventArgs e)
