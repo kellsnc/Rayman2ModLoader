@@ -115,7 +115,7 @@ void InitModLoader() {
         SetRDataWriteProtection(false);
 
         if (IsPathAbsolute(&ModsPath) == false) { ModsPath = ModManagerPath + L"\\" + ModsPath; }
-        std::wstring modlist = loaderconfig->getWString("Mods", L"");
+        std::wstring modlist = loaderconfig->getWString("ModsList", L"");
 
         bool loadmods = modlist.empty() == false;
         bool loadcodes = loaderconfig->getBool("LoadCodes", true);

@@ -52,7 +52,16 @@ namespace Rayman2ModManager
             this.codesTab = new System.Windows.Forms.TabPage();
             this.listView1 = new System.Windows.Forms.ListView();
             this.optionsTab = new System.Windows.Forms.TabPage();
+            this.groupBoxDebug = new System.Windows.Forms.GroupBox();
+            this.checkBoxLog = new System.Windows.Forms.CheckBox();
+            this.checkBoxConsole = new System.Windows.Forms.CheckBox();
+            this.groupBoxVisual = new System.Windows.Forms.GroupBox();
+            this.comboBoxParticules = new System.Windows.Forms.ComboBox();
+            this.labelParticules = new System.Windows.Forms.Label();
             this.graphicGroupBox = new System.Windows.Forms.GroupBox();
+            this.comboBoxTexMem = new System.Windows.Forms.ComboBox();
+            this.labelTexsMem = new System.Windows.Forms.Label();
+            this.comboBoxDepth = new System.Windows.Forms.ComboBox();
             this.labelDepth = new System.Windows.Forms.Label();
             this.comboBoxResolutions = new System.Windows.Forms.ComboBox();
             this.xLabel1 = new System.Windows.Forms.Label();
@@ -63,15 +72,6 @@ namespace Rayman2ModManager
             this.graphicsAPILabel = new System.Windows.Forms.Label();
             this.comboBoxDLL = new System.Windows.Forms.ComboBox();
             this.graphicsDLLLabel = new System.Windows.Forms.Label();
-            this.comboBoxDepth = new System.Windows.Forms.ComboBox();
-            this.labelParticules = new System.Windows.Forms.Label();
-            this.groupBoxVisual = new System.Windows.Forms.GroupBox();
-            this.comboBoxParticules = new System.Windows.Forms.ComboBox();
-            this.labelTexsMem = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.groupBoxDebug = new System.Windows.Forms.GroupBox();
-            this.checkBoxConsole = new System.Windows.Forms.CheckBox();
-            this.checkBoxLog = new System.Windows.Forms.CheckBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tabControl.SuspendLayout();
             this.modTab.SuspendLayout();
@@ -81,11 +81,11 @@ namespace Rayman2ModManager
             this.splitContainerMods.SuspendLayout();
             this.codesTab.SuspendLayout();
             this.optionsTab.SuspendLayout();
+            this.groupBoxDebug.SuspendLayout();
+            this.groupBoxVisual.SuspendLayout();
             this.graphicGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Height)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Width)).BeginInit();
-            this.groupBoxVisual.SuspendLayout();
-            this.groupBoxDebug.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSaveAndPlay
@@ -99,6 +99,7 @@ namespace Rayman2ModManager
             this.toolTip.SetToolTip(this.buttonSaveAndPlay, "Save the configuration and launch the game.\r\nYou can also launch the game directl" +
         "y.");
             this.buttonSaveAndPlay.UseVisualStyleBackColor = true;
+            this.buttonSaveAndPlay.Click += new System.EventHandler(this.buttonSaveAndPlay_Click);
             // 
             // buttonSave
             // 
@@ -110,6 +111,7 @@ namespace Rayman2ModManager
             this.buttonSave.Text = "Save";
             this.toolTip.SetToolTip(this.buttonSave, "Save the Mod Loader\'s and the game\'s configurations.");
             this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
             // buttonInstall
             // 
@@ -347,11 +349,84 @@ namespace Rayman2ModManager
             this.optionsTab.Text = "Options";
             this.optionsTab.UseVisualStyleBackColor = true;
             // 
+            // groupBoxDebug
+            // 
+            this.groupBoxDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxDebug.Controls.Add(this.checkBoxLog);
+            this.groupBoxDebug.Controls.Add(this.checkBoxConsole);
+            this.groupBoxDebug.Location = new System.Drawing.Point(8, 269);
+            this.groupBoxDebug.Name = "groupBoxDebug";
+            this.groupBoxDebug.Size = new System.Drawing.Size(554, 90);
+            this.groupBoxDebug.TabIndex = 13;
+            this.groupBoxDebug.TabStop = false;
+            this.groupBoxDebug.Text = "Debugging";
+            // 
+            // checkBoxLog
+            // 
+            this.checkBoxLog.AutoSize = true;
+            this.checkBoxLog.Location = new System.Drawing.Point(10, 59);
+            this.checkBoxLog.Name = "checkBoxLog";
+            this.checkBoxLog.Size = new System.Drawing.Size(149, 26);
+            this.checkBoxLog.TabIndex = 1;
+            this.checkBoxLog.Text = "Enable log file";
+            this.toolTip.SetToolTip(this.checkBoxLog, "This will output debug information in a log file.");
+            this.checkBoxLog.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxConsole
+            // 
+            this.checkBoxConsole.AutoSize = true;
+            this.checkBoxConsole.Location = new System.Drawing.Point(10, 27);
+            this.checkBoxConsole.Name = "checkBoxConsole";
+            this.checkBoxConsole.Size = new System.Drawing.Size(159, 26);
+            this.checkBoxConsole.TabIndex = 0;
+            this.checkBoxConsole.Text = "Enable console";
+            this.toolTip.SetToolTip(this.checkBoxConsole, "This will open a console outputting debug information from the game and from mods" +
+        ".");
+            this.checkBoxConsole.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxVisual
+            // 
+            this.groupBoxVisual.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxVisual.Controls.Add(this.comboBoxParticules);
+            this.groupBoxVisual.Controls.Add(this.labelParticules);
+            this.groupBoxVisual.Location = new System.Drawing.Point(8, 193);
+            this.groupBoxVisual.Name = "groupBoxVisual";
+            this.groupBoxVisual.Size = new System.Drawing.Size(554, 70);
+            this.groupBoxVisual.TabIndex = 12;
+            this.groupBoxVisual.TabStop = false;
+            this.groupBoxVisual.Text = "Visuals";
+            // 
+            // comboBoxParticules
+            // 
+            this.comboBoxParticules.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxParticules.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.comboBoxParticules.FormattingEnabled = true;
+            this.comboBoxParticules.Items.AddRange(new object[] {
+            "Null",
+            "Low",
+            "Medium",
+            "High"});
+            this.comboBoxParticules.Location = new System.Drawing.Point(140, 27);
+            this.comboBoxParticules.Name = "comboBoxParticules";
+            this.comboBoxParticules.Size = new System.Drawing.Size(135, 30);
+            this.comboBoxParticules.TabIndex = 11;
+            // 
+            // labelParticules
+            // 
+            this.labelParticules.AutoSize = true;
+            this.labelParticules.Location = new System.Drawing.Point(6, 35);
+            this.labelParticules.Name = "labelParticules";
+            this.labelParticules.Size = new System.Drawing.Size(128, 22);
+            this.labelParticules.TabIndex = 11;
+            this.labelParticules.Text = "Particule Rate:";
+            // 
             // graphicGroupBox
             // 
             this.graphicGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.graphicGroupBox.Controls.Add(this.comboBox1);
+            this.graphicGroupBox.Controls.Add(this.comboBoxTexMem);
             this.graphicGroupBox.Controls.Add(this.labelTexsMem);
             this.graphicGroupBox.Controls.Add(this.comboBoxDepth);
             this.graphicGroupBox.Controls.Add(this.labelDepth);
@@ -370,6 +445,51 @@ namespace Rayman2ModManager
             this.graphicGroupBox.TabIndex = 0;
             this.graphicGroupBox.TabStop = false;
             this.graphicGroupBox.Text = "Graphics";
+            // 
+            // comboBoxTexMem
+            // 
+            this.comboBoxTexMem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxTexMem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTexMem.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.comboBoxTexMem.FormattingEnabled = true;
+            this.comboBoxTexMem.Items.AddRange(new object[] {
+            "Vram",
+            "Vram+",
+            "Vram4",
+            "Vram8",
+            "Agp",
+            "Agp4",
+            "Agp8"});
+            this.comboBoxTexMem.Location = new System.Drawing.Point(399, 133);
+            this.comboBoxTexMem.Name = "comboBoxTexMem";
+            this.comboBoxTexMem.Size = new System.Drawing.Size(149, 30);
+            this.comboBoxTexMem.TabIndex = 13;
+            this.toolTip.SetToolTip(this.comboBoxTexMem, "Memory allocated for textures.");
+            // 
+            // labelTexsMem
+            // 
+            this.labelTexsMem.AutoSize = true;
+            this.labelTexsMem.Location = new System.Drawing.Point(239, 141);
+            this.labelTexsMem.Name = "labelTexsMem";
+            this.labelTexsMem.Size = new System.Drawing.Size(154, 22);
+            this.labelTexsMem.TabIndex = 12;
+            this.labelTexsMem.Text = "Textures Memory:";
+            // 
+            // comboBoxDepth
+            // 
+            this.comboBoxDepth.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxDepth.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.comboBoxDepth.FormattingEnabled = true;
+            this.comboBoxDepth.Items.AddRange(new object[] {
+            "8",
+            "16",
+            "32"});
+            this.comboBoxDepth.Location = new System.Drawing.Point(75, 133);
+            this.comboBoxDepth.Name = "comboBoxDepth";
+            this.comboBoxDepth.Size = new System.Drawing.Size(137, 30);
+            this.comboBoxDepth.TabIndex = 10;
+            this.toolTip.SetToolTip(this.comboBoxDepth, "The color depth resolution.");
             // 
             // labelDepth
             // 
@@ -398,6 +518,7 @@ namespace Rayman2ModManager
             this.comboBoxResolutions.Name = "comboBoxResolutions";
             this.comboBoxResolutions.Size = new System.Drawing.Size(199, 30);
             this.comboBoxResolutions.TabIndex = 8;
+            this.toolTip.SetToolTip(this.comboBoxResolutions, "Choose a predefined set of resolution.");
             // 
             // xLabel1
             // 
@@ -411,16 +532,28 @@ namespace Rayman2ModManager
             // numericUpDown_Height
             // 
             this.numericUpDown_Height.Location = new System.Drawing.Point(243, 99);
+            this.numericUpDown_Height.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.numericUpDown_Height.Name = "numericUpDown_Height";
             this.numericUpDown_Height.Size = new System.Drawing.Size(100, 28);
             this.numericUpDown_Height.TabIndex = 6;
+            this.toolTip.SetToolTip(this.numericUpDown_Height, "The height resolution.");
             // 
             // numericUpDown_Width
             // 
             this.numericUpDown_Width.Location = new System.Drawing.Point(112, 99);
+            this.numericUpDown_Width.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
             this.numericUpDown_Width.Name = "numericUpDown_Width";
             this.numericUpDown_Width.Size = new System.Drawing.Size(100, 28);
             this.numericUpDown_Width.TabIndex = 5;
+            this.toolTip.SetToolTip(this.numericUpDown_Width, "The width resolution.");
             // 
             // resolutionLabel
             // 
@@ -477,122 +610,6 @@ namespace Rayman2ModManager
             this.graphicsDLLLabel.TabIndex = 0;
             this.graphicsDLLLabel.Text = "Graphics DLL:";
             // 
-            // comboBoxDepth
-            // 
-            this.comboBoxDepth.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxDepth.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.comboBoxDepth.FormattingEnabled = true;
-            this.comboBoxDepth.Items.AddRange(new object[] {
-            "8",
-            "16",
-            "32"});
-            this.comboBoxDepth.Location = new System.Drawing.Point(75, 133);
-            this.comboBoxDepth.Name = "comboBoxDepth";
-            this.comboBoxDepth.Size = new System.Drawing.Size(137, 30);
-            this.comboBoxDepth.TabIndex = 10;
-            // 
-            // labelParticules
-            // 
-            this.labelParticules.AutoSize = true;
-            this.labelParticules.Location = new System.Drawing.Point(6, 35);
-            this.labelParticules.Name = "labelParticules";
-            this.labelParticules.Size = new System.Drawing.Size(128, 22);
-            this.labelParticules.TabIndex = 11;
-            this.labelParticules.Text = "Particule Rate:";
-            // 
-            // groupBoxVisual
-            // 
-            this.groupBoxVisual.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxVisual.Controls.Add(this.comboBoxParticules);
-            this.groupBoxVisual.Controls.Add(this.labelParticules);
-            this.groupBoxVisual.Location = new System.Drawing.Point(8, 193);
-            this.groupBoxVisual.Name = "groupBoxVisual";
-            this.groupBoxVisual.Size = new System.Drawing.Size(554, 70);
-            this.groupBoxVisual.TabIndex = 12;
-            this.groupBoxVisual.TabStop = false;
-            this.groupBoxVisual.Text = "Visuals";
-            // 
-            // comboBoxParticules
-            // 
-            this.comboBoxParticules.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxParticules.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.comboBoxParticules.FormattingEnabled = true;
-            this.comboBoxParticules.Items.AddRange(new object[] {
-            "Null",
-            "Low",
-            "Medium",
-            "High"});
-            this.comboBoxParticules.Location = new System.Drawing.Point(140, 27);
-            this.comboBoxParticules.Name = "comboBoxParticules";
-            this.comboBoxParticules.Size = new System.Drawing.Size(135, 30);
-            this.comboBoxParticules.TabIndex = 11;
-            // 
-            // labelTexsMem
-            // 
-            this.labelTexsMem.AutoSize = true;
-            this.labelTexsMem.Location = new System.Drawing.Point(239, 141);
-            this.labelTexsMem.Name = "labelTexsMem";
-            this.labelTexsMem.Size = new System.Drawing.Size(154, 22);
-            this.labelTexsMem.TabIndex = 12;
-            this.labelTexsMem.Text = "Textures Memory:";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Vram",
-            "Vram+",
-            "Vram4",
-            "Vram8",
-            "Agp",
-            "Agp4",
-            "Agp8"});
-            this.comboBox1.Location = new System.Drawing.Point(399, 133);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(149, 30);
-            this.comboBox1.TabIndex = 13;
-            // 
-            // groupBoxDebug
-            // 
-            this.groupBoxDebug.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxDebug.Controls.Add(this.checkBoxLog);
-            this.groupBoxDebug.Controls.Add(this.checkBoxConsole);
-            this.groupBoxDebug.Location = new System.Drawing.Point(8, 269);
-            this.groupBoxDebug.Name = "groupBoxDebug";
-            this.groupBoxDebug.Size = new System.Drawing.Size(554, 90);
-            this.groupBoxDebug.TabIndex = 13;
-            this.groupBoxDebug.TabStop = false;
-            this.groupBoxDebug.Text = "Debugging";
-            // 
-            // checkBoxConsole
-            // 
-            this.checkBoxConsole.AutoSize = true;
-            this.checkBoxConsole.Location = new System.Drawing.Point(10, 27);
-            this.checkBoxConsole.Name = "checkBoxConsole";
-            this.checkBoxConsole.Size = new System.Drawing.Size(159, 26);
-            this.checkBoxConsole.TabIndex = 0;
-            this.checkBoxConsole.Text = "Enable console";
-            this.toolTip.SetToolTip(this.checkBoxConsole, "This will open a console outputting debug information from the game and from mods" +
-        ".");
-            this.checkBoxConsole.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxLog
-            // 
-            this.checkBoxLog.AutoSize = true;
-            this.checkBoxLog.Location = new System.Drawing.Point(10, 59);
-            this.checkBoxLog.Name = "checkBoxLog";
-            this.checkBoxLog.Size = new System.Drawing.Size(149, 26);
-            this.checkBoxLog.TabIndex = 1;
-            this.checkBoxLog.Text = "Enable log file";
-            this.toolTip.SetToolTip(this.checkBoxLog, "This will output debug information in a log file.");
-            this.checkBoxLog.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -616,14 +633,14 @@ namespace Rayman2ModManager
             this.splitContainerMods.ResumeLayout(false);
             this.codesTab.ResumeLayout(false);
             this.optionsTab.ResumeLayout(false);
+            this.groupBoxDebug.ResumeLayout(false);
+            this.groupBoxDebug.PerformLayout();
+            this.groupBoxVisual.ResumeLayout(false);
+            this.groupBoxVisual.PerformLayout();
             this.graphicGroupBox.ResumeLayout(false);
             this.graphicGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Height)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Width)).EndInit();
-            this.groupBoxVisual.ResumeLayout(false);
-            this.groupBoxVisual.PerformLayout();
-            this.groupBoxDebug.ResumeLayout(false);
-            this.groupBoxDebug.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -666,7 +683,7 @@ namespace Rayman2ModManager
         private System.Windows.Forms.GroupBox groupBoxVisual;
         private System.Windows.Forms.ComboBox comboBoxParticules;
         private System.Windows.Forms.Label labelParticules;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBoxTexMem;
         private System.Windows.Forms.Label labelTexsMem;
         private System.Windows.Forms.GroupBox groupBoxDebug;
         private System.Windows.Forms.CheckBox checkBoxLog;
