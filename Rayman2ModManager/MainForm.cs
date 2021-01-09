@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -79,9 +80,12 @@ namespace Rayman2ModManager
             foreach (Code item in checkedListBoxCodes.CheckedIndices.OfType<int>().Select(a => codes[a]))
             {
                 if (item.Patch)
+                {
                     selectedPatches.Add(item);
-                else
+                } else
+                {
                     selectedCodes.Add(item);
+                }
 
                 loaderini.EnabledCodes.Add(item.Name);
             }
@@ -342,11 +346,29 @@ namespace Rayman2ModManager
         private void buttonSave_Click(object sender, EventArgs e)
         {
             SaveAll();
+            LoadModList(ModsPath);
         }
 
         private void buttonSaveAndPlay_Click(object sender, EventArgs e)
         {
             SaveAll();
+
+            if (loaderInstalled == false)
+            {
+                switch (MessageBox.Show(this, "Looks like you're starting the game without the mod loader installed. Without the mod loader, the mods and codes you've selected won't be used, and some settings may not work.\n\nDo you want to install the mod loader now?", "SADX Mod Manager", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
+                {
+                    case DialogResult.Cancel:
+                        return;
+                    case DialogResult.Yes:
+                        InstallLoader();
+                        break;
+                }
+            }
+            
+            Process process = Process.Start(loaderini.Mods.Select((item) => mods[item].EXEFile)
+                                                .FirstOrDefault((item) => !string.IsNullOrEmpty(item)) ?? "rayman2.exe");
+            process?.WaitForInputIdle(10000);
+            Close();
         }
 
         private void comboBoxResolutions_SelectedValueChanged(object sender, EventArgs e)

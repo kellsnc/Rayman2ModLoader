@@ -7,6 +7,8 @@ namespace Rayman2ModManager
 {
 	public class Rayman2ModInfo : ModInfo
 	{
+		public string EXEFile { get; set; }
+
 		public static new IEnumerable<string> GetModFiles(DirectoryInfo directoryInfo)
 		{
 			string modini = Path.Combine(directoryInfo.FullName, "mod.ini");
