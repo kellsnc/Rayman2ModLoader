@@ -484,7 +484,7 @@ namespace Rayman2ModManager
             this.comboBoxDepth.Items.AddRange(new object[] {
             "8",
             "16",
-            "32"});
+            "24"});
             this.comboBoxDepth.Location = new System.Drawing.Point(75, 133);
             this.comboBoxDepth.Name = "comboBoxDepth";
             this.comboBoxDepth.Size = new System.Drawing.Size(137, 30);
@@ -519,6 +519,7 @@ namespace Rayman2ModManager
             this.comboBoxResolutions.Size = new System.Drawing.Size(199, 30);
             this.comboBoxResolutions.TabIndex = 8;
             this.toolTip.SetToolTip(this.comboBoxResolutions, "Choose a predefined set of resolution.");
+            this.comboBoxResolutions.SelectedValueChanged += new System.EventHandler(this.comboBoxResolutions_SelectedValueChanged);
             // 
             // xLabel1
             // 

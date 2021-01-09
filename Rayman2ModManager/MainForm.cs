@@ -170,5 +170,12 @@ namespace Rayman2ModManager
         {
             SaveAll();
         }
+
+        private void comboBoxResolutions_SelectedValueChanged(object sender, EventArgs e)
+        {
+            string[] subStrings = comboBoxResolutions.Text.Split('x');
+            numericUpDown_Width.Value = decimal.Parse(subStrings[0]);
+            numericUpDown_Height.Value = decimal.Parse(subStrings[1]);
+        }
     }
 }
