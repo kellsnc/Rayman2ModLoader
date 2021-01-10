@@ -25,6 +25,28 @@ HANDLE WINAPI MyCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwSh
 	return CreateFileA(rayman2_fileMap.replaceFile(lpFileName), dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
 
+const char* newName = "";
+
+/**
+* fopen() wrapper using _ReplaceFile()
+* @param Filename
+* @param Mode
+* @return
+*/
+__declspec(dllexport) __declspec(naked) FILE* Myfopen(const char* Filename, const char* Mode) {
+	__asm {
+		mov eax, [esp + 4]
+		mov newName, eax
+	}
+	
+	newName = rayman2_fileMap.replaceFile(newName);
+	
+	__asm {
+		mov[esp + 4], eax
+		jmp cs : [0049C1B8h]
+	}
+}
+
 /**
 * C wrapper to call rayman2_fileMap.replaceFile() from asm.
 * @param lpFileName Filename.
@@ -34,18 +56,15 @@ const char* _ReplaceFile(const char* lpFileName) {
 	return rayman2_fileMap.replaceFile(lpFileName);
 }
 
-/**
- * Hook Rayman2's CreateFileA() import.
- */
-void HookCreateFileA() {
+void HookProcFunction(const char* dll, const char* funcname, void* newfunc) {
 	ULONG ulSize = 0;
 
 	// SADX module handle. (main executable)
 	HMODULE hModule = GetModuleHandle(nullptr);
 
-	PROC pNewFunction = (PROC)MyCreateFileA;
-	// Get the actual CreateFileA() using GetProcAddress().
-	PROC pActualFunction = GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA");
+	PROC pNewFunction = (PROC)newfunc;
+	PROC pActualFunction = GetProcAddress(GetModuleHandleA(dll), funcname);
+
 	assert(pActualFunction != nullptr);
 
 	auto pImportDesc = (PIMAGE_IMPORT_DESCRIPTOR)ImageDirectoryEntryToData(hModule, TRUE, IMAGE_DIRECTORY_ENTRY_IMPORT, &ulSize);
@@ -60,8 +79,7 @@ void HookCreateFileA() {
 		// get the module name
 		auto pcszModName = (PCSTR)((PBYTE)hModule + pImportDesc->Name);
 
-		// check if the module is kernel32.dll
-		if (pcszModName != nullptr && _stricmp(pcszModName, "Kernel32.dll") == 0)
+		if (pcszModName != nullptr && _stricmp(pcszModName, dll) == 0)
 		{
 			// get the module
 			auto pThunk = (PIMAGE_THUNK_DATA)((PBYTE)hModule + pImportDesc->FirstThunk);
@@ -82,6 +100,15 @@ void HookCreateFileA() {
 			}
 		}
 	}
+}
+
+/**
+ * Hook Rayman2's CreateFileA() & fopen imports.
+ */
+void HookFileFunctions() {
+	HookProcFunction("Kernel32.dll", "CreateFileA", (void*)MyCreateFileA);
+	WriteJump((void*)0x576CB4, Myfopen);
+	WriteJump((void*)0x45FCB4, Myfopen);
 }
 
 /**
