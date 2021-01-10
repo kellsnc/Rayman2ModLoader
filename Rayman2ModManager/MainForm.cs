@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using IniFile;
 using ModManagerCommon;
 using ModManagerCommon.Forms;
+using Rayman2ModManager.Forms;
 using Newtonsoft.Json;
 
 namespace Rayman2ModManager
@@ -61,7 +62,7 @@ namespace Rayman2ModManager
         private ConfigFile configFile;
 
         private string GamePath = "";
-        private string ModsPath = "Mods";
+        public string ModsPath = "Mods";
         private string ubiIni = "ubi.ini";
         private string loaderIniPath = "Rayman2ModLoader.ini";
         private string updatePath = ".updates";
@@ -358,7 +359,11 @@ namespace Rayman2ModManager
 
         private void addModButton_Click(object sender, EventArgs e)
         {
-
+            using (var ModDialog = new AddModForm(ModsPath))
+            {
+                if (ModDialog.ShowDialog() == DialogResult.OK)
+                    RefreshModList();
+            }
         }
 
         private void refreshButton_Click(object sender, EventArgs e)
@@ -953,7 +958,7 @@ namespace Rayman2ModManager
 
             if (releases == null || releases.Count == 0)
             {
-                return false
+                return false;
             }
 
             foreach (GitHubRelease release in releases)

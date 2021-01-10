@@ -56,6 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigFile.cs" />
+    <Compile Include="Forms\AddModForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddModForm.Designer.cs">
+      <DependentUpon>AddModForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoaderInfo.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -66,6 +72,9 @@
     <Compile Include="ModInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\AddModForm.resx">
+      <DependentUpon>AddModForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
