@@ -336,7 +336,7 @@ namespace Rayman2ModManager.Forms
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "AddModForm";
+            this.Text = "Add new mod";
             this.newModTabControl.ResumeLayout(false);
             this.generalTab.ResumeLayout(false);
             this.generalTab.PerformLayout();
