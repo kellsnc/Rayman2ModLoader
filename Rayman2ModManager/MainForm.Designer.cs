@@ -50,6 +50,7 @@ namespace Rayman2ModManager
             this.downmostButton = new System.Windows.Forms.Button();
             this.labelModDescription = new System.Windows.Forms.Label();
             this.codesTab = new System.Windows.Forms.TabPage();
+            this.checkedListBoxCodes = new System.Windows.Forms.CheckedListBox();
             this.optionsTab = new System.Windows.Forms.TabPage();
             this.groupBoxDebug = new System.Windows.Forms.GroupBox();
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
@@ -72,7 +73,16 @@ namespace Rayman2ModManager
             this.comboBoxDLL = new System.Windows.Forms.ComboBox();
             this.graphicsDLLLabel = new System.Windows.Forms.Label();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.checkedListBoxCodes = new System.Windows.Forms.CheckedListBox();
+            this.modContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.verifyIntegrityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.forceUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl.SuspendLayout();
             this.modTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMods)).BeginInit();
@@ -86,6 +96,7 @@ namespace Rayman2ModManager
             this.graphicGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Height)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Width)).BeginInit();
+            this.modContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSaveAndPlay
@@ -200,6 +211,8 @@ namespace Rayman2ModManager
             this.modListView.TabIndex = 0;
             this.modListView.UseCompatibleStateImageBehavior = false;
             this.modListView.View = System.Windows.Forms.View.Details;
+            this.modListView.SelectedIndexChanged += new System.EventHandler(this.modListView_SelectedIndexChanged);
+            this.modListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.modListView_MouseClick);
             // 
             // nameColumnHeader
             // 
@@ -241,6 +254,7 @@ namespace Rayman2ModManager
             this.upmostButton.Text = "⤒";
             this.toolTip.SetToolTip(this.upmostButton, "Move selected mods to topmost.");
             this.upmostButton.UseVisualStyleBackColor = true;
+            this.upmostButton.Click += new System.EventHandler(this.upmostButton_Click);
             // 
             // addModButton
             // 
@@ -266,6 +280,7 @@ namespace Rayman2ModManager
             this.upButton.Text = "↑";
             this.toolTip.SetToolTip(this.upButton, "Move selected mods up.");
             this.upButton.UseVisualStyleBackColor = true;
+            this.upButton.Click += new System.EventHandler(this.upButton_Click);
             // 
             // refreshButton
             // 
@@ -291,6 +306,7 @@ namespace Rayman2ModManager
             this.downButton.Text = "↓";
             this.toolTip.SetToolTip(this.downButton, "Move selected mods down.");
             this.downButton.UseVisualStyleBackColor = true;
+            this.downButton.Click += new System.EventHandler(this.downButton_Click);
             // 
             // downmostButton
             // 
@@ -303,6 +319,7 @@ namespace Rayman2ModManager
             this.downmostButton.Text = "⤓";
             this.toolTip.SetToolTip(this.downmostButton, "Move selected mods to bottom-most");
             this.downmostButton.UseVisualStyleBackColor = true;
+            this.downmostButton.Click += new System.EventHandler(this.downmostButton_Click);
             // 
             // labelModDescription
             // 
@@ -323,6 +340,15 @@ namespace Rayman2ModManager
             this.codesTab.TabIndex = 1;
             this.codesTab.Text = "Codes";
             this.codesTab.UseVisualStyleBackColor = true;
+            // 
+            // checkedListBoxCodes
+            // 
+            this.checkedListBoxCodes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkedListBoxCodes.FormattingEnabled = true;
+            this.checkedListBoxCodes.Location = new System.Drawing.Point(3, 3);
+            this.checkedListBoxCodes.Name = "checkedListBoxCodes";
+            this.checkedListBoxCodes.Size = new System.Drawing.Size(566, 596);
+            this.checkedListBoxCodes.TabIndex = 1;
             // 
             // optionsTab
             // 
@@ -598,14 +624,76 @@ namespace Rayman2ModManager
             this.graphicsDLLLabel.TabIndex = 0;
             this.graphicsDLLLabel.Text = "Graphics DLL:";
             // 
-            // checkedListBoxCodes
+            // modContextMenu
             // 
-            this.checkedListBoxCodes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBoxCodes.FormattingEnabled = true;
-            this.checkedListBoxCodes.Location = new System.Drawing.Point(3, 3);
-            this.checkedListBoxCodes.Name = "checkedListBoxCodes";
-            this.checkedListBoxCodes.Size = new System.Drawing.Size(566, 596);
-            this.checkedListBoxCodes.TabIndex = 1;
+            this.modContextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.modContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openFolderToolStripMenuItem,
+            this.uninstallToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.checkForUpdatesToolStripMenuItem,
+            this.forceUpdateToolStripMenuItem,
+            this.verifyIntegrityToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.toolStripMenuItem1});
+            this.modContextMenu.Name = "modContextMenu";
+            this.modContextMenu.Size = new System.Drawing.Size(229, 208);
+            // 
+            // openFolderToolStripMenuItem
+            // 
+            this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.openFolderToolStripMenuItem.Text = "Open folder";
+            this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(225, 6);
+            // 
+            // checkForUpdatesToolStripMenuItem
+            // 
+            this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.checkForUpdatesToolStripMenuItem.Text = "Check for updates";
+            // 
+            // verifyIntegrityToolStripMenuItem
+            // 
+            this.verifyIntegrityToolStripMenuItem.Name = "verifyIntegrityToolStripMenuItem";
+            this.verifyIntegrityToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.verifyIntegrityToolStripMenuItem.Text = "Verify integrity";
+            // 
+            // forceUpdateToolStripMenuItem
+            // 
+            this.forceUpdateToolStripMenuItem.Name = "forceUpdateToolStripMenuItem";
+            this.forceUpdateToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.forceUpdateToolStripMenuItem.Text = "Force update";
+            // 
+            // uninstallToolStripMenuItem
+            // 
+            this.uninstallToolStripMenuItem.Name = "uninstallToolStripMenuItem";
+            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.uninstallToolStripMenuItem.Text = "Uninstall";
+            this.uninstallToolStripMenuItem.Click += new System.EventHandler(this.uninstallToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(225, 6);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generateManifestToolStripMenuItem});
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(228, 32);
+            this.toolStripMenuItem1.Text = "Developer";
+            // 
+            // generateManifestToolStripMenuItem
+            // 
+            this.generateManifestToolStripMenuItem.Name = "generateManifestToolStripMenuItem";
+            this.generateManifestToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             // 
             // MainForm
             // 
@@ -638,6 +726,7 @@ namespace Rayman2ModManager
             this.graphicGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Height)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Width)).EndInit();
+            this.modContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -686,6 +775,16 @@ namespace Rayman2ModManager
         private System.Windows.Forms.CheckBox checkBoxConsole;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.CheckedListBox checkedListBoxCodes;
+        private System.Windows.Forms.ContextMenuStrip modContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uninstallToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem verifyIntegrityToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem forceUpdateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem generateManifestToolStripMenuItem;
     }
 }
 

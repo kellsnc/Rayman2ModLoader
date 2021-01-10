@@ -293,9 +293,16 @@ namespace Rayman2ModManager
             checkedListBoxCodes.EndUpdate();
         }
 
+        private void RefreshModList()
+        {
+            upmostButton.Enabled = upButton.Enabled = downButton.Enabled = downmostButton.Enabled = configModButton.Enabled = false;
+            LoadModList(ModsPath);
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             SetDoubleBuffered(modListView, true);
+            SetDoubleBuffered(checkedListBoxCodes, true);
 
             string[] args = Environment.GetCommandLineArgs();
 
@@ -345,7 +352,7 @@ namespace Rayman2ModManager
 
         private void refreshButton_Click(object sender, EventArgs e)
         {
-
+            RefreshModList();
         }
 
         private void configModButton_Click(object sender, EventArgs e)
@@ -356,7 +363,7 @@ namespace Rayman2ModManager
         private void buttonSave_Click(object sender, EventArgs e)
         {
             SaveAll();
-            LoadModList(ModsPath);
+            RefreshModList();
         }
 
         private void buttonSaveAndPlay_Click(object sender, EventArgs e)
@@ -386,6 +393,216 @@ namespace Rayman2ModManager
             string[] subStrings = comboBoxResolutions.Text.Split('x');
             numericUpDown_Width.Value = decimal.Parse(subStrings[0]);
             numericUpDown_Height.Value = decimal.Parse(subStrings[1]);
+        }
+
+        private void modListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int count = modListView.SelectedIndices.Count;
+
+            if (count == 0)
+            {
+                upmostButton.Enabled = upButton.Enabled = downButton.Enabled = downmostButton.Enabled = configModButton.Enabled = false;
+                labelModDescription.Text = "Description: No mod selected.";
+            }
+            else if (count == 1)
+            {
+                labelModDescription.Text = "Description: " + mods[(string)modListView.SelectedItems[0].Tag].Description;
+                upmostButton.Enabled = modListView.SelectedIndices[0] != 0;
+                upButton.Enabled = modListView.SelectedIndices[0] > 0;
+                downButton.Enabled = modListView.SelectedIndices[0] < modListView.Items.Count - 1;
+                downmostButton.Enabled = modListView.SelectedIndices[0] != modListView.Items.Count - 1;
+                configModButton.Enabled = File.Exists(Path.Combine("mods", (string)modListView.SelectedItems[0].Tag, "configschema.xml"));
+            }
+            else if (count > 1)
+            {
+                labelModDescription.Text = "Description: Multiple mods selected.";
+                upmostButton.Enabled = upButton.Enabled = downButton.Enabled = downmostButton.Enabled = true;
+                configModButton.Enabled = false;
+            }
+        }
+
+        private void upmostButton_Click(object sender, EventArgs e)
+        {
+            if (modListView.SelectedItems.Count < 1)
+                return;
+
+            modListView.BeginUpdate();
+
+            for (int i = 0; i < modListView.SelectedItems.Count; i++)
+            {
+                int index = modListView.SelectedItems[i].Index;
+
+                if (index > 0)
+                {
+                    ListViewItem item = modListView.SelectedItems[i];
+                    modListView.Items.Remove(item);
+                    modListView.Items.Insert(i, item);
+                }
+            }
+
+            modListView.SelectedItems[0].EnsureVisible();
+            modListView.EndUpdate();
+        }
+
+        private void upButton_Click(object sender, EventArgs e)
+        {
+            if (modListView.SelectedItems.Count < 1)
+                return;
+
+            modListView.BeginUpdate();
+
+            for (int i = 0; i < modListView.SelectedItems.Count; i++)
+            {
+                int index = modListView.SelectedItems[i].Index;
+
+                if (index-- > 0 && !modListView.Items[index].Selected)
+                {
+                    ListViewItem item = modListView.SelectedItems[i];
+                    modListView.Items.Remove(item);
+                    modListView.Items.Insert(index, item);
+                }
+            }
+
+            modListView.SelectedItems[0].EnsureVisible();
+            modListView.EndUpdate();
+        }
+
+        private void downButton_Click(object sender, EventArgs e)
+        {
+            if (modListView.SelectedItems.Count < 1)
+                return;
+
+            modListView.BeginUpdate();
+
+            for (int i = modListView.SelectedItems.Count - 1; i >= 0; i--)
+            {
+                int index = modListView.SelectedItems[i].Index + 1;
+
+                if (index != modListView.Items.Count && !modListView.Items[index].Selected)
+                {
+                    ListViewItem item = modListView.SelectedItems[i];
+                    modListView.Items.Remove(item);
+                    modListView.Items.Insert(index, item);
+                }
+            }
+
+            modListView.SelectedItems[modListView.SelectedItems.Count - 1].EnsureVisible();
+            modListView.EndUpdate();
+        }
+
+        private void downmostButton_Click(object sender, EventArgs e)
+        {
+            if (modListView.SelectedItems.Count < 1)
+                return;
+
+            modListView.BeginUpdate();
+
+            for (int i = modListView.SelectedItems.Count - 1; i >= 0; i--)
+            {
+                int index = modListView.SelectedItems[i].Index;
+
+                if (index != modListView.Items.Count - 1)
+                {
+                    ListViewItem item = modListView.SelectedItems[i];
+                    modListView.Items.Remove(item);
+                    modListView.Items.Insert(modListView.Items.Count, item);
+                }
+            }
+
+            modListView.SelectedItems[modListView.SelectedItems.Count - 1].EnsureVisible();
+            modListView.EndUpdate();
+        }
+
+        private void modListView_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+            {
+                return;
+            }
+
+            if (modListView.FocusedItem.Bounds.Contains(e.Location))
+            {
+                modContextMenu.Show(Cursor.Position);
+            }
+        }
+
+        private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in modListView.SelectedItems)
+            {
+                Process.Start(Path.Combine("mods", (string)item.Tag));
+            }
+        }
+
+        private void uninstallToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(this, "This will uninstall all selected mods."
+                + "\n\nAre you sure you wish to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            result = MessageBox.Show(this, "Would you like to keep mod user data where possible? (Save files, config files, etc)",
+                "User Data", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            foreach (ListViewItem item in modListView.SelectedItems)
+            {
+                var dir = (string)item.Tag;
+                var modDir = Path.Combine("mods", dir);
+                var manpath = Path.Combine(modDir, "mod.manifest");
+
+                try
+                {
+                    if (result == DialogResult.Yes && File.Exists(manpath))
+                    {
+                        List<ModManifestEntry> manifest = ModManifest.FromFile(manpath);
+                        foreach (var entry in manifest)
+                        {
+                            var path = Path.Combine(modDir, entry.FilePath);
+                            if (File.Exists(path))
+                            {
+                                File.Delete(path);
+                            }
+                        }
+
+                        File.Delete(manpath);
+                        var version = Path.Combine(modDir, "mod.version");
+                        if (File.Exists(version))
+                        {
+                            File.Delete(version);
+                        }
+                    }
+                    else
+                    {
+                        if (result == DialogResult.Yes)
+                        {
+                            var retain = MessageBox.Show(this, $"The mod \"{ mods[dir].Name }\" (\"mods\\{ dir }\") does not have a manifest, so mod user data cannot be retained."
+                                + " Do you want to uninstall it anyway?", "Cannot Retain User Data", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                            if (retain == DialogResult.No)
+                            {
+                                continue;
+                            }
+                        }
+
+                        Directory.Delete(modDir, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, $"Failed to uninstall mod \"{ mods[dir].Name }\" from \"{ dir }\": { ex.Message }", "Failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            RefreshModList();
         }
     }
 }
