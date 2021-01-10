@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Diagnostics;
+using System.Net;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using IniFile;
 using ModManagerCommon;
 using ModManagerCommon.Forms;
+using Newtonsoft.Json;
 
 namespace Rayman2ModManager
 {
@@ -62,13 +64,22 @@ namespace Rayman2ModManager
         private string ModsPath = "Mods";
         private string ubiIni = "ubi.ini";
         private string loaderIniPath = "Rayman2ModLoader.ini";
+        private string updatePath = ".updates";
         private const string lstcodespath = "Codes.lst";
         private bool loaderInstalled = false;
+        private bool displayedManifestWarning = false;
+
+        private const float modloaderver = 1.0f;
 
         Dictionary<string, Rayman2ModInfo> mods;
 
         CodeList mainCodes;
         List<Code> codes;
+
+        readonly ModUpdater modUpdater = new ModUpdater();
+        BackgroundWorker updateChecker;
+        private bool manualModUpdate;
+        private bool checkedForUpdates;
 
         private void SaveCodes()
         {
@@ -110,6 +121,11 @@ namespace Rayman2ModManager
             loaderini.APIName = comboBoxAPI.Text;
             loaderini.DebugConsole = checkBoxConsole.Checked;
             loaderini.DebugFile = checkBoxLog.Checked;
+
+            loaderini.UpdateCheck = updateCheckStartupCheckBox.Checked;
+            loaderini.ModUpdateCheck = modUpdateCheckStartupCheckBox.Checked;
+            loaderini.UpdateUnit = (UpdateUnit)frequencyComboBox.SelectedIndex;
+            loaderini.UpdateFrequency = (int)frequencyNumericUpDown.Value;
 
             IniSerializer.Serialize(loaderini, path);
         }
@@ -178,6 +194,11 @@ namespace Rayman2ModManager
             checkBoxLog.Checked = loaderini.DebugFile;
             comboBoxDLL.Text = loaderini.DllName;
             comboBoxAPI.Text = loaderini.APIName;
+
+            updateCheckStartupCheckBox.Checked = loaderini.UpdateCheck;
+            modUpdateCheckStartupCheckBox.Checked = loaderini.ModUpdateCheck;
+            frequencyComboBox.SelectedIndex = (int)loaderini.UpdateUnit;
+            frequencyNumericUpDown.Value = loaderini.UpdateFrequency;
         }
 
         private void ReadGameConfig(string path)
@@ -199,18 +220,6 @@ namespace Rayman2ModManager
             if (loaderInstalled == true)
             {
                 buttonInstall.Text = "Uninstall";
-            }
-            else
-            {
-                DialogResult result = MessageBox.Show("The Mod Loader is not installed, do you want to install it? \n It will modify \"ubi.ini\".", "Install Mod Loader", MessageBoxButtons.YesNo);
-
-                if (result == DialogResult.Yes)
-                {
-                    InstallLoader();
-                }
-
-                comboBoxDLL.Text = configFile.GameConfig.GLI_DllFile;
-                comboBoxAPI.Text = configFile.GameConfig.GLI_Dll;
             }
         }
 
@@ -341,6 +350,8 @@ namespace Rayman2ModManager
                 Directory.CreateDirectory(ModsPath);
             }
 
+            updatePath = ModsPath + "\\" + updatePath;
+
             LoadCodesFile(ModsPath + "\\");
             LoadModList(ModsPath);
         }
@@ -357,7 +368,8 @@ namespace Rayman2ModManager
 
         private void configModButton_Click(object sender, EventArgs e)
         {
-
+            using (ModConfigDialog dlg = new ModConfigDialog(Path.Combine("mods", (string)modListView.SelectedItems[0].Tag), modListView.SelectedItems[0].Text))
+                dlg.ShowDialog(this);
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -372,7 +384,7 @@ namespace Rayman2ModManager
 
             if (loaderInstalled == false)
             {
-                switch (MessageBox.Show(this, "Looks like you're starting the game without the mod loader installed. Without the mod loader, the mods and codes you've selected won't be used, and some settings may not work.\n\nDo you want to install the mod loader now?", "SADX Mod Manager", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
+                switch (MessageBox.Show(this, "Looks like you're starting the game without the mod loader installed. Without the mod loader, the mods and codes you've selected won't be used, and some settings may not work.\n\nDo you want to install the mod loader now?", "Rayman2 Mod Manager", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
                 {
                     case DialogResult.Cancel:
                         return;
@@ -603,6 +615,666 @@ namespace Rayman2ModManager
             }
 
             RefreshModList();
+        }
+
+        private void installURLHandlerButton_Click(object sender, EventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(Application.ExecutablePath, "urlhandler") { UseShellExecute = true, Verb = "runas" }).WaitForExit();
+            MessageBox.Show(this, "URL handler installed!", Text);
+        }
+
+        private void frequencyComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            frequencyNumericUpDown.Enabled = frequencyComboBox.SelectedIndex > 0;
+        }
+
+        private static bool UpdateTimeElapsed(UpdateUnit unit, int amount, DateTime start)
+        {
+            if (unit == UpdateUnit.Always)
+            {
+                return true;
+            }
+
+            TimeSpan span = DateTime.UtcNow - start;
+
+            switch (unit)
+            {
+                case UpdateUnit.Hours:
+                    return span.TotalHours >= amount;
+
+                case UpdateUnit.Days:
+                    return span.TotalDays >= amount;
+
+                case UpdateUnit.Weeks:
+                    return span.TotalDays / 7.0 >= amount;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(unit), unit, null);
+            }
+        }
+        private void UpdateChecker_EnableControls(object sender, RunWorkerCompletedEventArgs runWorkerCompletedEventArgs)
+        {
+            updateCheckNowButton.Enabled = true;
+            checkForUpdatesToolStripMenuItem.Enabled = true;
+            verifyIntegrityToolStripMenuItem.Enabled = true;
+            forceUpdateToolStripMenuItem.Enabled = true;
+            uninstallToolStripMenuItem.Enabled = true;
+            developerToolStripMenuItem.Enabled = true;
+        }
+
+        private void InitializeWorker()
+        {
+            if (updateChecker != null)
+            {
+                return;
+            }
+
+            updateChecker = new BackgroundWorker { WorkerSupportsCancellation = true };
+            updateChecker.DoWork += UpdateChecker_DoWork;
+            updateChecker.RunWorkerCompleted += UpdateChecker_RunWorkerCompleted;
+            updateChecker.RunWorkerCompleted += UpdateChecker_EnableControls;
+        }
+
+        private void CheckForModUpdates(bool force = false)
+        {
+            if (!force && !loaderini.ModUpdateCheck)
+            {
+                return;
+            }
+
+            InitializeWorker();
+
+            if (!force && !UpdateTimeElapsed(loaderini.UpdateUnit, loaderini.UpdateFrequency, DateTime.FromFileTimeUtc(loaderini.ModUpdateTime)))
+            {
+                return;
+            }
+
+            checkedForUpdates = true;
+            loaderini.ModUpdateTime = DateTime.UtcNow.ToFileTimeUtc();
+            updateChecker.RunWorkerAsync(mods.Select(x => new KeyValuePair<string, ModInfo>(x.Key, x.Value)).ToList());
+            updateCheckNowButton.Enabled = false;
+        }
+
+        private void UpdateChecker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (modUpdater.ForceUpdate)
+            {
+                updateChecker?.Dispose();
+                updateChecker = null;
+                modUpdater.ForceUpdate = false;
+                modUpdater.Clear();
+            }
+
+            if (e.Cancelled)
+            {
+                return;
+            }
+
+            if (!(e.Result is Tuple<List<ModDownload>, List<string>> data))
+            {
+                return;
+            }
+
+            List<string> errors = data.Item2;
+            if (errors.Count != 0)
+            {
+                MessageBox.Show(this, "The following errors occurred while checking for updates:\n\n" + string.Join("\n", errors),
+                    "Update Errors", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            bool manual = manualModUpdate;
+            manualModUpdate = false;
+
+            List<ModDownload> updates = data.Item1;
+            if (updates.Count == 0)
+            {
+                if (manual)
+                {
+                    MessageBox.Show(this, "Mods are up to date.",
+                        "No Updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                return;
+            }
+
+            using (var dialog = new ModUpdatesDialog(updates))
+            {
+                if (dialog.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                updates = dialog.SelectedMods;
+            }
+
+            if (updates.Count == 0)
+            {
+                return;
+            }
+
+            DialogResult result;
+
+            do
+            {
+                try
+                {
+                    result = DialogResult.Cancel;
+                    if (!Directory.Exists(updatePath))
+                    {
+                        Directory.CreateDirectory(updatePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result = MessageBox.Show(this, "Failed to create temporary update directory:\n" + ex.Message
+                        + "\n\nWould you like to retry?", "Directory Creation Failed", MessageBoxButtons.RetryCancel);
+                }
+            } while (result == DialogResult.Retry);
+
+            using (var progress = new ModDownloadDialog(updates, updatePath))
+            {
+                progress.ShowDialog(this);
+            }
+
+            do
+            {
+                try
+                {
+                    result = DialogResult.Cancel;
+                    Directory.Delete(updatePath, true);
+                }
+                catch (Exception ex)
+                {
+                    result = MessageBox.Show(this, "Failed to remove temporary update directory:\n" + ex.Message
+                        + "\n\nWould you like to retry? You can remove the directory manually later.",
+                        "Directory Deletion Failed", MessageBoxButtons.RetryCancel);
+                }
+            } while (result == DialogResult.Retry);
+
+            RefreshModList();
+        }
+
+        private void UpdateChecker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (!(sender is BackgroundWorker worker))
+            {
+                throw new Exception("what");
+            }
+
+            Invoke(new Action(() =>
+            {
+                updateCheckNowButton.Enabled = false;
+                checkForUpdatesToolStripMenuItem.Enabled = false;
+                verifyIntegrityToolStripMenuItem.Enabled = false;
+                forceUpdateToolStripMenuItem.Enabled = false;
+                uninstallToolStripMenuItem.Enabled = false;
+                developerToolStripMenuItem.Enabled = false;
+            }));
+
+            var updatableMods = e.Argument as List<KeyValuePair<string, ModInfo>>;
+            List<ModDownload> updates = null;
+            List<string> errors = null;
+
+            var tokenSource = new CancellationTokenSource();
+            CancellationToken token = tokenSource.Token;
+
+            using (var task = new Task(() => modUpdater.GetModUpdates(updatableMods, out updates, out errors, token), token))
+            {
+                task.Start();
+
+                while (!task.IsCompleted && !task.IsCanceled)
+                {
+                    Application.DoEvents();
+
+                    if (worker.CancellationPending)
+                    {
+                        tokenSource.Cancel();
+                    }
+                }
+
+                task.Wait(token);
+            }
+
+            e.Result = new Tuple<List<ModDownload>, List<string>>(updates, errors);
+        }
+
+        private void UpdateChecker_DoWorkForced(object sender, DoWorkEventArgs e)
+        {
+            if (!(sender is BackgroundWorker worker))
+            {
+                throw new Exception("what");
+            }
+
+            if (!(e.Argument is List<Tuple<string, ModInfo, List<ModManifestDiff>>> updatableMods) || updatableMods.Count == 0)
+            {
+                return;
+            }
+
+            var updates = new List<ModDownload>();
+            var errors = new List<string>();
+
+            using (var client = new UpdaterWebClient())
+            {
+                foreach (Tuple<string, ModInfo, List<ModManifestDiff>> info in updatableMods)
+                {
+                    if (worker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        break;
+                    }
+
+                    ModInfo mod = info.Item2;
+                    if (!string.IsNullOrEmpty(mod.GitHubRepo))
+                    {
+                        if (string.IsNullOrEmpty(mod.GitHubAsset))
+                        {
+                            errors.Add($"[{ mod.Name }] GitHubRepo specified, but GitHubAsset is missing.");
+                            continue;
+                        }
+
+                        ModDownload d = modUpdater.GetGitHubReleases(mod, info.Item1, client, errors);
+                        if (d != null)
+                        {
+                            updates.Add(d);
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(mod.GameBananaItemType) && mod.GameBananaItemId.HasValue)
+                    {
+                        ModDownload d = modUpdater.GetGameBananaReleases(mod, info.Item1, errors);
+                        if (d != null)
+                        {
+                            updates.Add(d);
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(mod.UpdateUrl))
+                    {
+                        List<ModManifestEntry> localManifest = info.Item3
+                            .Where(x => x.State == ModManifestState.Unchanged)
+                            .Select(x => x.Current).ToList();
+
+                        ModDownload d = modUpdater.CheckModularVersion(mod, info.Item1, localManifest, client, errors);
+                        if (d != null)
+                        {
+                            updates.Add(d);
+                        }
+                    }
+                }
+            }
+
+            e.Result = new Tuple<List<ModDownload>, List<string>>(updates, errors);
+        }
+
+        private readonly Dictionary<string, List<GitHubRelease>> gitHubCache = new Dictionary<string, List<GitHubRelease>>();
+
+        private bool CheckForUpdates(bool force = false)
+        {
+            if (!force && !loaderini.UpdateCheck)
+            {
+                return false;
+            }
+
+            if (!force && !UpdateTimeElapsed(loaderini.UpdateUnit, loaderini.UpdateFrequency, DateTime.FromFileTimeUtc(loaderini.UpdateTime)))
+            {
+                return false;
+            }
+
+            checkedForUpdates = true;
+            loaderini.UpdateTime = DateTime.UtcNow.ToFileTimeUtc();
+
+            // Check for Mod Loader updates
+
+            List<GitHubRelease> releases = null;
+            string url = "https://api.github.com/repos/kellsnc/Rayman2ModLoader/releases";
+
+            UpdaterWebClient client = new UpdaterWebClient();
+
+            if (!gitHubCache.ContainsKey(url))
+            {
+                try
+                {
+                    string text = client.DownloadString(url);
+                    releases = JsonConvert.DeserializeObject<List<GitHubRelease>>(text)
+                        .Where(x => !x.Draft && !x.PreRelease)
+                        .ToList();
+
+                    if (releases.Count > 0)
+                    {
+                        gitHubCache[url] = releases;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    
+                }
+            }
+            else
+            {
+                releases = gitHubCache[url];
+            }
+
+            if (releases == null || releases.Count == 0)
+            {
+                return false
+            }
+
+            foreach (GitHubRelease release in releases)
+            {
+                if (float.Parse(release.TagName) > modloaderver)
+                {
+                    GitHubAsset asset = release.Assets
+                    .FirstOrDefault(x => x.Name.Equals("Release", StringComparison.OrdinalIgnoreCase));
+
+                    if (asset == null)
+                    {
+                        continue;
+                    }
+
+                    using (var dlg = new LoaderDownloadDialog(asset.DownloadUrl, updatePath))
+                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    {
+                        Close();
+                        return true;
+                    }
+
+                    break;
+                }
+            }
+
+            return false;
+        }
+
+        private void updateCheckNowButton_Click(object sender, EventArgs e)
+        {
+            updateCheckNowButton.Enabled = false;
+
+            if (CheckForUpdates(true))
+            {
+                return;
+            }
+
+            manualModUpdate = true;
+            CheckForModUpdates(true);
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            if (CheckForUpdates())
+                return;
+
+            if (loaderInstalled == false)
+            {
+                DialogResult result = MessageBox.Show("The Mod Loader is not installed, do you want to install it? \n It will modify \"ubi.ini\".", "Install Mod Loader", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes)
+                {
+                    InstallLoader();
+                }
+
+                comboBoxDLL.Text = configFile.GameConfig.GLI_DllFile;
+                comboBoxAPI.Text = configFile.GameConfig.GLI_Dll;
+            }
+
+            List<string> uris = Program.UriQueue.GetUris();
+
+            foreach (string str in uris)
+            {
+                HandleUri(str);
+            }
+
+            Program.UriQueue.UriEnqueued += UriQueueOnUriEnqueued;
+
+            CheckForModUpdates();
+
+            // If we've checked for updates, save the modified
+            // last update times without requiring the user to
+            // click the save button.
+            if (checkedForUpdates)
+            {
+                SaveLoaderConfig(loaderIniPath);
+            }
+        }
+
+        private void HandleUri(string uri)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                WindowState = FormWindowState.Normal;
+            }
+
+            Activate();
+
+            var fields = uri.Substring("rm2mm:".Length).Split(',');
+
+            // TODO: lib-ify
+            string itemType = fields.FirstOrDefault(x => x.StartsWith("gb_itemtype", StringComparison.InvariantCultureIgnoreCase));
+            itemType = itemType.Substring(itemType.IndexOf(":") + 1);
+
+            string itemId = fields.FirstOrDefault(x => x.StartsWith("gb_itemid", StringComparison.InvariantCultureIgnoreCase));
+            itemId = itemId.Substring(itemId.IndexOf(":") + 1);
+
+            var dummyInfo = new ModInfo();
+
+            GameBananaItem gbi = GameBananaItem.Load(itemType, long.Parse(itemId));
+
+            dummyInfo.Name = gbi.Name;
+
+            dummyInfo.Author = gbi.OwnerName;
+
+            DialogResult result = MessageBox.Show(this, $"Do you want to install mod \"{dummyInfo.Name}\" by {dummyInfo.Author} from {new Uri(fields[0]).DnsSafeHost}?", "Mod Download", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            #region create update folder
+            do
+            {
+                try
+                {
+                    result = DialogResult.Cancel;
+                    if (!Directory.Exists(updatePath))
+                    {
+                        Directory.CreateDirectory(updatePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result = MessageBox.Show(this, "Failed to create temporary update directory:\n" + ex.Message
+                                                   + "\n\nWould you like to retry?", "Directory Creation Failed", MessageBoxButtons.RetryCancel);
+                }
+            } while (result == DialogResult.Retry);
+            #endregion
+
+            string dummyPath = dummyInfo.Name;
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                dummyPath = dummyPath.Replace(c, '_');
+            }
+
+            dummyPath = Path.Combine("mods", dummyPath);
+
+            var updates = new List<ModDownload>
+            {
+                new ModDownload(dummyInfo, dummyPath, fields[0], null, 0)
+            };
+
+            using (var progress = new ModDownloadDialog(updates, updatePath))
+            {
+                progress.ShowDialog(this);
+            }
+
+            do
+            {
+                try
+                {
+                    result = DialogResult.Cancel;
+                    Directory.Delete(updatePath, true);
+                }
+                catch (Exception ex)
+                {
+                    result = MessageBox.Show(this, "Failed to remove temporary update directory:\n" + ex.Message
+                                                   + "\n\nWould you like to retry? You can remove the directory manually later.",
+                        "Directory Deletion Failed", MessageBoxButtons.RetryCancel);
+                }
+            } while (result == DialogResult.Retry);
+
+            RefreshModList();
+        }
+
+        private void UriQueueOnUriEnqueued(object sender, OnUriEnqueuedArgs args)
+        {
+            args.Handled = true;
+
+            if (InvokeRequired)
+            {
+                Invoke((Action<object, OnUriEnqueuedArgs>)UriQueueOnUriEnqueued, sender, args);
+                return;
+            }
+
+            HandleUri(args.Uri);
+        }
+
+        private void UpdateSelectedMods()
+        {
+            InitializeWorker();
+            manualModUpdate = true;
+            updateChecker?.RunWorkerAsync(modListView.SelectedItems.Cast<ListViewItem>()
+                .Select(x => (string)x.Tag)
+                .Select(x => new KeyValuePair<string, ModInfo>(x, mods[x]))
+                .ToList());
+        }
+
+        private void forceUpdateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(this, "This will force all selected mods to be completely re-downloaded."
+                + " Are you sure you want to continue?",
+                "Force Update", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
+
+            modUpdater.ForceUpdate = true;
+            UpdateSelectedMods();
+        }
+
+        private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateSelectedMods();
+        }
+
+        private void verifyIntegrityToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            List<Tuple<string, ModInfo>> items = modListView.SelectedItems.Cast<ListViewItem>()
+                .Select(x => (string)x.Tag)
+                .Where(x => File.Exists(Path.Combine("mods", x, "mod.manifest")))
+                .Select(x => new Tuple<string, ModInfo>(x, mods[x]))
+                .ToList();
+
+            if (items.Count < 1)
+            {
+                MessageBox.Show(this, "None of the selected mods have manifests, so they cannot be verified.",
+                    "Missing mod.manifest", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (var progress = new VerifyModDialog(items))
+            {
+                var result = progress.ShowDialog(this);
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                List<Tuple<string, ModInfo, List<ModManifestDiff>>> failed = progress.Failed;
+                if (failed.Count < 1)
+                {
+                    MessageBox.Show(this, "All selected mods passed verification.", "Integrity Pass",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    result = MessageBox.Show(this, "The following mods failed verification:\n"
+                        + string.Join("\n", failed.Select(x => $"{x.Item2.Name}: {x.Item3.Count(y => y.State != ModManifestState.Unchanged)} file(s)"))
+                        + "\n\nWould you like to attempt repairs?",
+                        "Integrity Fail", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if (result != DialogResult.Yes)
+                    {
+                        return;
+                    }
+
+                    InitializeWorker();
+
+                    updateChecker.DoWork -= UpdateChecker_DoWork;
+                    updateChecker.DoWork += UpdateChecker_DoWorkForced;
+
+                    updateChecker.RunWorkerAsync(failed);
+
+                    modUpdater.ForceUpdate = true;
+                    updateCheckNowButton.Enabled = false;
+                }
+            }
+        }
+
+        private void generateManifestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!displayedManifestWarning)
+            {
+                DialogResult result = MessageBox.Show(this, "This is a developer functionality, are you sure?",
+                    "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                displayedManifestWarning = true;
+            }
+
+            foreach (ListViewItem item in modListView.SelectedItems)
+            {
+                var modPath = Path.Combine("mods", (string)item.Tag);
+                var manifestPath = Path.Combine(modPath, "mod.manifest");
+
+                List<ModManifestEntry> manifest;
+                List<ModManifestDiff> diff;
+
+                using (var progress = new ManifestDialog(modPath, $"Generating manifest: {(string)item.Tag}", true))
+                {
+                    progress.SetTask("Generating file index...");
+                    if (progress.ShowDialog(this) == DialogResult.Cancel)
+                    {
+                        continue;
+                    }
+
+                    diff = progress.Diff;
+                }
+
+                if (diff == null)
+                {
+                    continue;
+                }
+
+                if (diff.Count(x => x.State != ModManifestState.Unchanged) <= 0)
+                {
+                    continue;
+                }
+
+                using (var dialog = new ManifestDiffDialog(diff))
+                {
+                    if (dialog.ShowDialog(this) == DialogResult.Cancel)
+                    {
+                        continue;
+                    }
+
+                    manifest = dialog.MakeNewManifest();
+                }
+
+                ModManifest.ToFile(manifest, manifestPath);
+            }
         }
     }
 }
