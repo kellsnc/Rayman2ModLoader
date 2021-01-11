@@ -30,8 +30,9 @@ extern "C" {
 }
 
 void RestoreGraphicsDLL() {
-    ReadConfig_GraphicsDLLFile(DLLName.c_str()); // Restore the original DLL Name
-    LoadGraphicsDLL(); // Call the original DLL
+    ReadConfig_GliDLLFile(DLLName.c_str()); // Restore the original DLL Name
+    ReadConfig_GliDLL(APIName.c_str()); // Restore the original DLL Name
+    LoadGLILibrary(); // Call the original DLL
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {

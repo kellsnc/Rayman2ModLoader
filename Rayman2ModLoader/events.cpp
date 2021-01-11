@@ -10,7 +10,7 @@ std::vector<ModEvent> modBeforeRenderEvents;
 std::vector<ModEvent> modAfterRenderEvents;
 CodeParser codeParser;
 
-Trampoline* GameEngine_t = nullptr; // OnFrame
+Trampoline* _fn_vEngine_t = nullptr; // OnFrame
 
 void RaiseEvents(const std::vector<ModEvent>& eventList) {
 	for (auto& i : eventList) {
@@ -30,22 +30,22 @@ void __cdecl OnFrame() {
 	codeParser.processCodeList();
 	RaiseEvents(modFrameEvents);
 
-	VoidFunc(original, GameEngine_t->Target());
+	VoidFunc(original, _fn_vEngine_t->Target());
 	original();
 }
 
 void __cdecl BeforeRender(Uint32 a1) {
 	RaiseEvents(modBeforeRenderEvents);
-	j_Glide_OnSceneBegin(a1);
+	j_GLI_DRV_bBeginScene(a1);
 }
 
-void __cdecl AfterRender() {
+void __cdecl AfterRender(Uint32 a1) {
 	RaiseEvents(modAfterRenderEvents);
-	j_Glide_OnSceneEnd();
+	j_GLI_DRV_bEndScene(a1);
 }
 
 void InitEvents() {
-	GameEngine_t = new Trampoline((int)GameEngine, (int)GameEngine + 0x9, OnFrame);
+	_fn_vEngine_t = new Trampoline((int)_fn_vEngine, (int)_fn_vEngine + 0x9, OnFrame);
 	WriteCall((void*)0x40AF36, BeforeRender);
 	WriteCall((void*)0x40B1C6, AfterRender);
 }
