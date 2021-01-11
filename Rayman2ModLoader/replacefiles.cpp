@@ -9,6 +9,10 @@ HANDLE WINAPI MyCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwSh
 	return CreateFileA(rayman2_fileMap.replaceFile(lpFileName), dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
 
+HANDLE WINAPI MyLoadLibraryA(LPCSTR lpFileName) {
+	return LoadLibraryA(rayman2_fileMap.replaceFile(lpFileName));
+}
+
 const char* newName = "";
 
 __declspec(dllexport) __declspec(naked) FILE* Myfopen(const char* Filename, const char* Mode) {
@@ -76,6 +80,7 @@ void HookProcFunction(const char* dll, const char* funcname, void* newfunc) {
  */
 void HookFileFunctions() {
 	HookProcFunction("Kernel32.dll", "CreateFileA", (void*)MyCreateFileA);
+	HookProcFunction("Kernel32.dll", "LoadLibraryA", (void*)MyLoadLibraryA);
 	WriteJump((void*)0x576CB4, Myfopen);
 	WriteJump((void*)0x45FCB4, Myfopen);
 }

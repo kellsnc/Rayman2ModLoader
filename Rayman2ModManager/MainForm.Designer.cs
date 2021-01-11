@@ -223,6 +223,7 @@ namespace Rayman2ModManager
             this.modListView.TabIndex = 0;
             this.modListView.UseCompatibleStateImageBehavior = false;
             this.modListView.View = System.Windows.Forms.View.Details;
+            this.modListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.modListView_ItemChecked);
             this.modListView.SelectedIndexChanged += new System.EventHandler(this.modListView_SelectedIndexChanged);
             this.modListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.modListView_MouseClick);
             // 

@@ -9,6 +9,8 @@ namespace Rayman2ModManager
 	{
 		public string EXEFile { get; set; }
 		public string Category { get; set; }
+		public string GLI_DllFile { get; set; }
+		public string GLI_Dll { get; set; }
 
 		public static new IEnumerable<string> GetModFiles(DirectoryInfo directoryInfo)
 		{

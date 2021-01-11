@@ -74,7 +74,7 @@ void InitModDLL(const std::wstring* modpath, const std::wstring dll_filename, co
 // Load a mod folder, returns 1 if the mod failed to load.
 int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder) {
 	const std::wstring mod_inifile = modpath + L"\\mod.ini";
-
+	
 	const IniFile* config = new IniFile(mod_inifile);
 	const IniGroup* modinfo = config->getGroup("");
 
@@ -82,7 +82,7 @@ int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder)
 		modinfo = modinfo;
 
 		const std::wstring modname = modinfo->getWString("Name", *foldername);
-
+		
 		if (modinfo->hasKeyNonEmpty("DLLFile")) {
 			InitModDLL(&modpath, modpath + L'\\' + modinfo->getWString("DLLFile"), &modname);
 		}
@@ -123,6 +123,7 @@ int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder)
 
 		// Check for folder file replacements.
 		ScanModFolder(modpath + L"\\data", loadorder);
+		ScanModFolder(modpath + L"\\dll", loadorder);
 		
 		return 0;
 	}

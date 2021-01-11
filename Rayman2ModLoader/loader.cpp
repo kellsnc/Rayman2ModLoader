@@ -102,8 +102,8 @@ void InitModLoader() {
     const IniGroup* loaderconfig = config->getGroup("");
 
     if (loaderconfig != nullptr) {
-        DLLName = loaderconfig->getString("GlideDLL", DLLName);
-        APIName = loaderconfig->getString("GlideAPI", APIName);
+        DLLName = loaderconfig->getString("DllName", DLLName);
+        APIName = loaderconfig->getString("APIName", APIName);
         ModsPath = loaderconfig->getWString("ModsPath", ModsPath);
 
         // Init debug output system

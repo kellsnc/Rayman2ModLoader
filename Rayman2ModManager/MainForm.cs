@@ -69,6 +69,7 @@ namespace Rayman2ModManager
         private const string lstcodespath = "Codes.lst";
         private bool loaderInstalled = false;
         private bool displayedManifestWarning = false;
+        private bool updatingListView = false;
 
         private const float modloaderver = 1.0f;
 
@@ -286,6 +287,8 @@ namespace Rayman2ModManager
 
         private void LoadModList(string path)
         {
+            updatingListView = true;
+
             upmostButton.Enabled = upButton.Enabled = downButton.Enabled = downmostButton.Enabled = configModButton.Enabled = false;
             labelModDescription.Text = "Description: No mod selected.";
             modListView.Items.Clear();
@@ -306,9 +309,19 @@ namespace Rayman2ModManager
                     Rayman2ModInfo inf = mods[mod];
                     modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author, inf.Version, GetModCategory(inf) }) { Checked = true, Tag = mod });
                     
-                    if (!string.IsNullOrEmpty(inf.Codes))
+                    if (string.IsNullOrEmpty(inf.Codes) == false)
                     {
                         codes.AddRange(CodeList.Load(Path.Combine(Path.Combine(path, mod), inf.Codes)).Codes);
+                    }
+
+                    if (string.IsNullOrEmpty(inf.GLI_DllFile) == false)
+                    {
+                        comboBoxDLL.Items.Add(inf.GLI_DllFile);
+                    }
+
+                    if (string.IsNullOrEmpty(inf.GLI_Dll) == false)
+                    {
+                        comboBoxAPI.Items.Add(inf.GLI_Dll);
                     }
                 }
                 else
@@ -340,11 +353,21 @@ namespace Rayman2ModManager
                 checkedListBoxCodes.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
 
             checkedListBoxCodes.EndUpdate();
+            updatingListView = false;
         }
 
         private void RefreshModList()
         {
             upmostButton.Enabled = upButton.Enabled = downButton.Enabled = downmostButton.Enabled = configModButton.Enabled = false;
+            
+            comboBoxDLL.Items.Clear();
+            comboBoxDLL.Items.Add("GliVd1");
+            comboBoxDLL.Items.Add("GliDX6");
+
+            comboBoxAPI.Items.Clear();
+            comboBoxAPI.Items.Add("Glide2");
+            comboBoxAPI.Items.Add("DirectX6");
+            
             LoadModList(ModsPath);
         }
 
@@ -1318,6 +1341,39 @@ namespace Rayman2ModManager
                 }
 
                 ModManifest.ToFile(manifest, manifestPath);
+            }
+        }
+
+        private void modListView_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            if (updatingListView == false)
+            {
+                Rayman2ModInfo inf = mods[(string)e.Item.Tag];
+
+                if (e.Item.Checked == false)
+                {
+                    if (string.IsNullOrEmpty(inf.GLI_DllFile) == false && comboBoxDLL.Text == inf.GLI_DllFile)
+                    {
+                        comboBoxDLL.Text = comboBoxDLL.Items[0].ToString();
+                    }
+
+                    if (string.IsNullOrEmpty(inf.GLI_Dll) == false && comboBoxDLL.Text == inf.GLI_Dll)
+                    {
+                        comboBoxAPI.Text = comboBoxAPI.Items[0].ToString();
+                    }
+                }
+                else if (e.Item.Checked == true)
+                {
+                    if (string.IsNullOrEmpty(inf.GLI_DllFile) == false)
+                    {
+                        comboBoxDLL.Text = inf.GLI_DllFile;
+                    }
+
+                    if (string.IsNullOrEmpty(inf.GLI_Dll) == false)
+                    {
+                        comboBoxAPI.Text = inf.GLI_Dll;
+                    }
+                }
             }
         }
     }
