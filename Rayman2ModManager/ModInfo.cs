@@ -8,6 +8,7 @@ namespace Rayman2ModManager
 	public class Rayman2ModInfo : ModInfo
 	{
 		public string EXEFile { get; set; }
+		public string Category { get; set; }
 
 		public static new IEnumerable<string> GetModFiles(DirectoryInfo directoryInfo)
 		{

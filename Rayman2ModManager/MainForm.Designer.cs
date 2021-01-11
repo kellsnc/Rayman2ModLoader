@@ -52,6 +52,14 @@ namespace Rayman2ModManager
             this.codesTab = new System.Windows.Forms.TabPage();
             this.checkedListBoxCodes = new System.Windows.Forms.CheckedListBox();
             this.optionsTab = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.updateCheckNowButton = new System.Windows.Forms.Button();
+            this.frequencyNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.frequencyComboBox = new System.Windows.Forms.ComboBox();
+            this.frequencyLabel = new System.Windows.Forms.Label();
+            this.modUpdateCheckStartupCheckBox = new System.Windows.Forms.CheckBox();
+            this.updateCheckStartupCheckBox = new System.Windows.Forms.CheckBox();
+            this.installURLHandlerButton = new System.Windows.Forms.Button();
             this.groupBoxDebug = new System.Windows.Forms.GroupBox();
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
             this.checkBoxConsole = new System.Windows.Forms.CheckBox();
@@ -75,22 +83,15 @@ namespace Rayman2ModManager
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.modContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.verifyIntegrityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forceUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.verifyIntegrityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.installURLHandlerButton = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.updateCheckStartupCheckBox = new System.Windows.Forms.CheckBox();
-            this.modUpdateCheckStartupCheckBox = new System.Windows.Forms.CheckBox();
-            this.frequencyLabel = new System.Windows.Forms.Label();
-            this.frequencyComboBox = new System.Windows.Forms.ComboBox();
-            this.frequencyNumericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.updateCheckNowButton = new System.Windows.Forms.Button();
+            this.categoryColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabControl.SuspendLayout();
             this.modTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMods)).BeginInit();
@@ -99,14 +100,14 @@ namespace Rayman2ModManager
             this.splitContainerMods.SuspendLayout();
             this.codesTab.SuspendLayout();
             this.optionsTab.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.frequencyNumericUpDown)).BeginInit();
             this.groupBoxDebug.SuspendLayout();
             this.groupBoxVisual.SuspendLayout();
             this.graphicGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Height)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Width)).BeginInit();
             this.modContextMenu.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.frequencyNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonSaveAndPlay
@@ -212,7 +213,8 @@ namespace Rayman2ModManager
             this.modListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.nameColumnHeader,
             this.authorColumnHeader,
-            this.versionColumnHeader});
+            this.versionColumnHeader,
+            this.categoryColumnHeader});
             this.modListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.modListView.HideSelection = false;
             this.modListView.Location = new System.Drawing.Point(5, 3);
@@ -372,6 +374,99 @@ namespace Rayman2ModManager
             this.optionsTab.TabIndex = 2;
             this.optionsTab.Text = "Options";
             this.optionsTab.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.updateCheckNowButton);
+            this.groupBox1.Controls.Add(this.frequencyNumericUpDown);
+            this.groupBox1.Controls.Add(this.frequencyComboBox);
+            this.groupBox1.Controls.Add(this.frequencyLabel);
+            this.groupBox1.Controls.Add(this.modUpdateCheckStartupCheckBox);
+            this.groupBox1.Controls.Add(this.updateCheckStartupCheckBox);
+            this.groupBox1.Controls.Add(this.installURLHandlerButton);
+            this.groupBox1.Location = new System.Drawing.Point(8, 365);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(554, 162);
+            this.groupBox1.TabIndex = 14;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Updates / downloads";
+            // 
+            // updateCheckNowButton
+            // 
+            this.updateCheckNowButton.Location = new System.Drawing.Point(257, 82);
+            this.updateCheckNowButton.Name = "updateCheckNowButton";
+            this.updateCheckNowButton.Size = new System.Drawing.Size(136, 32);
+            this.updateCheckNowButton.TabIndex = 11;
+            this.updateCheckNowButton.Text = "Check now";
+            this.toolTip.SetToolTip(this.updateCheckNowButton, "Check for updates now.");
+            this.updateCheckNowButton.UseVisualStyleBackColor = true;
+            this.updateCheckNowButton.Click += new System.EventHandler(this.updateCheckNowButton_Click);
+            // 
+            // frequencyNumericUpDown
+            // 
+            this.frequencyNumericUpDown.Location = new System.Drawing.Point(10, 84);
+            this.frequencyNumericUpDown.Name = "frequencyNumericUpDown";
+            this.frequencyNumericUpDown.Size = new System.Drawing.Size(96, 28);
+            this.frequencyNumericUpDown.TabIndex = 10;
+            this.toolTip.SetToolTip(this.frequencyNumericUpDown, "Select the amount of hours/days/weeks before checking for updates.");
+            // 
+            // frequencyComboBox
+            // 
+            this.frequencyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.frequencyComboBox.FormattingEnabled = true;
+            this.frequencyComboBox.Items.AddRange(new object[] {
+            "Always",
+            "Hours",
+            "Days",
+            "Weeks"});
+            this.frequencyComboBox.Location = new System.Drawing.Point(112, 83);
+            this.frequencyComboBox.Name = "frequencyComboBox";
+            this.frequencyComboBox.Size = new System.Drawing.Size(139, 30);
+            this.frequencyComboBox.TabIndex = 9;
+            this.toolTip.SetToolTip(this.frequencyComboBox, "Choose the update check frequency.");
+            this.frequencyComboBox.SelectedIndexChanged += new System.EventHandler(this.frequencyComboBox_SelectedIndexChanged);
+            // 
+            // frequencyLabel
+            // 
+            this.frequencyLabel.AutoSize = true;
+            this.frequencyLabel.Location = new System.Drawing.Point(6, 57);
+            this.frequencyLabel.Name = "frequencyLabel";
+            this.frequencyLabel.Size = new System.Drawing.Size(100, 22);
+            this.frequencyLabel.TabIndex = 8;
+            this.frequencyLabel.Text = "Frequency:";
+            // 
+            // modUpdateCheckStartupCheckBox
+            // 
+            this.modUpdateCheckStartupCheckBox.AutoSize = true;
+            this.modUpdateCheckStartupCheckBox.Location = new System.Drawing.Point(257, 28);
+            this.modUpdateCheckStartupCheckBox.Name = "modUpdateCheckStartupCheckBox";
+            this.modUpdateCheckStartupCheckBox.Size = new System.Drawing.Size(280, 26);
+            this.modUpdateCheckStartupCheckBox.TabIndex = 7;
+            this.modUpdateCheckStartupCheckBox.Text = "Check mod updates on startup";
+            this.modUpdateCheckStartupCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // updateCheckStartupCheckBox
+            // 
+            this.updateCheckStartupCheckBox.AutoSize = true;
+            this.updateCheckStartupCheckBox.Location = new System.Drawing.Point(10, 28);
+            this.updateCheckStartupCheckBox.Name = "updateCheckStartupCheckBox";
+            this.updateCheckStartupCheckBox.Size = new System.Drawing.Size(241, 26);
+            this.updateCheckStartupCheckBox.TabIndex = 6;
+            this.updateCheckStartupCheckBox.Text = "Check updates on startup";
+            this.updateCheckStartupCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // installURLHandlerButton
+            // 
+            this.installURLHandlerButton.Location = new System.Drawing.Point(10, 119);
+            this.installURLHandlerButton.Name = "installURLHandlerButton";
+            this.installURLHandlerButton.Size = new System.Drawing.Size(180, 32);
+            this.installURLHandlerButton.TabIndex = 5;
+            this.installURLHandlerButton.Text = "Install URL Handler";
+            this.toolTip.SetToolTip(this.installURLHandlerButton, "Install the URL Handler to download mods from a simple click from the web.");
+            this.installURLHandlerButton.UseVisualStyleBackColor = true;
+            this.installURLHandlerButton.Click += new System.EventHandler(this.installURLHandlerButton_Click);
             // 
             // groupBoxDebug
             // 
@@ -648,160 +743,72 @@ namespace Rayman2ModManager
             this.toolStripSeparator2,
             this.developerToolStripMenuItem});
             this.modContextMenu.Name = "modContextMenu";
-            this.modContextMenu.Size = new System.Drawing.Size(241, 241);
+            this.modContextMenu.Size = new System.Drawing.Size(229, 208);
             // 
             // openFolderToolStripMenuItem
             // 
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(240, 32);
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
             this.openFolderToolStripMenuItem.Text = "Open folder";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(237, 6);
-            // 
-            // checkForUpdatesToolStripMenuItem
-            // 
-            this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(240, 32);
-            this.checkForUpdatesToolStripMenuItem.Text = "Check for updates";
-            this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
-            // 
-            // verifyIntegrityToolStripMenuItem
-            // 
-            this.verifyIntegrityToolStripMenuItem.Name = "verifyIntegrityToolStripMenuItem";
-            this.verifyIntegrityToolStripMenuItem.Size = new System.Drawing.Size(240, 32);
-            this.verifyIntegrityToolStripMenuItem.Text = "Verify integrity";
-            this.verifyIntegrityToolStripMenuItem.Click += new System.EventHandler(this.verifyIntegrityToolStripMenuItem_Click);
-            // 
-            // forceUpdateToolStripMenuItem
-            // 
-            this.forceUpdateToolStripMenuItem.Name = "forceUpdateToolStripMenuItem";
-            this.forceUpdateToolStripMenuItem.Size = new System.Drawing.Size(240, 32);
-            this.forceUpdateToolStripMenuItem.Text = "Force update";
-            this.forceUpdateToolStripMenuItem.Click += new System.EventHandler(this.forceUpdateToolStripMenuItem_Click);
             // 
             // uninstallToolStripMenuItem
             // 
             this.uninstallToolStripMenuItem.Name = "uninstallToolStripMenuItem";
-            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(240, 32);
+            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
             this.uninstallToolStripMenuItem.Text = "Uninstall";
             this.uninstallToolStripMenuItem.Click += new System.EventHandler(this.uninstallToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(225, 6);
+            // 
+            // checkForUpdatesToolStripMenuItem
+            // 
+            this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.checkForUpdatesToolStripMenuItem.Text = "Check for updates";
+            this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
+            // 
+            // forceUpdateToolStripMenuItem
+            // 
+            this.forceUpdateToolStripMenuItem.Name = "forceUpdateToolStripMenuItem";
+            this.forceUpdateToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.forceUpdateToolStripMenuItem.Text = "Force update";
+            this.forceUpdateToolStripMenuItem.Click += new System.EventHandler(this.forceUpdateToolStripMenuItem_Click);
+            // 
+            // verifyIntegrityToolStripMenuItem
+            // 
+            this.verifyIntegrityToolStripMenuItem.Name = "verifyIntegrityToolStripMenuItem";
+            this.verifyIntegrityToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
+            this.verifyIntegrityToolStripMenuItem.Text = "Verify integrity";
+            this.verifyIntegrityToolStripMenuItem.Click += new System.EventHandler(this.verifyIntegrityToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(237, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(225, 6);
             // 
             // developerToolStripMenuItem
             // 
             this.developerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.generateManifestToolStripMenuItem});
             this.developerToolStripMenuItem.Name = "developerToolStripMenuItem";
-            this.developerToolStripMenuItem.Size = new System.Drawing.Size(240, 32);
+            this.developerToolStripMenuItem.Size = new System.Drawing.Size(228, 32);
             this.developerToolStripMenuItem.Text = "Developer";
             // 
             // generateManifestToolStripMenuItem
             // 
             this.generateManifestToolStripMenuItem.Name = "generateManifestToolStripMenuItem";
-            this.generateManifestToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.generateManifestToolStripMenuItem.Size = new System.Drawing.Size(257, 34);
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
-            // installURLHandlerButton
+            // categoryColumnHeader
             // 
-            this.installURLHandlerButton.Location = new System.Drawing.Point(10, 119);
-            this.installURLHandlerButton.Name = "installURLHandlerButton";
-            this.installURLHandlerButton.Size = new System.Drawing.Size(180, 32);
-            this.installURLHandlerButton.TabIndex = 5;
-            this.installURLHandlerButton.Text = "Install URL Handler";
-            this.toolTip.SetToolTip(this.installURLHandlerButton, "Install the URL Handler to download mods from a simple click from the web.");
-            this.installURLHandlerButton.UseVisualStyleBackColor = true;
-            this.installURLHandlerButton.Click += new System.EventHandler(this.installURLHandlerButton_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.updateCheckNowButton);
-            this.groupBox1.Controls.Add(this.frequencyNumericUpDown);
-            this.groupBox1.Controls.Add(this.frequencyComboBox);
-            this.groupBox1.Controls.Add(this.frequencyLabel);
-            this.groupBox1.Controls.Add(this.modUpdateCheckStartupCheckBox);
-            this.groupBox1.Controls.Add(this.updateCheckStartupCheckBox);
-            this.groupBox1.Controls.Add(this.installURLHandlerButton);
-            this.groupBox1.Location = new System.Drawing.Point(8, 365);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(554, 162);
-            this.groupBox1.TabIndex = 14;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Updates / downloads";
-            // 
-            // updateCheckStartupCheckBox
-            // 
-            this.updateCheckStartupCheckBox.AutoSize = true;
-            this.updateCheckStartupCheckBox.Location = new System.Drawing.Point(10, 28);
-            this.updateCheckStartupCheckBox.Name = "updateCheckStartupCheckBox";
-            this.updateCheckStartupCheckBox.Size = new System.Drawing.Size(241, 26);
-            this.updateCheckStartupCheckBox.TabIndex = 6;
-            this.updateCheckStartupCheckBox.Text = "Check updates on startup";
-            this.updateCheckStartupCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // modUpdateCheckStartupCheckBox
-            // 
-            this.modUpdateCheckStartupCheckBox.AutoSize = true;
-            this.modUpdateCheckStartupCheckBox.Location = new System.Drawing.Point(257, 28);
-            this.modUpdateCheckStartupCheckBox.Name = "modUpdateCheckStartupCheckBox";
-            this.modUpdateCheckStartupCheckBox.Size = new System.Drawing.Size(280, 26);
-            this.modUpdateCheckStartupCheckBox.TabIndex = 7;
-            this.modUpdateCheckStartupCheckBox.Text = "Check mod updates on startup";
-            this.modUpdateCheckStartupCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // frequencyLabel
-            // 
-            this.frequencyLabel.AutoSize = true;
-            this.frequencyLabel.Location = new System.Drawing.Point(6, 57);
-            this.frequencyLabel.Name = "frequencyLabel";
-            this.frequencyLabel.Size = new System.Drawing.Size(100, 22);
-            this.frequencyLabel.TabIndex = 8;
-            this.frequencyLabel.Text = "Frequency:";
-            // 
-            // frequencyComboBox
-            // 
-            this.frequencyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.frequencyComboBox.FormattingEnabled = true;
-            this.frequencyComboBox.Items.AddRange(new object[] {
-            "Always",
-            "Hours",
-            "Days",
-            "Weeks"});
-            this.frequencyComboBox.Location = new System.Drawing.Point(112, 83);
-            this.frequencyComboBox.Name = "frequencyComboBox";
-            this.frequencyComboBox.Size = new System.Drawing.Size(139, 30);
-            this.frequencyComboBox.TabIndex = 9;
-            this.toolTip.SetToolTip(this.frequencyComboBox, "Choose the update check frequency.");
-            this.frequencyComboBox.SelectedIndexChanged += new System.EventHandler(this.frequencyComboBox_SelectedIndexChanged);
-            // 
-            // frequencyNumericUpDown
-            // 
-            this.frequencyNumericUpDown.Location = new System.Drawing.Point(10, 84);
-            this.frequencyNumericUpDown.Name = "frequencyNumericUpDown";
-            this.frequencyNumericUpDown.Size = new System.Drawing.Size(96, 28);
-            this.frequencyNumericUpDown.TabIndex = 10;
-            this.toolTip.SetToolTip(this.frequencyNumericUpDown, "Select the amount of hours/days/weeks before checking for updates.");
-            // 
-            // updateCheckNowButton
-            // 
-            this.updateCheckNowButton.Location = new System.Drawing.Point(257, 82);
-            this.updateCheckNowButton.Name = "updateCheckNowButton";
-            this.updateCheckNowButton.Size = new System.Drawing.Size(136, 32);
-            this.updateCheckNowButton.TabIndex = 11;
-            this.updateCheckNowButton.Text = "Check now";
-            this.toolTip.SetToolTip(this.updateCheckNowButton, "Check for updates now.");
-            this.updateCheckNowButton.UseVisualStyleBackColor = true;
-            this.updateCheckNowButton.Click += new System.EventHandler(this.updateCheckNowButton_Click);
+            this.categoryColumnHeader.Text = "Category";
+            this.categoryColumnHeader.Width = 100;
             // 
             // MainForm
             // 
@@ -827,6 +834,9 @@ namespace Rayman2ModManager
             this.splitContainerMods.ResumeLayout(false);
             this.codesTab.ResumeLayout(false);
             this.optionsTab.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.frequencyNumericUpDown)).EndInit();
             this.groupBoxDebug.ResumeLayout(false);
             this.groupBoxDebug.PerformLayout();
             this.groupBoxVisual.ResumeLayout(false);
@@ -836,9 +846,6 @@ namespace Rayman2ModManager
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Height)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Width)).EndInit();
             this.modContextMenu.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.frequencyNumericUpDown)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -905,6 +912,7 @@ namespace Rayman2ModManager
         private System.Windows.Forms.Label frequencyLabel;
         private System.Windows.Forms.CheckBox modUpdateCheckStartupCheckBox;
         private System.Windows.Forms.CheckBox updateCheckStartupCheckBox;
+        private System.Windows.Forms.ColumnHeader categoryColumnHeader;
     }
 }
 

@@ -202,9 +202,32 @@ namespace Rayman2ModManager
             frequencyNumericUpDown.Value = loaderini.UpdateFrequency;
         }
 
-        private void ReadGameConfig(string path)
+        private void ReadGameConfig()
         {
-            configFile = File.Exists(path) ? IniSerializer.Deserialize<ConfigFile>(path) : new ConfigFile();
+            if (File.Exists(ubiIni))
+            {
+                configFile = IniSerializer.Deserialize<ConfigFile>(ubiIni);
+            } 
+            else
+            { 
+                if (File.Exists("C:\\Windows\\Ubisoft\\ubi.ini"))
+                {
+                    ubiIni = "C:\\Windows\\Ubisoft\\ubi.ini";
+                    configFile = IniSerializer.Deserialize<ConfigFile>(ubiIni);
+
+                    if (configFile.GameConfig.GLI_Device == null)
+                    {
+                        MessageBox.Show(this, "Error while reading ubi.ini in \"C:\\Windows\\Ubisoft\\ubi.ini\", install the game properly.", "Rayman2 Mod Loader", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Close();
+                    }
+                } 
+                else
+                {
+                    MessageBox.Show(this, "Cannot find the game's configuration, creating one in your game's directory...", "Rayman2 Mod Loader", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    configFile = new ConfigFile();
+                }
+            }
+
             loaderInstalled = configFile.GameConfig.GLI_DllFile == "modloader";
 
             comboBoxTexMem.Text = configFile.GameConfig.TexturesMem;
@@ -245,6 +268,22 @@ namespace Rayman2ModManager
             }
         }
 
+        private string GetModCategory(Rayman2ModInfo inf)
+        {
+            if (string.IsNullOrEmpty(inf.Category) == false)
+            {
+                return inf.Category.First().ToString().ToUpper() + inf.Category.Substring(1);
+            } 
+            else if (string.IsNullOrEmpty(inf.GameBananaItemType) == false)
+            {
+                return inf.GameBananaItemType.First().ToString().ToUpper() + inf.GameBananaItemType.Substring(1);
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
         private void LoadModList(string path)
         {
             upmostButton.Enabled = upButton.Enabled = downButton.Enabled = downmostButton.Enabled = configModButton.Enabled = false;
@@ -265,7 +304,7 @@ namespace Rayman2ModManager
                 if (mods.ContainsKey(mod))
                 {
                     Rayman2ModInfo inf = mods[mod];
-                    modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author, inf.Version }) { Checked = true, Tag = mod });
+                    modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author, inf.Version, GetModCategory(inf) }) { Checked = true, Tag = mod });
                     
                     if (!string.IsNullOrEmpty(inf.Codes))
                     {
@@ -284,7 +323,7 @@ namespace Rayman2ModManager
             {
                 if (!loaderini.Mods.Contains(inf.Key))
                 {
-                    modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author, inf.Value.Version }) { Tag = inf.Key });
+                    modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author, inf.Value.Version, GetModCategory(inf.Value) }) { Tag = inf.Key });
                 }
             }
 
@@ -337,7 +376,7 @@ namespace Rayman2ModManager
             ubiIni = GamePath + "\\" + ubiIni;
 
             ReadLoaderConfig(loaderIniPath);
-            ReadGameConfig(ubiIni);
+            ReadGameConfig();
 
             ModsPath = loaderini.ModsPath;
 
