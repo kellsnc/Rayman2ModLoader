@@ -1040,7 +1040,7 @@ namespace Rayman2ModManager
                 if (float.Parse(release.TagName) > modloaderver)
                 {
                     GitHubAsset asset = release.Assets
-                    .FirstOrDefault(x => x.Name.Equals("Release", StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(x => x.Name.Equals("Rayman2ModLoader.7z", StringComparison.OrdinalIgnoreCase));
 
                     if (asset == null)
                     {
