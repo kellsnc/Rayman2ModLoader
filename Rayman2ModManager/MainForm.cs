@@ -1037,7 +1037,7 @@ namespace Rayman2ModManager
 
             foreach (GitHubRelease release in releases)
             {
-                if (float.Parse(release.Name, System.Globalization.CultureInfo.InvariantCulture) > modloade)
+                if (float.Parse(release.Name, System.Globalization.CultureInfo.InvariantCulture) > modloaderver)
                 {
                     GitHubAsset asset = release.Assets
                     .FirstOrDefault(x => x.Name.Equals("Rayman2ModLoader.7z", StringComparison.OrdinalIgnoreCase));
@@ -1047,7 +1047,7 @@ namespace Rayman2ModManager
                         continue;
                     }
 
-                    using (var dlg = new UpdateMessageDialog("Rayman2 Mod Manager update", release.Body))
+                    using (var dlg = new UpdateMessageDialog("Rayman2 Mod Manager Update", release.Body))
                     {
                         if (dlg.ShowDialog(this) == DialogResult.Yes)
                         {
