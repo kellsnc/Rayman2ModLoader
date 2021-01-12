@@ -1,3 +1,3 @@
 #pragma once
 
-void InitMods(const IniGroup* loaderconfig, const std::wstring* path);
+void InitMods(const IniGroup* loaderconfig, const std::string* path);

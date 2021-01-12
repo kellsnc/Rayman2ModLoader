@@ -5,7 +5,7 @@
 
 #include "pch.h"
 
-void InitCodeFile(const std::wstring path, const char* debug) {
+void InitCodeFile(const std::string path, const char* debug) {
 	std::ifstream codes_str(path, std::ifstream::binary);
 
 	if (codes_str.is_open()) {
@@ -48,10 +48,10 @@ void InitCodeFile(const std::wstring path, const char* debug) {
 	}
 }
 
-void InitCodes(const std::wstring* path) {
+void InitCodes(const std::string* path) {
 	// Check for patches.
-	std::ifstream patches_str(*path + L"Patches.dat", std::ifstream::binary);
+	std::ifstream patches_str(*path + "Patches.dat", std::ifstream::binary);
 
-	InitCodeFile(*path + L"\\Patches.dat", "patches");
-	InitCodeFile(*path + L"\\Codes.dat", "codes");
+	InitCodeFile(*path + "\\Patches.dat", "patches");
+	InitCodeFile(*path + "\\Codes.dat", "codes");
 }

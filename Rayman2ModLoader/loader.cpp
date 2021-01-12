@@ -4,32 +4,32 @@
  */
 
 #include "pch.h"
-#include "pathhelper.h"
+#include "funchelper.h"
 
 #include "mods.h"
 #include "codes.h"
 
 // Path to the game (where this process is)
-std::wstring GamePath;
+std::string GamePath;
 
 // Path to the manager, guessed from the config path.
-std::wstring ModManagerPath; 
+std::string ModManagerPath; 
 
 // Path to the loader's configuration, can be moved with the "-loaderini" command (not recommended.)
-std::wstring ConfigPath = L"Rayman2ModLoader.ini";
+std::string ConfigPath = "Rayman2ModLoader.ini";
 
 // Path to "mods" folder (containing cheat codes and mods.)
 // Can be moved in the loader's configuration (not recommended.)
-std::wstring ModsPath = L"Mods\\";
+std::string ModsPath = "Mods\\";
 
 std::string DLLName = "GliVd1"; // Original DLL Name, read from the loader's configuration.
 std::string APIName = "Glide2"; // Original API Name, read from the loader's configuration.
 
 // Warns the user about the executable being wrong and exits.
 static void WrongExe() {
-    MessageBox(nullptr, L"This copy of Rayman 2 is not the correct version.\n\n"
-        L"Please obtain the EXE file from GoG or from the original European release.",
-        L"Rayman2 Mod Loader", MB_ICONERROR);
+    MessageBoxA(nullptr, "This copy of Rayman 2 is not the correct version.\n\n"
+        "Please obtain the EXE file from GoG or from the original European release.",
+        "Rayman2 Mod Loader", MB_ICONERROR);
 
     ExitProcess(1);
 }
@@ -72,8 +72,8 @@ static void SetRDataWriteProtection(bool protect) {
 
 // Get the game's path.
 void GetGamePath() {
-    wchar_t pathbuf[MAX_PATH];
-    GetModuleFileNameW(nullptr, pathbuf, MAX_PATH);
+    char pathbuf[MAX_PATH];
+    GetModuleFileNameA(nullptr, pathbuf, MAX_PATH);
 
     GamePath = pathbuf;
     SplitFilename(&GamePath);
@@ -82,24 +82,23 @@ void GetGamePath() {
 // Get the loader's configuration path and guess the manager's location from that.
 void GetConfigPath() {
     int argc;
-    LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    LPCSTR* argv = CommandLineToArgvA(GetCommandLineA(), &argc);
 
     // Attempt to get an ini location from the command line, otherwise keep default
     for (int i = 1; i < argc; i++) {
-        if (!wcscmp(argv[i], L"-loaderini")) {
+        if (!strcmp(argv[i], "-loaderini")) {
             ConfigPath = argv[++i];
         }
     }
 
     // Make path absolute if relative
     if (IsPathAbsolute(&ConfigPath) == false) {
-        ConfigPath = GamePath + L"\\" + ConfigPath;
+        ConfigPath = GamePath + "\\" + ConfigPath;
     }
 
-    ConfigPath = ConfigPath;
+    // Guess mod manager path
     ModManagerPath = ConfigPath;
     SplitFilename(&ModManagerPath);
-    ModManagerPath = ModManagerPath;
 }
 
 // Read the configuration and initialize everything accordingly.
@@ -110,7 +109,7 @@ void InitModLoader() {
     if (loaderconfig != nullptr) {
         DLLName = loaderconfig->getString("DllName", DLLName); // Original DLL name.
         APIName = loaderconfig->getString("APIName", APIName); // Original API name.
-        ModsPath = loaderconfig->getWString("ModsPath", ModsPath); // Path to the "mods" folder.
+        ModsPath = loaderconfig->getString("ModsPath", ModsPath); // Path to the "mods" folder.
 
         // Init debug output system
         InitOutput(loaderconfig);
@@ -120,7 +119,7 @@ void InitModLoader() {
 
         // If the "mods" folder path is relative, make it absolute
         if (IsPathAbsolute(&ModsPath) == false) { 
-            ModsPath = ModManagerPath + L"\\" + ModsPath; 
+            ModsPath = ModManagerPath + "\\" + ModsPath; 
         }
 
         bool loadmods = loaderconfig->hasKey("Mod1"); // At least one mod is enabled.

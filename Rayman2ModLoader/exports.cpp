@@ -77,7 +77,6 @@ extern "C" {
 		return EXPORT_GLI_DRV_lGetDllInfo(type, output);
 	}
 
-	// Sets capability flags and populates displays, devices and resolutions
 	EXPORT NAKED BOOL GLI_DRV_fn_lGetAllDisplayConfig(LPVOID gliSet)
 	{
 		JUMP(EXPORT_GLI_DRV_fn_lGetAllDisplayConfig);

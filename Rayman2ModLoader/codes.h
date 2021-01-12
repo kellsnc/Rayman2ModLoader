@@ -1,3 +1,3 @@
 #pragma once
 
-void InitCodes(const std::wstring* path);
+void InitCodes(const std::string* path);

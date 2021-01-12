@@ -69,10 +69,10 @@
     <ClInclude Include="filemap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="pathhelper.h">
+    <ClInclude Include="exports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exports.h">
+    <ClInclude Include="funchelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

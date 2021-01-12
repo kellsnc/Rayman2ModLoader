@@ -8,6 +8,7 @@
 #include <sstream>
 #include <fstream>
 #include <DbgHelp.h>
+#include <stdlib.h>
 
 #include "include/Rayman2ModLoader.h"
 #include "IniFile.hpp"

@@ -5,21 +5,21 @@
 
 #include "pch.h"
 
-static std::vector<std::pair<std::wstring, std::wstring>> modErrors; // store errors and print them all when mods are finished loading.
+static std::vector<std::pair<std::string, std::string>> modErrors; // store errors and print them all when mods are finished loading.
 static std::unordered_map<std::string, std::string> filereplaces; // store file replacements query and add them all at the end.
 static std::vector<std::pair<std::string, std::string>> fileswaps; // store file swaps query and swap them all at the end.
 
 // Print all errors in a single prompt.
 void ShowErrors() {
 	if (!modErrors.empty()) {
-		std::wstringstream message;
-		message << L"The following mods didn't load correctly:" << std::endl;
+		std::stringstream message;
+		message << "The following mods didn't load correctly:" << std::endl;
 
 		for (auto& i : modErrors) {
 			message << std::endl << i.first << ": " << i.second;
 		}
 
-		MessageBox(nullptr, message.str().c_str(), L"Mods failed to load", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, message.str().c_str(), "Mods failed to load", MB_OK | MB_ICONERROR);
 
 		// Clear the errors vector to free memory.
 		modErrors.clear();
@@ -45,8 +45,8 @@ void RunAllModFileReplacements() {
 }
 
 // DLL injection
-void InitModDLL(const std::wstring* modpath, const std::wstring dll_filename, const std::wstring* modname) {
-	HMODULE module = LoadLibrary(dll_filename.c_str());
+void InitModDLL(const std::string* modpath, const std::string dll_filename, const std::string* modname) {
+	HMODULE module = LoadLibraryA(dll_filename.c_str());
 
 	if (module != nullptr) {
 		const auto info = (const ModInfo*)GetProcAddress(module, "Rayman2ModInfo"); // check if this is a valid mod dll.
@@ -70,33 +70,31 @@ void InitModDLL(const std::wstring* modpath, const std::wstring dll_filename, co
 		// Parse DLL load error
 
 		DWORD error = GetLastError();
-		LPWSTR buffer;
-		size_t size = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-			nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), (LPWSTR)&buffer, 0, nullptr);
+		LPCSTR buffer;
+		size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), (LPSTR)&buffer, 0, nullptr);
 		bool allocated = (size != 0);
 
 		if (!allocated) {
-			static const wchar_t fmterr[] = L"Unable to format error message.";
-			buffer = const_cast<LPWSTR>(fmterr);
+			static const char fmterr[] = "Unable to format error message.";
+			buffer = const_cast<LPCSTR>(fmterr);
 			size = LengthOfArray(fmterr) - 1;
 		}
 
-		std::wstring message(buffer, size);
+		std::string message(buffer, size);
 
 		if (allocated) {
-			LocalFree(buffer);
+			LocalFree((HLOCAL)buffer);
 		}
 
-		const std::string dll_filenameA = UTF16toMBS(dll_filename, CP_ACP);
-		const std::string messageA = UTF16toMBS(message, CP_ACP);
-		PrintDebug("Failed loading mod DLL \"%s\": %s\n", dll_filenameA.c_str(), messageA.c_str());
-		modErrors.emplace_back(*modname, L"DLL error - " + message);
+		PrintDebug("Failed loading mod DLL \"%s\": %s\n", dll_filename.c_str(), message.c_str());
+		modErrors.emplace_back(*modname, "DLL error - " + message);
 	}
 }
 
 // Load a mod folder, returns 1 if the mod failed to load.
-int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder) {
-	const std::wstring mod_inifile = modpath + L"\\mod.ini";
+int InitSingleMod(std::string modpath, std::string* foldername, int loadorder) {
+	const std::string mod_inifile = modpath + "\\mod.ini";
 	
 	const IniFile* config = new IniFile(mod_inifile);
 	const IniGroup* modinfo = config->getGroup("");
@@ -104,11 +102,11 @@ int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder)
 	if (modinfo != nullptr) {
 		modinfo = modinfo;
 
-		const std::wstring modname = modinfo->getWString("Name", *foldername);
+		const std::string modname = modinfo->getString("Name", *foldername);
 		
 		// DLL injection
 		if (modinfo->hasKeyNonEmpty("DLLFile")) {
-			InitModDLL(&modpath, modpath + L'\\' + modinfo->getWString("DLLFile"), &modname);
+			InitModDLL(&modpath, modpath + '\\' + modinfo->getString("DLLFile"), &modname);
 		}
 
 		// Window Title
@@ -150,8 +148,8 @@ int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder)
 		}
 
 		// Check for folder file replacements.
-		ScanModFolder(modpath + L"\\data", loadorder);
-		ScanModFolder(modpath + L"\\dll", loadorder);
+		ScanModFolder(modpath + "\\data", loadorder);
+		ScanModFolder(modpath + "\\dll", loadorder);
 		
 		return 0;
 	}
@@ -161,12 +159,12 @@ int InitSingleMod(std::wstring modpath, std::wstring* foldername, int loadorder)
 		std::string s(modpath.begin(), modpath.end());
 		std::string s2(foldername->begin(), foldername->end());
 		PrintDebug("Failed loading mod \"%s\": could not open file mod.ini in \"%s\".\n", s2.c_str(), s.c_str());
-		modErrors.emplace_back(*foldername, L"mod.ini missing");
+		modErrors.emplace_back(*foldername, "mod.ini missing");
 		return 1;
 	}
 }
 
-void InitMods(const IniGroup* loaderconfig, const std::wstring* path) {
+void InitMods(const IniGroup* loaderconfig, const std::string* path) {
 	PrintDebug("[ModLoader] Loading mods... \n");
 
 	int failedcount = 0;
@@ -184,10 +182,10 @@ void InitMods(const IniGroup* loaderconfig, const std::wstring* path) {
 		}
 
 		// Temporary mod name
-		std::wstring foldername = loaderconfig->getWString(key);
+		std::string foldername = loaderconfig->getString(key);
 
 		// Load this mod
-		failedcount += InitSingleMod(*path + L"\\" + foldername, &foldername, count);
+		failedcount += InitSingleMod(*path + "\\" + foldername, &foldername, count);
 
 		count += 1;
 	}

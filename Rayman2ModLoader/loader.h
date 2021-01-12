@@ -2,6 +2,6 @@
 
 extern std::string DLLName;
 extern std::string APIName;
-extern std::wstring GamePath;
+extern std::string GamePath;
 
 void LoaderInit();
