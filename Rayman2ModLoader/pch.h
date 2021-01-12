@@ -8,12 +8,10 @@
 #include <sstream>
 #include <fstream>
 #include <DbgHelp.h>
-#include <stdlib.h>
 
 #include "include/Rayman2ModLoader.h"
 #include "IniFile.hpp"
 #include "CodeParser.hpp"
-#include "TextConv.hpp"
 #include "FileSystem.h"
 
 #include "Trampoline.h"
