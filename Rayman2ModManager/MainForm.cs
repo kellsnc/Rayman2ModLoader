@@ -162,7 +162,17 @@ namespace Rayman2ModManager
 
         private void InstallLoader()
         {
-            loaderini.DllName = configFile.GameConfig.GLI_DllFile;
+            if (configFile.GameConfig.GLI_DllFile != "modloader")
+            {
+                loaderini.DllName = configFile.GameConfig.GLI_DllFile;
+            }
+            else
+            {
+                // Default value if something went wrong.
+                loaderini.DllName = "GliVd1";
+                loaderini.APIName = "Glide2";
+            }
+            
             configFile.GameConfig.GLI_DllFile = "modloader";
             buttonInstall.Text = "Uninstall";
             loaderInstalled = true;
@@ -1069,15 +1079,12 @@ namespace Rayman2ModManager
 
             if (loaderInstalled == false)
             {
-                DialogResult result = MessageBox.Show("The Mod Loader is not installed, do you want to install it? \n It will modify \"ubi.ini\".", "Install Mod Loader", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show("The Mod Loader is not installed, do you want to install it?\nIt will modify \"ubi.ini\".", "Install Mod Loader", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes)
                 {
                     InstallLoader();
                 }
-
-                comboBoxDLL.Text = configFile.GameConfig.GLI_DllFile;
-                comboBoxAPI.Text = configFile.GameConfig.GLI_Dll;
             }
 
             List<string> uris = Program.UriQueue.GetUris();
