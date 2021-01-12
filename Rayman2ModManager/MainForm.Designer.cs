@@ -41,6 +41,7 @@ namespace Rayman2ModManager
             this.nameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.authorColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.versionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.categoryColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.configModButton = new System.Windows.Forms.Button();
             this.upmostButton = new System.Windows.Forms.Button();
             this.addModButton = new System.Windows.Forms.Button();
@@ -91,7 +92,6 @@ namespace Rayman2ModManager
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.categoryColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabControl.SuspendLayout();
             this.modTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMods)).BeginInit();
@@ -241,6 +241,11 @@ namespace Rayman2ModManager
             // 
             this.versionColumnHeader.Text = "Version";
             this.versionColumnHeader.Width = 80;
+            // 
+            // categoryColumnHeader
+            // 
+            this.categoryColumnHeader.Text = "Category";
+            this.categoryColumnHeader.Width = 100;
             // 
             // configModButton
             // 
@@ -806,11 +811,6 @@ namespace Rayman2ModManager
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
-            // categoryColumnHeader
-            // 
-            this.categoryColumnHeader.Text = "Category";
-            this.categoryColumnHeader.Width = 100;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -823,6 +823,7 @@ namespace Rayman2ModManager
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(500, 700);
             this.Name = "MainForm";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Rayman2 Mod Manager";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Shown += new System.EventHandler(this.MainForm_Shown);
