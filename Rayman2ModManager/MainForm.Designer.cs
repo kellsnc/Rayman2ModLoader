@@ -92,6 +92,7 @@ namespace Rayman2ModManager
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.verLabel = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.modTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMods)).BeginInit();
@@ -811,11 +812,22 @@ namespace Rayman2ModManager
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
+            // verLabel
+            // 
+            this.verLabel.AutoSize = true;
+            this.verLabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.verLabel.Location = new System.Drawing.Point(8, 715);
+            this.verLabel.Name = "verLabel";
+            this.verLabel.Size = new System.Drawing.Size(59, 20);
+            this.verLabel.TabIndex = 4;
+            this.verLabel.Text = "version";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(578, 744);
+            this.Controls.Add(this.verLabel);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.buttonInstall);
             this.Controls.Add(this.buttonSave);
@@ -849,6 +861,7 @@ namespace Rayman2ModManager
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_Width)).EndInit();
             this.modContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -915,6 +928,7 @@ namespace Rayman2ModManager
         private System.Windows.Forms.CheckBox modUpdateCheckStartupCheckBox;
         private System.Windows.Forms.CheckBox updateCheckStartupCheckBox;
         private System.Windows.Forms.ColumnHeader categoryColumnHeader;
+        private System.Windows.Forms.Label verLabel;
     }
 }
 

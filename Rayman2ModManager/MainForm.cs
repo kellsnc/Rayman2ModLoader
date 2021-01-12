@@ -386,6 +386,8 @@ namespace Rayman2ModManager
             SetDoubleBuffered(modListView, true);
             SetDoubleBuffered(checkedListBoxCodes, true);
 
+            verLabel.Text = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
             string[] args = Environment.GetCommandLineArgs();
 
             int i = 0;
