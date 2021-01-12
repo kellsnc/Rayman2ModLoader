@@ -1037,7 +1037,7 @@ namespace Rayman2ModManager
 
             foreach (GitHubRelease release in releases)
             {
-                if (float.Parse(release.Name) > modloaderver)
+                if (float.Parse(release.Name, System.Globalization.CultureInfo.InvariantCulture) > modloade)
                 {
                     GitHubAsset asset = release.Assets
                     .FirstOrDefault(x => x.Name.Equals("Rayman2ModLoader.7z", StringComparison.OrdinalIgnoreCase));
@@ -1047,11 +1047,35 @@ namespace Rayman2ModManager
                         continue;
                     }
 
-                    using (var dlg = new LoaderDownloadDialog(asset.DownloadUrl, updatePath))
-                    if (dlg.ShowDialog(this) == DialogResult.OK)
+                    using (var dlg = new UpdateMessageDialog("Rayman2 Mod Manager update", release.Body))
                     {
-                        Close();
-                        return true;
+                        if (dlg.ShowDialog(this) == DialogResult.Yes)
+                        {
+                            DialogResult result = DialogResult.OK;
+                            do
+                            {
+                                try
+                                {
+                                    if (!Directory.Exists(updatePath))
+                                    {
+                                        Directory.CreateDirectory(updatePath);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    result = MessageBox.Show(this, "Failed to create temporary update directory:\n" + ex.Message
+                                                                   + "\n\nWould you like to retry?", "Directory Creation Failed", MessageBoxButtons.RetryCancel);
+                                    if (result == DialogResult.Cancel) return false;
+                                }
+                            } while (result == DialogResult.Retry);
+
+                            using (var dlg2 = new LoaderDownloadDialog(asset.DownloadUrl, updatePath))
+                                if (dlg2.ShowDialog(this) == DialogResult.OK)
+                                {
+                                    Close();
+                                    return true;
+                                }
+                        }
                     }
 
                     break;
