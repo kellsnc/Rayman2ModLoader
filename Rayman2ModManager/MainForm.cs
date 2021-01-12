@@ -117,7 +117,7 @@ namespace Rayman2ModManager
             }
         }
 
-        private void SaveLoaderConfig(string path)
+        private void SaveLoaderConfig()
         {
             loaderini.DllName = comboBoxDLL.Text;
             loaderini.APIName = comboBoxAPI.Text;
@@ -129,10 +129,10 @@ namespace Rayman2ModManager
             loaderini.UpdateUnit = (UpdateUnit)frequencyComboBox.SelectedIndex;
             loaderini.UpdateFrequency = (int)frequencyNumericUpDown.Value;
 
-            IniSerializer.Serialize(loaderini, path);
+            IniSerializer.Serialize(loaderini, loaderIniPath);
         }
 
-        private void SaveGameConfig(string path)
+        private void SaveGameConfig()
         {
             if (loaderInstalled == false)
             {
@@ -144,13 +144,13 @@ namespace Rayman2ModManager
             configFile.GameConfig.TexturesMem = comboBoxTexMem.Text;
             configFile.GameConfig.GLI_Mode = "1 - " + numericUpDown_Width.Value.ToString() + " x " + numericUpDown_Height.Value.ToString() + " x " + comboBoxDepth.Text;
 
-            IniSerializer.Serialize(configFile, path);
+            IniSerializer.Serialize(configFile, ubiIni);
         }
 
         void SaveConfigs()
         {
-            SaveLoaderConfig(loaderIniPath);
-            SaveGameConfig(ubiIni);
+            SaveLoaderConfig();
+            SaveGameConfig();
         }
 
         private void SaveAll()
@@ -258,11 +258,11 @@ namespace Rayman2ModManager
             }
         }
 
-        private void LoadCodesFile(string path)
+        private void LoadCodesFile()
         {
             try
             {
-                string codespath = path + lstcodespath;
+                string codespath = ModsPath + "\\" + lstcodespath;
                 if (File.Exists(codespath))
                 {
                     mainCodes = CodeList.Load(codespath);
@@ -427,7 +427,7 @@ namespace Rayman2ModManager
 
             updatePath = ModsPath + "\\" + updatePath;
 
-            LoadCodesFile(ModsPath + "\\");
+            LoadCodesFile();
             LoadModList(ModsPath);
         }
 
@@ -1105,7 +1105,7 @@ namespace Rayman2ModManager
             // click the save button.
             if (checkedForUpdates)
             {
-                SaveLoaderConfig(loaderIniPath);
+                SaveLoaderConfig();
             }
         }
 
