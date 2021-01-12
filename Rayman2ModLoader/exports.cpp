@@ -284,11 +284,11 @@ extern "C" {
 	}
 }
 
-void LoadOriginalDLL(std::string dllname) {
+void LoadOriginalDLL() {
 	ReadConfig_GliDLLFile(DLLName.c_str()); // restore the original dll name
 	ReadConfig_GliDLL(APIName.c_str()); // restore the original api name
 	
-	std::string path = ".\\DLL\\" + dllname + "Vf.dll";
+	std::string path = ".\\DLL\\" + DLLName + "Vf.dll";
 	hOrig = LoadLibraryA(rayman2_fileMap.replaceFile(path.c_str())); // in case the DLL was replaced by a mod
 
 	if (hOrig == NULL) {

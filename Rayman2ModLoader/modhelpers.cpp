@@ -1,3 +1,8 @@
+/*
+ * Rayman2 Mod Loader.
+ * HelperFunctions: useful functions for mods to interact with the mod loader's functionalities.
+ */
+
 #include "pch.h"
 
 const char* __cdecl GetReplaceablePath(const char* path) {

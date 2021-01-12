@@ -161,7 +161,9 @@
   <ItemGroup>
     <ClInclude Include="codes.h" />
     <ClInclude Include="events.h" />
+    <ClInclude Include="exports.h" />
     <ClInclude Include="filemap.hpp" />
+    <ClInclude Include="pathhelper.h" />
     <ClInclude Include="replacefiles.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="modhelpers.h" />

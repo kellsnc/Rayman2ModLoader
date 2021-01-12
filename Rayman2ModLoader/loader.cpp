@@ -1,21 +1,31 @@
 /*
  * Rayman2 Mod Loader.
- * Main Loader, reads config & pass to event system
+ * Read the loader's configuration to load codes/modes/events.
  */
 
 #include "pch.h"
+#include "pathhelper.h"
 
 #include "mods.h"
 #include "codes.h"
 
+// Path to the game (where this process is)
 std::wstring GamePath;
-std::wstring ModManagerPath;
+
+// Path to the manager, guessed from the config path.
+std::wstring ModManagerPath; 
+
+// Path to the loader's configuration, can be moved with the "-loaderini" command (not recommended.)
 std::wstring ConfigPath = L"Rayman2ModLoader.ini";
+
+// Path to "mods" folder (containing cheat codes and mods.)
+// Can be moved in the loader's configuration (not recommended.)
 std::wstring ModsPath = L"Mods\\";
 
-std::string DLLName = "GliVd1";
-std::string APIName = "Glide2";
+std::string DLLName = "GliVd1"; // Original DLL Name, read from the loader's configuration.
+std::string APIName = "Glide2"; // Original API Name, read from the loader's configuration.
 
+// Warns the user about the executable being wrong and exits.
 static void WrongExe() {
     MessageBox(nullptr, L"This copy of Rayman 2 is not the correct version.\n\n"
         L"Please obtain the EXE file from GoG or from the original European release.",
@@ -24,6 +34,8 @@ static void WrongExe() {
     ExitProcess(1);
 }
 
+// This removes the write protection from the rdata section.
+// Mods will be able to edit the pure data contained in this section.
 static void SetRDataWriteProtection(bool protect) {
     // Reference: https://stackoverflow.com/questions/22588151/how-to-find-data-segment-and-code-segment-range-in-program
     
@@ -58,15 +70,7 @@ static void SetRDataWriteProtection(bool protect) {
     WrongExe();
 }
 
-void SplitFilename(std::wstring* str) {
-    std::string::size_type slash = str->find_last_of(L"/\\");
-    *str = str->substr(0, slash);
-}
-
-bool IsPathAbsolute(std::wstring* str) {
-    return &str->at(1) == L":";
-}
-
+// Get the game's path.
 void GetGamePath() {
     wchar_t pathbuf[MAX_PATH];
     GetModuleFileNameW(nullptr, pathbuf, MAX_PATH);
@@ -75,6 +79,7 @@ void GetGamePath() {
     SplitFilename(&GamePath);
 }
 
+// Get the loader's configuration path and guess the manager's location from that.
 void GetConfigPath() {
     int argc;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
@@ -97,14 +102,15 @@ void GetConfigPath() {
     ModManagerPath = ModManagerPath;
 }
 
+// Read the configuration and initialize everything accordingly.
 void InitModLoader() {
     const IniFile* config = new IniFile(ConfigPath);
     const IniGroup* loaderconfig = config->getGroup("");
 
     if (loaderconfig != nullptr) {
-        DLLName = loaderconfig->getString("DllName", DLLName);
-        APIName = loaderconfig->getString("APIName", APIName);
-        ModsPath = loaderconfig->getWString("ModsPath", ModsPath);
+        DLLName = loaderconfig->getString("DllName", DLLName); // Original DLL name.
+        APIName = loaderconfig->getString("APIName", APIName); // Original API name.
+        ModsPath = loaderconfig->getWString("ModsPath", ModsPath); // Path to the "mods" folder.
 
         // Init debug output system
         InitOutput(loaderconfig);
@@ -112,17 +118,20 @@ void InitModLoader() {
         // Mods and cheat codes can edit read-only memory
         SetRDataWriteProtection(false);
 
-        if (IsPathAbsolute(&ModsPath) == false) { ModsPath = ModManagerPath + L"\\" + ModsPath; }
+        // If the "mods" folder path is relative, make it absolute
+        if (IsPathAbsolute(&ModsPath) == false) { 
+            ModsPath = ModManagerPath + L"\\" + ModsPath; 
+        }
 
-        bool loadmods = loaderconfig->hasKey("Mod1");
-        bool loadcodes = loaderconfig->hasKey("Code1");
+        bool loadmods = loaderconfig->hasKey("Mod1"); // At least one mod is enabled.
+        bool loadcodes = loaderconfig->hasKey("Code1"); // At least one code is enabled.
 
-        // Set up function hooks
+        // If at least one code or one mod is enabled, hook into the game's functions
         if (loadcodes || loadmods) {
             InitEvents();
         }
 
-        // Load the Mod Manager main codes
+        // Load cheat codes
         if (loadcodes) {
             InitCodes(&ModsPath);
         }
@@ -130,7 +139,7 @@ void InitModLoader() {
             PrintDebug("[ModLoader] Loaded 0 codes\n");
         }
 
-        // Load mods DLL and custom codes
+        // Load mods
         if (loadmods) {
             InitMods(loaderconfig, &ModsPath);
         }

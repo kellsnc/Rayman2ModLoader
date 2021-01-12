@@ -1,3 +1,8 @@
+/*
+ * Rayman2 Mod Loader.
+ * Replace file functions to redirect them if needed using FileMap.
+ */
+
 #include "pch.h"
 #include "FileMap.hpp"
 
@@ -29,6 +34,7 @@ __declspec(dllexport) __declspec(naked) FILE* Myfopen(const char* Filename, cons
 	}
 }
 
+// Hook into an imported function
 void HookProcFunction(const char* dll, const char* funcname, void* newfunc) {
 	ULONG ulSize = 0;
 
@@ -75,9 +81,7 @@ void HookProcFunction(const char* dll, const char* funcname, void* newfunc) {
 	}
 }
 
-/**
- * Hook Rayman2's CreateFileA() & fopen imports.
- */
+// Hook Rayman2's CreateFileA() & fopen imports.
 void HookFileFunctions() {
 	HookProcFunction("Kernel32.dll", "CreateFileA", (void*)MyCreateFileA);
 	HookProcFunction("Kernel32.dll", "LoadLibraryA", (void*)MyLoadLibraryA);
