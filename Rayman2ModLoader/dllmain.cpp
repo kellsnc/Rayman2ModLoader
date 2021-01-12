@@ -5,47 +5,15 @@
 
 #include "pch.h"
 
-void CopyAPIString(char* output, const char* str) {
-    size_t length = strlen(str);
-    memcpy_s(output, length, str, length);
-    *(output + length) = *(char*)"\0";
-}
-
-extern "C" {
-    __declspec(dllexport) signed int __cdecl GLI_DRV_lGetDllInfo(const char* type, char* output) {
-        if (!strcmp(type, "Name")) {
-            CopyAPIString(output, APIName.c_str());
-        }
-        
-        return true;
-    }
-
-    __declspec(dllexport) signed int GLI_DRV_lSetCommonFct() {
-        return true;
-    }
-
-    __declspec(dllexport) signed int GLI_DRV_lSetCommonData() {
-        return true;
-    }
-}
-
-void RestoreGraphicsDLL() {
-    ReadConfig_GliDLLFile(DLLName.c_str()); // Restore the original DLL Name
-    ReadConfig_GliDLL(APIName.c_str()); // Restore the original DLL Name
-    LoadGLILibrary(); // Call the original DLL
-}
+void LoadOriginalDLL(std::string dllname);
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
     switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH:
-        LoaderInit();
-        HookFileFunctions();
-        RestoreGraphicsDLL();
-        break;
-    case DLL_THREAD_ATTACH:
-        RestoreGraphicsDLL();
-        return FALSE;
-    case DLL_THREAD_DETACH:
+        LoaderInit(); // load codes and mods
+        HookFileFunctions(); // hook CreateFileA and fopen to allow for file replacement from mods folder
+        LoadOriginalDLL(DLLName); // restore the original dll
+        
         break;
     case DLL_PROCESS_DETACH:
         DeleteOutput();

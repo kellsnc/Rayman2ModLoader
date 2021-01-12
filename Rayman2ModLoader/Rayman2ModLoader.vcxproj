@@ -181,6 +181,7 @@
     <ClCompile Include="codes.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="events.cpp" />
+    <ClCompile Include="exports.cpp" />
     <ClCompile Include="filemap.cpp" />
     <ClCompile Include="replacefiles.cpp" />
     <ClCompile Include="modhelpers.cpp" />
