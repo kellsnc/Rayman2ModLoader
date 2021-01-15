@@ -62,6 +62,14 @@ public:
 	 */
 	void scanFolder(const std::string& srcPath, int modIdx);
 
+	/**
+	 * Scans a texture folder to replace/add individual textures
+	 * @param srcPath Path of a texture folder.
+	 * @param modIdx Index of the current mod.
+	 * @param index Index of the current archive.
+     */
+	void scanTexturesFolder(const std::string& srcPath, int modIdx, int index);
+
 protected:
 	/**
 	 * Recursively scan a directory and add all files to the replacement map.

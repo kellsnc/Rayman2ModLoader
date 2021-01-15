@@ -167,9 +167,17 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 
 		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
-			// Recursively scan this directory.
 			const string newSrcPath = srcPath + '\\' + string(data.cFileName);
-			scanFolder_int(newSrcPath, srcLen, modIdx);
+
+			if (newSrcPath.substr(newSrcPath.length() - 5).find(".cnt") != std::string::npos) {
+				PrintDebug("[ModLoader] Scanning textures in \"%s\"\n", newSrcPath.c_str());
+				scanTexturesFolder(newSrcPath, modIdx, AddCNTArchiveToList(newSrcPath));
+			}
+			else {
+				// Recursively scan this directory.
+				scanFolder_int(newSrcPath, srcLen, modIdx);
+			}
+
 			continue;
 		}
 
@@ -188,6 +196,58 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 		}
 		
 		setReplaceFile(origFile, modFile, modIdx);
+	} while (FindNextFileA(hFind, &data) != 0);
+
+	FindClose(hFind);
+}
+
+/**
+ * Scans a texture folder to replace/add individual textures
+ * @param srcPath Path of a texture folder.
+ * @param modIdx Index of the current mod.
+ * @param index Index of the current archive.
+ */
+void FileMap::scanTexturesFolder(const string& srcPath, int modIdx, int index) {
+	WIN32_FIND_DATAA data;
+	char path[MAX_PATH];
+	snprintf(path, sizeof(path), "%s\\*", srcPath.c_str());
+	HANDLE hFind = FindFirstFileA(path, &data);
+
+	// No files found.
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		// NOTE: This will hide *all* files starting with '.'.
+		if (data.cFileName[0] == '.')
+		{
+			continue;
+		}
+
+		const string newSrcPath = srcPath + '\\' + string(data.cFileName);
+
+		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			// Recursively scan this directory.
+			scanTexturesFolder(newSrcPath, modIdx, index);
+			continue;
+		}
+
+		// If it's a GF file add it directly
+		if (!_stricmp(".gf", PathFindExtensionA(data.cFileName)))
+		{
+			AddFileToReplacementArchive(newSrcPath, index);
+		}
+
+		// If it's an PNG file convert it first
+		if (!_stricmp(".png", PathFindExtensionA(data.cFileName)))
+		{
+			// to do
+		}
+
 	} while (FindNextFileA(hFind, &data) != 0);
 
 	FindClose(hFind);

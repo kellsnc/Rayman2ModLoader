@@ -90,7 +90,7 @@ void HookFileFunctions() {
 }
 
 // Scan for file replacement in a folder
-void ScanModFolder(const std::string str, int loadorder) {
+void ScanModFolder(const std::string& str, int loadorder) {
 	if (DirectoryExists(str)) {
 		rayman2_fileMap.scanFolder(str, loadorder);
 	}

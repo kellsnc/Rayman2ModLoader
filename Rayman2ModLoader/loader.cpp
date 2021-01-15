@@ -145,6 +145,9 @@ void InitModLoader() {
         else {
             PrintDebug("[ModLoader] Loaded 0 mod\n");
         }
+
+        // Init the CNT archive replacement
+        TexturesInit();
     }
     else {
         const int type = MessageBox(nullptr, L"Cannot find the Mod Loader configuration.\n\n"

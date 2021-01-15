@@ -15,12 +15,13 @@
 #include "FileSystem.h"
 
 #include "Trampoline.h"
-#include "FileMap.hpp"
 
+#include "FileMap.hpp"
 #include "output.h"
 #include "loader.h"
 #include "events.h"
 #include "replacefiles.h"
+#include "textures.h"
 #include "modhelpers.h"
 
 #endif

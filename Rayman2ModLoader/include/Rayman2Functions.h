@@ -1282,6 +1282,7 @@ FunctionPointer(int, GetBuffer, (), 0x4928C0);
 FunctionPointer(int, FIL_fn_vFirstInit_unsure, (), 0x4928D0);
 FunctionPointer(int, FileExists_, (const char* Filename), 0x4929C0);
 FunctionPointer(char, makeSavePath, (const char* aDot, const char* saveName), 0x492A10);
+FunctionPointer(void*, FIL_fn_vOpenConcatFile, (const char* fileName), 0x493300);
 FunctionPointer(int, FIL_fn_vCloseConcatFile, (int a1), 0x493590);
 FunctionPointer(char*, LoadGFFile, (int a1, int a2, const char* gfName), 0x4935C0);
 FunctionPointer(int, FIL_fn_vCloseFileInConcatFile, (int a1), 0x4938D0);
