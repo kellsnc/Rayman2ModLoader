@@ -20,8 +20,12 @@ int AddCNTArchiveToList(const std::string& path) {
 	return archivesReplacements.size() - 1;
 }
 
-void AddFileToReplacementArchive(const std::string& path, int index) {
+void AddFileToReplacementArchive(const std::string& path, const int index) {
 	archivesReplacements[index].second->AddFile(path);
+}
+
+void AddFileStreamToReplacementArchive(const std::string& path, const std::vector<char>& bytes, const int index) {
+	archivesReplacements[index].second->AddFile(path, bytes);
 }
 
 void* __cdecl FIL_fn_vOpenConcatFile_r(const char* Str) {

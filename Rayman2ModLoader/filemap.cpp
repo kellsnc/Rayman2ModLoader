@@ -17,6 +17,8 @@ using std::unordered_map;
 #include <Windows.h>
 #include <Shlwapi.h>
 
+#include "GraphicFile.h"
+
 /**
  * Replace slash characters with backslashes.
  * @param c Character.
@@ -245,7 +247,12 @@ void FileMap::scanTexturesFolder(const string& srcPath, int modIdx, int index) {
 		// If it's an PNG file convert it first
 		if (!_stricmp(".png", PathFindExtensionA(data.cFileName)))
 		{
-			// to do
+			GraphicFile gf;
+			std::vector<char> bytes;
+
+			gf.ReadPNG(newSrcPath);
+			gf.GetRawData(bytes);
+			AddFileStreamToReplacementArchive(newSrcPath, bytes, index);
 		}
 
 	} while (FindNextFileA(hFind, &data) != 0);

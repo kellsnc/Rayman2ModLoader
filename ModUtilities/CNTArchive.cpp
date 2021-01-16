@@ -66,7 +66,7 @@ int CNTArchive::GetFileIndex(std::string name) {
 	return files.size();
 }
 
-void CNTArchive::AddOrReplaceFile(const std::string& fileName) {
+void CNTArchive::AddOrReplaceFile(const std::string& fileName, char* buffer, const int length) {
 	std::string truncName = fileName;
 	size_t pos = truncName.find(std::string(".cnt"));
 
@@ -74,20 +74,14 @@ void CNTArchive::AddOrReplaceFile(const std::string& fileName) {
 		truncName = truncName.substr(pos + 5);
 	}
 
+	if (GetExtension(truncName, false) == "png") {
+		truncName = truncName.substr(0, truncName.size() - 4);
+		truncName += ".gf";
+	}
+	
 	std::string name = GetBaseName(truncName);
 	std::string directories = GetDirectory(truncName);
 	
-	// Get length of file using this horrible thing
-	int file_;
-	_sopen_s(&file_, fileName.c_str(), _O_RDONLY | _O_BINARY, _SH_DENYWR, _S_IREAD);
-	int length = _filelength(file_);
-	_close(file_);
-
-	std::ifstream file(fileName, std::ios_base::binary);
-	char* buffer = new char[length];
-	file.read(buffer, length);
-	file.close();
-
 	CNTFile* existingFile = FindFile(truncName);
 
 	if (existingFile) {
@@ -123,6 +117,35 @@ void CNTArchive::AddOrReplaceFile(const std::string& fileName) {
 		cntfile.unknown = 0;
 		files.push_back(cntfile);
 	}
+
+	UpdateCounts();
+}
+
+void CNTArchive::AddOrReplaceFile(const std::string& fileName) {
+	// Get length of file using this horrible thing
+	int file_;
+	_sopen_s(&file_, fileName.c_str(), _O_RDONLY | _O_BINARY, _SH_DENYWR, _S_IREAD);
+	int length = _filelength(file_);
+	_close(file_);
+
+	// Read file bytes
+	std::ifstream file(fileName, std::ios_base::binary);
+	char* buffer = new char[length];
+	file.read(buffer, length);
+	file.close();
+
+	AddOrReplaceFile(fileName, buffer, length);
+}
+
+void CNTArchive::AddFile(const std::string& fileName, const std::vector<char>& bytes) {
+	int size = bytes.size();
+	char* buffer = new char[size];
+
+	for (int i = 0; i < size; ++i) {
+		buffer[i] = bytes[i];
+	}
+
+	AddOrReplaceFile(fileName, buffer, size);
 }
 
 void CNTArchive::AddFile(const char* fileName) {
