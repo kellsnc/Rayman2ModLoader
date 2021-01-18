@@ -9,7 +9,6 @@
 		szymski: https://github.com/szymski
 		RayCarrot: https://github.com/RayCarrot
 
-
 	File Structure:
 		0x4 magic (888)
 		0x4 width

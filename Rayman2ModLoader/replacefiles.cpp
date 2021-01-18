@@ -10,22 +10,22 @@
 
 FileMap rayman2_fileMap;
 
-HANDLE WINAPI MyCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile) {
+HANDLE WINAPI CreateFileA_r(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile) {
 	return CreateFileA(rayman2_fileMap.replaceFile(lpFileName), dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
 
-HANDLE WINAPI MyLoadLibraryA(LPCSTR lpFileName) {
+HANDLE WINAPI LoadLibraryA_r(LPCSTR lpFileName) {
 	return LoadLibraryA(rayman2_fileMap.replaceFile(lpFileName));
 }
 
 const char* newName = "";
 
-__declspec(dllexport) __declspec(naked) FILE* Myfopen(const char* Filename, const char* Mode) {
+__declspec(dllexport) __declspec(naked) FILE* fopen_r(const char* Filename, const char* Mode) {
 	__asm {
 		mov eax, [esp + 4]
 		mov newName, eax
 	}
-	
+
 	newName = rayman2_fileMap.replaceFile(newName);
 	
 	__asm {
@@ -83,10 +83,10 @@ void HookProcFunction(const char* dll, const char* funcname, void* newfunc) {
 
 // Hook Rayman2's CreateFileA() & fopen imports.
 void HookFileFunctions() {
-	HookProcFunction("Kernel32.dll", "CreateFileA", (void*)MyCreateFileA);
-	HookProcFunction("Kernel32.dll", "LoadLibraryA", (void*)MyLoadLibraryA);
-	WriteJump((void*)0x576CB4, Myfopen);
-	WriteJump((void*)0x45FCB4, Myfopen);
+	HookProcFunction("Kernel32.dll", "CreateFileA", (void*)CreateFileA_r);
+	HookProcFunction("Kernel32.dll", "LoadLibraryA", (void*)LoadLibraryA_r);
+	WriteJump((void*)0x576CB4, fopen_r);
+	WriteJump((void*)0x45FCB4, fopen_r);
 }
 
 // Scan for file replacement in a folder
