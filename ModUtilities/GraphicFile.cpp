@@ -117,6 +117,8 @@ void GraphicFile::ReadPNG(const char* path) {
 		return;
 	}
 
+	pixels.clear();
+
 	// lodepng::decode always outputs RGBA, this tells the actual number of channels
 	switch(state.info_png.color.colortype) {
 	case LodePNGColorType::LCT_RGB:
@@ -138,6 +140,43 @@ void GraphicFile::ReadPNG(const char* path) {
 
 void GraphicFile::ReadPNG(std::string path) {
 	ReadPNG(path.c_str());
+}
+
+void GraphicFile::ReadBMP(const char* path) {
+	std::vector<unsigned char> bmp;
+
+	lodepng::load_file(bmp, path);
+
+	if (bmp.size() < 54 || bmp[0] != 'B' || bmp[1] != 'M' || (bmp[28] != 24 && bmp[28] != 32)) {
+		return;
+	}
+
+	pixels.clear();
+
+	width = bmp[18] + bmp[19] * 256;
+	height = bmp[22] + bmp[23] * 256;
+	channelCount = bmp[28] / 8;
+
+	unsigned int pixeloffset = bmp[10] + 256 * bmp[11];
+
+	// reserve space to avoid multiple reallocation of vector
+	pixels.resize(width * height * channelCount);
+
+	for (int i = 0; i < width * height * channelCount; i += channelCount) {
+		pixels[i + 0] = bmp[pixeloffset + i + 0];
+		pixels[i + 1] = bmp[pixeloffset + i + 1];
+		pixels[i + 2] = bmp[pixeloffset + i + 2];
+
+		if (channelCount == 4) {
+			pixels[i + 3] = bmp[pixeloffset + i + 3];
+		}
+	}
+
+	UpdateRepeatByte();
+}
+
+void GraphicFile::ReadBMP(std::string path) {
+	ReadBMP(path.c_str());
 }
 
 GraphicFile::GraphicFile() { }

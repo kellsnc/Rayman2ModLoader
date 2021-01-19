@@ -42,6 +42,8 @@ public:
 	void GetRawData(std::vector<char>& bytes);
 	void ReadPNG(const char* path);
 	void ReadPNG(std::string path);
+	void ReadBMP(const char* path);
+	void ReadBMP(std::string path);
 
 	explicit GraphicFile();
 };

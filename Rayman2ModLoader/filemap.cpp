@@ -229,7 +229,7 @@ void FileMap::scanTexturesFolder(const string& srcPath, int modIdx, int index) {
 			continue;
 		}
 
-		const string newSrcPath = srcPath + '\\' + string(data.cFileName);
+		string newSrcPath = srcPath + '\\' + string(data.cFileName);
 
 		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
@@ -244,7 +244,7 @@ void FileMap::scanTexturesFolder(const string& srcPath, int modIdx, int index) {
 			AddFileToReplacementArchive(newSrcPath, index);
 		}
 
-		// If it's an PNG file convert it first
+		// If it's a PNG file convert it first
 		if (!_stricmp(".png", PathFindExtensionA(data.cFileName)))
 		{
 			GraphicFile gf;
@@ -252,6 +252,19 @@ void FileMap::scanTexturesFolder(const string& srcPath, int modIdx, int index) {
 
 			gf.ReadPNG(newSrcPath);
 			gf.GetRawData(bytes);
+			newSrcPath = newSrcPath.substr(0, newSrcPath.size() - 4) + ".gf";  // restore gf extension
+			AddFileStreamToReplacementArchive(newSrcPath, bytes, index);
+		}
+
+		// If it's a BMP file convert it first
+		if (!_stricmp(".bmp", PathFindExtensionA(data.cFileName)))
+		{
+			GraphicFile gf;
+			std::vector<char> bytes;
+
+			gf.ReadBMP(newSrcPath);
+			gf.GetRawData(bytes);
+			newSrcPath = newSrcPath.substr(0, newSrcPath.size() - 4) + ".gf"; // restore gf extension
 			AddFileStreamToReplacementArchive(newSrcPath, bytes, index);
 		}
 

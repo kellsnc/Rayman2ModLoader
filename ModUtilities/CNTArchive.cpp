@@ -74,11 +74,6 @@ void CNTArchive::AddOrReplaceFile(const std::string& fileName, char* buffer, con
 		truncName = truncName.substr(pos + 5);
 	}
 
-	if (GetExtension(truncName, false) == "png") {
-		truncName = truncName.substr(0, truncName.size() - 4);
-		truncName += ".gf";
-	}
-	
 	std::string name = GetBaseName(truncName);
 	std::string directories = GetDirectory(truncName);
 	
