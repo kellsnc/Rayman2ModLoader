@@ -5,7 +5,11 @@
 
 #ifndef RAYMAN2MODLOADER_STRUCTS_H
 #define RAYMAN2MODLOADER_STRUCTS_H
+
 #include <math.h>
+#include <cstdio>
+#include <cstdint>
+
 #pragma pack(push, 1)
 
 struct tdstEngineObject;
@@ -73,7 +77,7 @@ struct Vector3
 };
 
 struct Matrix {
-    Sint32 transformationType;
+    int32_t transformationType;
     float x;
     float y;
     float z;
@@ -130,38 +134,38 @@ struct Text2D
     float positionX;
     float positionY;
     float size;
-    __byte alphaByte;
-    __byte gap11;
-    __byte highlight;
-    __byte options; // bit 4 = highlighting color
+    uint8_t alphaByte;
+    uint8_t gap11;
+    uint8_t highlight;
+    uint8_t options; // bit 4 = highlighting color
     int dword14;
-    __byte flag3;
+    uint8_t flag3;
 };
 
 struct TextureData
 {
-    Uint32 field0;
-    Uint16 field4;
-    Uint16 field6;
+    uint32_t field0;
+    uint16_t field4;
+    uint16_t field6;
     void* tempBuffer;
-    Uint32 fieldC;
-    Uint32 field10;
-    Uint32 flags;
-    Uint16 height_;
-    Uint16 width_;
-    Uint16 height;
-    Uint16 width;
-    Uint32 currentScrollX;
-    Uint32 currentScrollY;
-    Uint32 textureScrollingEnabled;
-    Uint32 alphaMask;
-    Uint32 field30;
-    Uint32 field34;
-    Uint32 field38;
-    Uint32 field3C;
-    Uint32 field40;
-    __byte field44;
-    __byte flags__byte;
+    uint32_t fieldC;
+    uint32_t field10;
+    uint32_t flags;
+    uint16_t height_;
+    uint16_t width_;
+    uint16_t height;
+    uint16_t width;
+    uint32_t currentScrollX;
+    uint32_t currentScrollY;
+    uint32_t textureScrollingEnabled;
+    uint32_t alphaMask;
+    uint32_t field30;
+    uint32_t field34;
+    uint32_t field38;
+    uint32_t field3C;
+    uint32_t field40;
+    uint8_t field44;
+    uint8_t flagsuint8_t;
 };
 
 struct SNAFileStruct
@@ -222,10 +226,10 @@ struct struct_fileHandle
 {
     int readFunc;
     int noError;
-    Uint32 dword8;
-    __byte byteC;
-    __byte fD[3];
-    Uint32 dword10;
+    uint32_t dword8;
+    uint8_t byteC;
+    uint8_t fD[3];
+    uint32_t dword10;
     int magic;
     int field_18;
     int field_1C;
@@ -235,16 +239,16 @@ struct struct_fileHandle
 
 struct struct_dataPointer
 {
-    Uint32 dword0;
-    Uint32 dword4;
-    Uint32 dword8;
-    __byte byteC;
-    __declspec(align(4)) Uint32 dword10;
-    Uint32 dword14;
-    Uint32 dword18;
-    Uint32 dword1C;
-    Uint32 dword20;
-    Uint32 dword24;
+    uint32_t dword0;
+    uint32_t dword4;
+    uint32_t dword8;
+    uint8_t byteC;
+    __declspec(align(4)) uint32_t dword10;
+    uint32_t dword14;
+    uint32_t dword18;
+    uint32_t dword1C;
+    uint32_t dword20;
+    uint32_t dword24;
 };
 
 struct BNM_Header
@@ -264,16 +268,16 @@ struct BNM_Header
 
 struct __declspec(align(2)) BNM_FileEntry
 {
-    Uint32 dword0;
-    Uint32 type;
-    Uint32 dword8;
+    uint32_t dword0;
+    uint32_t type;
+    uint32_t dword8;
     int length;
-    Uint32 dword10;
-    Uint32 dword14;
-    Uint32 dword18;
-    Uint32 dword1C;
-    Uint32 dword20;
-    Uint32 dword24;
+    uint32_t dword10;
+    uint32_t dword14;
+    uint32_t dword18;
+    uint32_t dword1C;
+    uint32_t dword20;
+    uint32_t dword24;
     int field_28;
     int field_2C;
     int field_30;
@@ -293,24 +297,24 @@ struct LEVELS0DAT_Header
 
 struct GliTexture
 {
-    __byte something1_2[8];
-    Uint32 something3;
-    __byte something4_5[8];
-    Uint32 something6;
-    Uint16 word18;
-    Uint16 word1A;
-    Uint16 word1C;
-    Uint16 word1E;
-    __byte gap20[12];
-    Uint32 dword2C;
-    __byte gap30[21];
-    __byte byte45;
+    uint8_t something1_2[8];
+    uint32_t something3;
+    uint8_t something4_5[8];
+    uint32_t something6;
+    uint16_t word18;
+    uint16_t word1A;
+    uint16_t word1C;
+    uint16_t word1E;
+    uint8_t gap20[12];
+    uint32_t dword2C;
+    uint8_t gap30[21];
+    uint8_t byte45;
     char textureFilename[130];
 };
 
 struct struct_fixFileObject
 {
-    __byte gap0[8];
+    uint8_t gap0[8];
     struct_fileHandle* openedFileHandle;
 };
 
@@ -503,8 +507,8 @@ struct Entity2
 
 struct tdstDynam_
 {
-    __byte gap0[336];
-    Uint32 dword150;
+    uint8_t gap0[336];
+    uint32_t dword150;
     int field_154;
     int field_158;
     int field_15C;
@@ -614,15 +618,15 @@ struct HIE_tdstSuperObject
     int someRenderField;
     int renderBits;
     BoundingVolume* boundingVolume;
-    Uint32 field_38;
+    uint32_t field_38;
     int field_3C;
     int field_40;
     int field_44;
-    Uint32 field_48;
-    Uint32 field_4C;
-    Uint32 field_50;
-    Uint32 field_54;
-    Uint32 field_58;
+    uint32_t field_48;
+    uint32_t field_4C;
+    uint32_t field_50;
+    uint32_t field_54;
+    uint32_t field_58;
 };
 
 struct tdst3dData_
@@ -631,7 +635,7 @@ struct tdst3dData_
     tdstState_* animState;
     tdstState_* anotherState;
     int field_C;
-    Uint32 dword10;
+    uint32_t dword10;
     int dword14;
     int field_18;
     int field_1C;
@@ -656,14 +660,14 @@ struct tdst3dData_
     int field_68;
     int field_6C;
     int field_70;
-    Uint16 currentFrame;
-    __byte somethingSound1;
+    uint16_t currentFrame;
+    uint8_t somethingSound1;
     char somethingSound2;
-    Uint32 dword78;
-    __byte gap7C[12];
+    uint32_t dword78;
+    uint8_t gap7C[12];
     tdstState_* newAnimState;
-    Uint16 word8C;
-    __byte byte8E;
+    uint16_t word8C;
+    uint8_t byte8E;
     char field_8F;
     stVaporAnimData** animObjectsDataArray;
     int allocateSize;
@@ -676,14 +680,14 @@ struct tdst3dData_
     int field_B0;
     int field_B4;
     int field_B8;
-    Uint32 dwordBC;
-    Uint32 dwordC0;
-    Uint32 dwordC4;
-    Uint16 wordC8;
-    __byte byteCA;
-    __byte gapCB[21];
-    __byte framerate;
-    __byte byteE1;
+    uint32_t dwordBC;
+    uint32_t dwordC0;
+    uint32_t dwordC4;
+    uint16_t wordC8;
+    uint8_t byteCA;
+    uint8_t gapCB[21];
+    uint8_t framerate;
+    uint8_t byteE1;
     int field_E2;
     int field_E6;
     int field_EA;
@@ -720,7 +724,7 @@ struct tdstIntelligence_
 
 struct AI_tdstMind_
 {
-    __byte gap0[4];
+    uint8_t gap0[4];
     tdstIntelligence_* comport_intelligence;
     tdstIntelligence_* intelligence_reflex;
 };
@@ -793,7 +797,7 @@ struct tdstState_
     tdstState_* nextState;
     int MechanicsIdCard;
     char field_28;
-    __byte stateSpeed;
+    uint8_t stateSpeed;
     char field_2A;
     char field_2B;
     int field_2C;
@@ -843,11 +847,11 @@ struct __declspec(align(1)) tdstFrame3d
     tdstAnim3d_* probablyFramePtr;
     Matrix* matrix;
     Vector3* movementSpeed;
-    Uint32 dwordC;
+    uint32_t dwordC;
     stHierarchy* hierarchy;
     tdstAnim3d_* anim3d;
-    Uint16 frameNumber;
-    __byte importantFlag;
+    uint16_t frameNumber;
+    uint8_t importantFlag;
 };
 
 struct tdstNodeInterpret_
@@ -864,7 +868,7 @@ struct tdstGetSetParam_
     int field1;
     tdstNodeInterpret_* field2;
     int field3;
-    Uint32 field4_DataType;
+    uint32_t field4_DataType;
     int field5;
     int field6;
     int field7;
@@ -883,7 +887,7 @@ struct struct_entryStruct
 {
     struct_entryStruct* entryStruct;
     char maxIndex;
-    __byte usedActions;
+    uint8_t usedActions;
     char field_6;
     char field_7;
     int field_8;
@@ -1111,15 +1115,15 @@ struct __declspec(align(8)) DNM_stDynamics
     int field_11C;
     int field_120;
     int field_124;
-    Uint32 dword128;
-    Uint32 dword12C;
-    Uint32 dword130;
-    Uint32 dword134;
-    Uint32 dword138;
-    Uint32 dword13C;
-    Uint32 dword140;
-    Uint32 dword144;
-    Uint32 dword148;
+    uint32_t dword128;
+    uint32_t dword12C;
+    uint32_t dword130;
+    uint32_t dword134;
+    uint32_t dword138;
+    uint32_t dword13C;
+    uint32_t dword140;
+    uint32_t dword144;
+    uint32_t dword148;
     int field_14C;
     struct_DnmReport* report;
     int inertX;
@@ -1144,8 +1148,8 @@ struct __declspec(align(8)) DNM_stDynamics
     int field_1A0;
     int field_1A4;
     float posX;
-    Uint32 posY;
-    Uint32 posZ;
+    uint32_t posY;
+    uint32_t posZ;
     int gap1B4;
     int field_1B8;
     int field_1BC;
@@ -1346,7 +1350,7 @@ struct __declspec(align(8)) DNM_stDynamics
     int field_4F4;
     int field_4F8;
     int field_4FC;
-    __byte gap500[112];
+    uint8_t gap500[112];
     char String1[4];
     int field_574;
     int field_578;
@@ -1425,13 +1429,13 @@ struct WP_tdstGraph_
 struct struct_Arc
 {
     int test;
-    Uint32 dword4;
-    Uint32 dword8;
-    Uint32 graphNode;
-    Uint32 nodeFrom;
-    Uint32 nodeTo;
-    Uint32 dword18;
-    Uint32 dword1C;
+    uint32_t dword4;
+    uint32_t dword8;
+    uint32_t graphNode;
+    uint32_t nodeFrom;
+    uint32_t nodeTo;
+    uint32_t dword18;
+    uint32_t dword1C;
 };
 
 struct WP_tdstGraphNode_
@@ -1452,8 +1456,8 @@ struct WP_tdstGraphNode_
 struct WP_tdstListOfArc_
 {
     WP_tdstGraphNode_* firstNode;
-    Uint32 dword4;
-    Uint32 dword8;
+    uint32_t dword4;
+    uint32_t dword8;
 };
 
 struct __declspec(align(2)) tdstKeyFrame_
@@ -1463,13 +1467,13 @@ struct __declspec(align(2)) tdstKeyFrame_
     int field_8;
     float floatC;
     __int16 gap10;
-    __byte bitmask;
+    uint8_t bitmask;
     int field_13;
     char field_17;
-    Uint16 word18;
-    Uint16 word1A;
-    Uint16 word1C;
-    Uint16 word1E;
+    uint16_t word18;
+    uint16_t word1A;
+    uint16_t word1C;
+    uint16_t word1E;
     __int16 field_20;
     __int16 field_22;
     int field_24;
@@ -1487,7 +1491,7 @@ struct tdstChannel_
 {
     __int16 gap0;
     __int16 subObjectIndex;
-    Uint16 word4;
+    uint16_t word4;
     __int16 field_6;
     int field_8;
     int field_C;
@@ -1498,18 +1502,18 @@ struct st_A3dGENERAL
     int gap0;
     int field_4;
     int field_8;
-    Uint16 wordC;
+    uint16_t wordC;
     __int16 gapE;
     __int16 field_10;
     int field_12;
     __int16 field_16;
-    Uint16 onlyFrameOffset_B;
+    uint16_t onlyFrameOffset_B;
     int gap1A;
     int field_1E;
     int field_22;
     int field_26;
     int field_2A;
-    Uint16 onlyFrameOffset_A;
+    uint16_t onlyFrameOffset_A;
     __int16 channelIndex;
     __int16 field_32;
     int field_34;
@@ -1517,9 +1521,9 @@ struct st_A3dGENERAL
 
 struct stOnlyFrame
 {
-    Uint16 quaternionOffset;
-    Uint16 vectorOffset;
-    Uint16 word4;
+    uint16_t quaternionOffset;
+    uint16_t vectorOffset;
+    uint16_t word4;
     __int16 hierarchyOffset;
     __int16 finalField;
 };
@@ -1589,10 +1593,10 @@ struct HIE_tdstSuperObject_Sector
 
 struct __declspec(align(2)) EngineObjectWrapper
 {
-    Uint32 dword0;
+    uint32_t dword0;
     tdstEngineObject* engineObject;
-    __byte gap8[4];
-    Uint16 wordC;
+    uint8_t gap8[4];
+    uint16_t wordC;
 };
 
 struct __declspec(align(2)) tdst3dData_Sector
@@ -1601,7 +1605,7 @@ struct __declspec(align(2)) tdst3dData_Sector
     tdstState_* animState;
     tdstState_* anotherState;
     int field_C;
-    Uint32 dword10;
+    uint32_t dword10;
     int gap14;
     int field_18;
     int field_1C;
@@ -1626,15 +1630,15 @@ struct __declspec(align(2)) tdst3dData_Sector
     int field_68;
     int field_6C;
     int field_70;
-    Uint16 currentFrame;
-    __byte somethingSound1;
+    uint16_t currentFrame;
+    uint8_t somethingSound1;
     char somethingSound2;
-    Uint32 dword78;
-    __byte gap7C[12];
+    uint32_t dword78;
+    uint8_t gap7C[12];
     tdstState_* newAnimState;
-    Uint16 word8C;
-    __byte byte8E;
-    __byte gap8F[13];
+    uint16_t word8C;
+    uint8_t byte8E;
+    uint8_t gap8F[13];
     int dword9C;
     int field_A0;
     int field_A4;
@@ -1643,14 +1647,14 @@ struct __declspec(align(2)) tdst3dData_Sector
     int field_B0;
     int field_B4;
     int field_B8;
-    Uint32 dwordBC;
-    Uint32 dwordC0;
-    Uint32 dwordC4;
-    Uint16 wordC8;
-    __byte byteCA;
-    __byte gapCB[21];
-    __byte framerate;
-    __byte byteE1;
+    uint32_t dwordBC;
+    uint32_t dwordC0;
+    uint32_t dwordC4;
+    uint16_t wordC8;
+    uint8_t byteCA;
+    uint8_t gapCB[21];
+    uint8_t framerate;
+    uint8_t byteE1;
     int field_E2;
     int field_E6;
     int field_EA;
@@ -1670,11 +1674,11 @@ struct __declspec(align(2)) tdst3dData_Sector
 
 struct __declspec(align(16)) COL_tdstCollideObject_
 {
-    Uint32 dword0;
+    uint32_t dword0;
     int field_4;
     int field_8;
     int field_C;
-    Uint32 dword10;
+    uint32_t dword10;
     int faces;
     int field_18;
     int field_1C;
@@ -1715,23 +1719,23 @@ struct collideObjectData
     int field_0;
     __int16 field_4;
     __declspec(align(4)) int field_8;
-    __byte gapC[4];
+    uint8_t gapC[4];
     int field_16;
 };
 
 struct GMT_tdstGameMaterial_
 {
-    __byte gap0[12];
-    Uint32 material;
+    uint8_t gap0[12];
+    uint32_t material;
 };
 
 struct __declspec(align(4)) struct_faceData
 {
     GMT_tdstGameMaterial_* gameMaterial;
-    Uint16 subFaceCount;
-    __declspec(align(4)) Uint32 dword8;
-    __byte gapC[4];
-    Uint32 normals;
+    uint16_t subFaceCount;
+    __declspec(align(4)) uint32_t dword8;
+    uint8_t gapC[4];
+    uint32_t normals;
 };
 
 struct Model_0_3
@@ -1749,21 +1753,21 @@ struct Model_0_3
 struct cameraParameters
 {
     int field_0;
-    __byte gap4[8];
+    uint8_t gap4[8];
     int field_12;
-    __byte gap10[136];
+    uint8_t gap10[136];
     int field_152;
     int field_156;
     int field_160;
-    __byte gapA4[4];
+    uint8_t gapA4[4];
     int field_168;
     int field_172;
     int field_176;
-    __byte gapB4[4];
+    uint8_t gapB4[4];
     int field_184;
     int field_188;
     int field_192;
-    __byte gapC4[4];
+    uint8_t gapC4[4];
     int field_200;
     int field_204;
     int field_208;
@@ -1781,7 +1785,7 @@ struct GLI_BIG_GLOBALS
 
 struct tdstStandardGame_
 {
-    __byte gap0[12];
+    uint8_t gap0[12];
     HIE_tdstSuperObject* superObject_maybe;
     int field_10;
     HIE_tdstSuperObject* superObject;
@@ -1796,7 +1800,7 @@ struct OLDtdstEngineObject
 struct __declspec(align(4)) struct_mechanicsIdCard
 {
     int field0;
-    __byte flags;
+    uint8_t flags;
     __declspec(align(4)) int gravity;
     int maxRebound;
     int int10;
@@ -1807,16 +1811,16 @@ struct __declspec(align(4)) struct_mechanicsIdCard
     int tiltIntensity;
     int tiltInertia;
     int tiltOrigin;
-    Uint32 inertiaMaxX;
-    Uint32 inertiaMaxY;
-    Uint32 inertiaMaxZ;
+    uint32_t inertiaMaxX;
+    uint32_t inertiaMaxY;
+    uint32_t inertiaMaxZ;
 };
 
 struct struct_rendercontext
 {
-    __byte gap0[8];
-    Uint32 dword8;
-    Uint32 dwordC;
+    uint8_t gap0[8];
+    uint32_t dword8;
+    uint32_t dwordC;
 };
 
 struct IPT_tdstEntryElement
@@ -1824,23 +1828,23 @@ struct IPT_tdstEntryElement
     int gap0;
     int field_4;
     IPT_tdstEntryElement* nextEntry;
-    Uint32 validCount;
+    uint32_t validCount;
     int field_10;
     int field_14;
 };
 
 struct struct_a1_3
 {
-    __byte f0[8];
+    uint8_t f0[8];
     char str1[256];
     char str2[256];
-    Uint32 dword8;
+    uint32_t dword8;
 };
 
 struct struct_a1_9
 {
-    __byte gap0[8];
-    Uint32 word8;
+    uint8_t gap0[8];
+    uint32_t word8;
 };
 
 struct struct_MecObstacle_Field28
@@ -1888,18 +1892,18 @@ struct DNM_stMecObstacle
 struct __declspec(align(1)) COL_tdstGVForCollision_
 {
     int field_0;
-    __byte gap4[572];
+    uint8_t gap4[572];
     int field_576;
     int field_580;
     int field_584;
-    __byte gap24C[12];
+    uint8_t gap24C[12];
     int field_600;
     int field_604;
     int field_608;
     int field_612;
     int field_616;
     int field_620;
-    __byte gap270[68];
+    uint8_t gap270[68];
     int field_692;
     int field_696;
     char field_700;
@@ -1907,18 +1911,18 @@ struct __declspec(align(1)) COL_tdstGVForCollision_
 
 struct __declspec(align(2)) struct_SAIlist
 {
-    __byte gap0[4];
+    uint8_t gap0[4];
     void* dest;
     const void* source;
-    Uint32 num;
-    Uint16 mode;
+    uint32_t num;
+    uint16_t mode;
 };
 
 struct __declspec(align(2)) struct_g_p_stNextPtrRelocInfo
 {
-    Uint32 dword0;
-    __byte byte4;
-    __byte byte5;
+    uint32_t dword0;
+    uint8_t byte4;
+    uint8_t byte5;
 };
 
 #pragma pack(pop)

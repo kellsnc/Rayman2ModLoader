@@ -6,6 +6,9 @@
 #ifndef RAYMAN2MODLOADER_VARS_H
 #define RAYMAN2MODLOADER_VARS_H
 
+#include <cstdio>
+#include <cstdint>
+
 typedef bool(__cdecl* BoolFuncPtr)(void);
 typedef int(__cdecl* SectionInfoPtr)(tdstSectInfo_*, int);
 typedef int(__cdecl* EvalFuncPtr)(HIE_tdstSuperObject*, tdstNodeInterpret_*, tdstGetSetParam_*);
@@ -69,12 +72,12 @@ DataPointer(char, gcGlobAleat, 0x4A7070);
 DataPointer(int, g_bRealTimeAnimationLoad, 0x4A7104);
 DataPointer(int, GEO_g_xZFar, 0x4A7204);
 DataPointer(int, g_bGLDBlockSwaping, 0x4A7210);
-DataPointer(Uint32, someBackgroundColor, 0x4A721C);
+DataPointer(uint32_t, someBackgroundColor, 0x4A721C);
 DataPointer(int, IsGLIInitialized, 0x4A7234);
 DataPointer(int, hwnd, 0x4A7238);
 DataPointer(char, GLI_cGlobalFogIsOn, 0x4A7248);
 DataPointer(int, g_AlphabetCharacterpointer_new, 0x4A724C);
-DataPointer(Uint32, GLI_g_hMenuBackgroundObject, 0x4A7250);
+DataPointer(uint32_t, GLI_g_hMenuBackgroundObject, 0x4A7250);
 DataPointer(int, g_AlphabetCharacterPointer, 0x4A727C);
 DataPointer(float, MEC_g_xBaseCoeff, 0x4B72C4);
 DataPointer(float, MEC_g_xWalkCoeff, 0x4B72C8);
@@ -109,7 +112,7 @@ DataPointer(int, FIL_g_hHandleToFileInConcatFile, 0x4B9C48);
 DataArray(char, cmdline, 0x4E0DA0, MAX_PATH);
 DataPointer(HANDLE, hSemaphore_0, 0x4E0D80);
 DataPointer(HANDLE, ExitEvt, 0x4E0ECC);
-DataArray(__byte, textTable, 0x4E1093, 420);
+DataArray(uint8_t, textTable, 0x4E1093, 420);
 DataPointer(char, cNoDynChangeTheta, 0x4E92FC);
 DataPointer(char, cRefAxisIsAlreadyComputed, 0x4E92FD);
 DataPointer(int*, g_a_hPersoInZone, 0x4E9320);

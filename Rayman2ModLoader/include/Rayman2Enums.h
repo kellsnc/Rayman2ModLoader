@@ -6,6 +6,8 @@
 #ifndef RAYMAN2MODLOADER_ENUMS_H
 #define RAYMAN2MODLOADER_ENUMS_H
 
+#include <cstdint>
+
 enum Languages : __int32
 {
 	Language_English,
@@ -15,7 +17,7 @@ enum Languages : __int32
 	Language_German
 };
 
-enum LEVEL_STATE : __byte
+enum LEVEL_STATE : uint8_t
 {
 	LEVEL_STATE_PRELOAD = 0x1,
 	LEVEL_STATE_LOADED_FILES = 0x3,

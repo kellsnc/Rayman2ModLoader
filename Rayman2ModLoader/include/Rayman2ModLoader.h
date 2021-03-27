@@ -9,11 +9,8 @@
 #error Mods must be built targeting 32-bit x86, change your settings.
 #endif
 
-#define Sint32 signed __int32
-#define Uint32 unsigned __int32
-#define Sint16 signed __int16
-#define Uint16 unsigned __int16
-#define __byte unsigned __int8
+#include <cstdio>
+#include <cstdint>
 
 #include "MemAccess.h"
 #include "Rayman2ModInfo.h"

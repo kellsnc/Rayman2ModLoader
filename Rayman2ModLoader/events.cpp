@@ -35,12 +35,12 @@ void __cdecl OnFrame() {
 	original();
 }
 
-void __cdecl BeforeRender(Uint32 a1) {
+void __cdecl BeforeRender(uint32_t a1) {
 	RaiseEvents(modBeforeRenderEvents);
 	j_GLI_DRV_bBeginScene(a1);
 }
 
-void __cdecl AfterRender(Uint32 a1) {
+void __cdecl AfterRender(uint32_t a1) {
 	RaiseEvents(modAfterRenderEvents);
 	j_GLI_DRV_bEndScene(a1);
 }
