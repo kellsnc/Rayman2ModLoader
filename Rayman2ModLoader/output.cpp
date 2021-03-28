@@ -30,7 +30,7 @@ void __cdecl PrintDebug(const char* Format, ...) {
 		fputs(buf, DebugFile);
 		fflush(DebugFile);
 	}
-
+	
 	delete[] buf;
 }
 

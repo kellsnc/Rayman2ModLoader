@@ -36,7 +36,7 @@ void* __cdecl FIL_fn_vOpenConcatFile_r(const char* Str) {
 	std::transform(outputPath.begin(), outputPath.end(), outputPath.begin(), ::tolower);
 
 	if (FileExists(outputPath)) {
-		remove(outputPath.c_str());
+		std::remove(outputPath.c_str());
 	}
 
 	// Check if the file has had external modifications
@@ -47,11 +47,11 @@ void* __cdecl FIL_fn_vOpenConcatFile_r(const char* Str) {
 			if (FileExists(outputPath)) {
 				inputPath = outputPath;
 			}
+			else {
+				filesToDelete.push_back(outputPath);
+			}
 
 			CNTArchive* cnt = new CNTArchive(inputPath);
-
-			outputPath = GetDirectory(Str) + "\\." + GetBaseName(Str); // new file name
-			filesToDelete.push_back(outputPath);
 
 			cnt->Merge(*archive.second); // merge the new textures
 			cnt->SaveToFile(outputPath); // save file
@@ -74,7 +74,7 @@ void TexturesDelete() {
 
 	for (auto& path : filesToDelete) {
 		if (FileExists(path)) {
-			remove(path.c_str());
+			std::remove(path.c_str());
 		}
 	}
 }
