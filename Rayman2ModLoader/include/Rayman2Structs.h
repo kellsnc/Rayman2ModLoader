@@ -320,7 +320,7 @@ struct struct_fixFileObject
 
 struct EngineStructure
 {
-    LEVEL_STATE engineMode;
+    ENGINE_STATE engineMode;
     char field_1;
     char field_2;
     char field_3;

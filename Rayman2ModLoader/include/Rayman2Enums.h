@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-enum Languages : __int32
+enum Languages : int32_t
 {
 	Language_English,
 	Language_French,
@@ -17,12 +17,19 @@ enum Languages : __int32
 	Language_German
 };
 
-enum LEVEL_STATE : uint8_t
+enum ENGINE_STATE : int8_t
 {
-	LEVEL_STATE_PRELOAD = 0x1,
-	LEVEL_STATE_LOADED_FILES = 0x3,
-	LEVEL_STATE_LOADINGSCREEN = 0x5,
-	LEVEL_STATE_LOADED = 0x9
+	ENGINE_STATE_0 = 0x0,
+	ENGINE_STATE_PRELOAD = 0x1,
+	ENGINE_STATE_EXIT = 0x2,
+	ENGINE_STATE_INITSTUFF = 0x3,
+	ENGINE_STATE_INITLEVEL = 0x4,
+	ENGINE_STATE_LOADLEVEL = 0x5,
+	ENGINE_STATE_6 = 0x6,
+	ENGINE_STATE_7 = 0x7,
+	ENGINE_STATE_8 = 0x8,
+	ENGINE_STATE_INGAME = 0x9,
+	ENGINE_STATE_10 = 0xA,
 };
 
 enum SOUND_BANK_STATE

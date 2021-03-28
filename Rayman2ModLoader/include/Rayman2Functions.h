@@ -37,7 +37,7 @@ FunctionPointer(int, fn_vDesInitLevelLoop, (), 0x4044A0);
 FunctionPointer(int, fn_vCopyProtectKeyToModels, (), 0x4045F0);
 FunctionPointer(int, fn_vChooseTheGoodDesInit, (), 0x404940);
 FunctionPointer(int, LoadDSCFiles, (), 0x404A40);
-FunctionPointer(void, fn_vChangeEngineMode, (unsigned __int8 levelState), 0x404BF0);
+FunctionPointer(void, fn_vChangeEngineMode, (ENGINE_STATE mode), 0x404BF0);
 FunctionPointer(int, fn_vSetFirstLevelName, (int a1), 0x404CC0);
 FunctionPointer(int, fn_p_szGetFirstLevelName, (), 0x404CF0);
 FunctionPointer(char*, fn_vSetLevelName, (const char* levelName), 0x404D00);
