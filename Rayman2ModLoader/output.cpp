@@ -48,7 +48,7 @@ void InitOutput(const IniGroup* loaderconfig) {
 	if (loaderconfig->getBool("DebugFile")) {
 		_wfopen_s(&DebugFile, L"Rayman2ModLoader.log", L"a+");
 	}
-
+	
 	// If console/log enabled, print mod loader information.
 	if (DebugConsole == true || DebugFile != nullptr) {
 		PrintDebug("[ModLoader] Rayman2 Mod Loader, version %i (" __TIMESTAMP__ ")\n", ModLoaderVer);
