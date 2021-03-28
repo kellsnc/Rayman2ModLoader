@@ -29,15 +29,26 @@ void AddFileStreamToReplacementArchive(const std::string& path, const std::vecto
 }
 
 void* __cdecl FIL_fn_vOpenConcatFile_r(const char* Str) {
-	std::string outputPath = Str;
-	
+	std::string inputPath = Str;
+	std::transform(inputPath.begin(), inputPath.end(), inputPath.begin(), ::tolower);
+
+	std::string outputPath = GetDirectory(Str) + "\\." + GetBaseName(Str);
+	std::transform(outputPath.begin(), outputPath.end(), outputPath.begin(), ::tolower);
+
+	if (FileExists(outputPath)) {
+		remove(outputPath.c_str());
+	}
+
 	// Check if the file has had external modifications
 	for (auto& archive : archivesReplacements) {
-		std::transform(outputPath.begin(), outputPath.end(), outputPath.begin(), ::tolower);
 		std::transform(archive.first.begin(), archive.first.end(), archive.first.begin(), ::tolower);
 
-		if (archive.first.find(outputPath) != std::string::npos) {
-			CNTArchive* cnt = new CNTArchive(Str);
+		if (archive.first.find(inputPath) != std::string::npos) {
+			if (FileExists(outputPath)) {
+				inputPath = outputPath;
+			}
+
+			CNTArchive* cnt = new CNTArchive(inputPath);
 
 			outputPath = GetDirectory(Str) + "\\." + GetBaseName(Str); // new file name
 			filesToDelete.push_back(outputPath);
