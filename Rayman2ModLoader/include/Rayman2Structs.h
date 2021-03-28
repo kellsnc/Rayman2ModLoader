@@ -321,23 +321,11 @@ struct struct_fixFileObject
 struct EngineStructure
 {
     ENGINE_STATE engineMode;
-    char field_1;
-    char field_2;
-    char field_3;
-    int field_4;
-    int field_8;
-    int field_C;
-    int field_10;
-    int field_14;
-    int field_18;
-    int levelName;
-    int field_20;
-    int field_23;
-    int field_27;
-    int field_2B;
-    int field_2F;
-    int field_33;
-    int field_37;
+    const char* currentLevelName;
+    char gap6[26];
+    const char* nextLevelName;
+    char gap23[26];
+    const char* firstLevelName;
     int field_3B;
     int field_3F;
     int field_43;
