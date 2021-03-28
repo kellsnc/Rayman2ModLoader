@@ -56,9 +56,9 @@ int CNTArchive::GetDirectoryIndex(std::string path) {
 	return folders.size();
 }
 
-int CNTArchive::GetFileIndex(std::string name) {
+int CNTArchive::GetFileIndex(std::string name, int folderid) {
 	for (int i = 0; i < files.size(); ++i) {
-		if (files[i].name.compare(name) == 0) {
+		if (files[i].name.compare(name) == 0 && files[i].folderID == folderid) {
 			return i;
 		}
 	}
@@ -332,7 +332,15 @@ void CNTArchive::Merge(const CNTArchive& archive) {
 	}
 	
 	for (auto& impfile : archive.files) {
-		int index = GetFileIndex(impfile.name);
+		int dir = 0;
+
+		for (auto& i : newDirectoriesIndices) {
+			if (impfile.folderID == i.first) {
+				dir = i.second;
+			}
+		}
+
+		int index = GetFileIndex(impfile.name, dir);
 
 		if (index < files.size()) {
 			// file exists
@@ -345,11 +353,7 @@ void CNTArchive::Merge(const CNTArchive& archive) {
 			files.push_back(file);
 		}
 
-		for (auto& i : newDirectoriesIndices) {
-			if (files[index].folderID == i.first) {
-				files[index].folderID = i.second;
-			}
-		}
+		files[index].folderID = dir;
 	}
 
 	UpdateCounts();

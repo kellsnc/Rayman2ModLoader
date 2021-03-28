@@ -59,7 +59,7 @@ private:
 	std::vector<CNTFile> files;
 
 	int GetDirectoryIndex(std::string path);
-	int GetFileIndex(std::string name);
+	int GetFileIndex(std::string name, int folderid);
 
 	void AddOrReplaceFile(const std::string& fileName, char* buffer, const int length);
 	void AddOrReplaceFile(const std::string& fileName);
