@@ -43,7 +43,7 @@ void InitOutput(const IniGroup* loaderconfig) {
 		SetConsoleTitle(L"Rayman2 Mod Loader output");
 		freopen_s(&ConsoleStream, "CONOUT$", "wb", stdout);
 	}
-
+	
 	// Open log file (DebugFile stays null if not enabled)
 	if (loaderconfig->getBool("DebugFile")) {
 		_wfopen_s(&DebugFile, L"Rayman2ModLoader.log", L"a+");

@@ -27,7 +27,7 @@ namespace Rayman2ModManager
 			if (args.Length > 0 && args[0] == "urlhandler")
 			{
 				using (var hkcr = Registry.ClassesRoot)
-				using (var key = hkcr.CreateSubKey(protocol))
+				using (var key = hkcr.CreateSubKey("rm2mm"))
 				{
 					key.SetValue(null, "URL:Rayman2 Mod Manager Protocol");
 					key.SetValue("URL Protocol", string.Empty);
