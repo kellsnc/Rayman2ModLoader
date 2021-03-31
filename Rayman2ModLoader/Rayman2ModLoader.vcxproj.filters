@@ -69,13 +69,16 @@
     <ClInclude Include="filemap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="exports.h">
+    <ClInclude Include="glide.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="funchelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="textures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fixes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -110,10 +113,13 @@
     <ClCompile Include="filemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="exports.cpp">
+    <ClCompile Include="glide.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="textures.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fixes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

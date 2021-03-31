@@ -6,9 +6,6 @@
 #include "pch.h"
 #include "funchelper.h"
 
-#include "mods.h"
-#include "codes.h"
-
 // Path to the game (where this process is)
 std::string GamePath;
 
@@ -31,7 +28,7 @@ static void WrongExe() {
         "Please obtain the EXE file from GoG or from the original European release.",
         "Rayman2 Mod Loader", MB_ICONERROR);
 
-    ExitProcess(1);
+    ExitProcess(EXIT_FAILURE);
 }
 
 // This removes the write protection from the rdata section.
@@ -111,6 +108,9 @@ void InitModLoader() {
         APIName = loaderconfig->getString("APIName", APIName); // Original API name.
         ModsPath = loaderconfig->getString("ModsPath", ModsPath); // Path to the "mods" folder.
 
+        // Init game fixes
+        InitFixes(loaderconfig);
+
         // Init debug output system
         InitOutput(loaderconfig);
 
@@ -155,7 +155,7 @@ void InitModLoader() {
             L"Rayman2 Mod Loader", MB_OKCANCEL | MB_ICONERROR);
 
         if (type != IDOK) {
-            ExitProcess(1);
+            ExitProcess(EXIT_FAILURE);
         }
     }
     

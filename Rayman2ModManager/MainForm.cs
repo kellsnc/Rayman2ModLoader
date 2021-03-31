@@ -123,6 +123,7 @@ namespace Rayman2ModManager
             loaderini.APIName = comboBoxAPI.Text;
             loaderini.DebugConsole = checkBoxConsole.Checked;
             loaderini.DebugFile = checkBoxLog.Checked;
+            loaderini.PauseWhenInactive = checkBoxFocus.Checked;
 
             loaderini.UpdateCheck = updateCheckStartupCheckBox.Checked;
             loaderini.ModUpdateCheck = modUpdateCheckStartupCheckBox.Checked;
@@ -142,7 +143,10 @@ namespace Rayman2ModManager
 
             configFile.GameConfig.ParticuleRate = comboBoxParticules.Text;
             configFile.GameConfig.TexturesMem = comboBoxTexMem.Text;
-            configFile.GameConfig.GLI_Mode = "1 - " + numericUpDown_Width.Value.ToString() + " x " + numericUpDown_Height.Value.ToString() + " x " + comboBoxDepth.Text;
+
+            string fs = checkBoxFullScreen.Checked == true ? "1" : "0";
+
+            configFile.GameConfig.GLI_Mode = fs + " - " + numericUpDown_Width.Value.ToString() + " x " + numericUpDown_Height.Value.ToString() + " x " + comboBoxDepth.Text;
 
             IniSerializer.Serialize(configFile, ubiIni);
         }
@@ -206,6 +210,7 @@ namespace Rayman2ModManager
             checkBoxLog.Checked = loaderini.DebugFile;
             comboBoxDLL.Text = loaderini.DllName;
             comboBoxAPI.Text = loaderini.APIName;
+            checkBoxFocus.Checked = loaderini.PauseWhenInactive;
 
             updateCheckStartupCheckBox.Checked = loaderini.UpdateCheck;
             modUpdateCheckStartupCheckBox.Checked = loaderini.ModUpdateCheck;
@@ -215,6 +220,8 @@ namespace Rayman2ModManager
 
         private void ReadGameConfig()
         {
+            bool error_ini = false;
+
             if (File.Exists(ubiIni))
             {
                 configFile = IniSerializer.Deserialize<ConfigFile>(ubiIni);
@@ -223,19 +230,34 @@ namespace Rayman2ModManager
             { 
                 if (File.Exists("C:\\Windows\\Ubisoft\\ubi.ini"))
                 {
-                    ubiIni = "C:\\Windows\\Ubisoft\\ubi.ini";
-                    configFile = IniSerializer.Deserialize<ConfigFile>(ubiIni);
+                    string ubiIni_ = "C:\\Windows\\Ubisoft\\ubi.ini";
+                    configFile = IniSerializer.Deserialize<ConfigFile>(ubiIni_);
 
                     if (configFile.GameConfig.GLI_Device == null)
                     {
-                        MessageBox.Show(this, "Error while reading ubi.ini in \"C:\\Windows\\Ubisoft\\ubi.ini\", install the game properly.", "Rayman2 Mod Loader", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        Close();
+                        error_ini = true;
+                    } else
+                    {
+                        ubiIni = ubiIni_;
                     }
                 } 
                 else
                 {
-                    MessageBox.Show(this, "Cannot find the game's configuration, creating one in your game's directory...", "Rayman2 Mod Loader", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    error_ini = true;
+                }
+            }
+
+            if (error_ini == true)
+            {
+                DialogResult result = MessageBox.Show(this, "Cannot find the game's configuration, do you want to create one in this directory?", "Rayman2 Mod Loader", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                
+                if (result == DialogResult.Yes)
+                {
                     configFile = new ConfigFile();
+                } else
+                {
+                    Close();
+                    return;
                 }
             }
 
@@ -244,14 +266,25 @@ namespace Rayman2ModManager
             comboBoxTexMem.Text = configFile.GameConfig.TexturesMem;
             comboBoxParticules.Text = configFile.GameConfig.ParticuleRate;
 
-            string[] stringSeparators = new string[] { " x " };
-            string mode = configFile.GameConfig.GLI_Mode.Remove(0, 4);
-            string[] subStrings = mode.Split(stringSeparators, StringSplitOptions.None);
+            checkBoxFullScreen.Checked = Convert.ToBoolean(Convert.ToInt32(configFile.GameConfig.GLI_Mode.ElementAt(0)));
 
-            numericUpDown_Width.Value = decimal.Parse(subStrings[0]);
-            numericUpDown_Height.Value = decimal.Parse(subStrings[1]);
-            comboBoxDepth.Text = subStrings[2];
-            
+            try
+            {
+                string[] stringSeparators = new string[] { " x " };
+                string mode = configFile.GameConfig.GLI_Mode.Remove(0, 4);
+                string[] subStrings = mode.Split(stringSeparators, StringSplitOptions.None);
+
+                numericUpDown_Width.Value = decimal.Parse(subStrings[0]);
+                numericUpDown_Height.Value = decimal.Parse(subStrings[1]);
+                comboBoxDepth.Text = subStrings[2];
+            }
+            catch
+            {
+                numericUpDown_Width.Value = 1280;
+                numericUpDown_Height.Value = 1024;
+                comboBoxDepth.Text = "16";
+            }
+           
             if (loaderInstalled == true)
             {
                 buttonInstall.Text = "Uninstall";

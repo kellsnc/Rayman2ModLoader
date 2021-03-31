@@ -5,15 +5,16 @@
 
 #include "pch.h"
 
-HMODULE hOrig = NULL;
-
 #define GETEXPORT(name) EXPORT_##name## = (int)GetProcAddress(hOrig, #name##);
+#define CALLEXPORT(name) ((decltype(name)*)EXPORT_##name)
+#define JUMPEXPORT(adr) __asm {jmp EXPORT_##adr}
 #define EXPORT __declspec(dllexport)
 #define NAKED __declspec(naked)
-#define JUMP(adr) __asm {jmp adr};
 
-BOOL(*EXPORT_GLI_DRV_lGetDllInfo)(const char*, char*) = NULL;
+static bool DLLReplaced = false;
+static HMODULE hOrig = NULL;
 
+static int EXPORT_GLI_DRV_lGetDllInfo;
 static int EXPORT_GLI_DRV_lSetCommonFct;
 static int EXPORT_GLI_DRV_lSetCommonData;
 static int EXPORT_GLI_DRV_bBeginScene;
@@ -56,15 +57,11 @@ static int EXPORT_GLI_DRV_xSendListToViewport;
 static int EXPORT_GLI_DRV_xSendSingleTriangleToClip_TRIANGLES;
 static int EXPORT_GLI_DRV_vReadaptDisplay;
 
-static bool DLLReplaced = false;
-
 void CopyAPIString(char* output, const char* str) {
 	size_t length = strlen(str);
-	memcpy_s(output, length, str, length);
+	memcpy_s(output, length + 1, str, length + 1);
 	*(output + length) = *(char*)"\0";
 }
-
-// Redirect all the exports to the original DLL
 
 extern "C" {
 	EXPORT BOOL GLI_DRV_lGetDllInfo(const char* type, char* output) {
@@ -74,212 +71,214 @@ extern "C" {
 			return true;
 		}
 
-		return EXPORT_GLI_DRV_lGetDllInfo(type, output);
+		return CALLEXPORT(GLI_DRV_lGetDllInfo)(type, output);
 	}
 
 	EXPORT NAKED BOOL GLI_DRV_fn_lGetAllDisplayConfig(LPVOID gliSet)
 	{
-		JUMP(EXPORT_GLI_DRV_fn_lGetAllDisplayConfig);
+		JUMPEXPORT(GLI_DRV_fn_lGetAllDisplayConfig);
 	}
 
-	EXPORT NAKED BOOL GLI_DRV_lSetCommonData(const char* szName, void* value)
+	EXPORT NAKED BOOL GLI_DRV_lSetCommonData(const char* name, void* ptr)
 	{
-		JUMP(EXPORT_GLI_DRV_lSetCommonData);
+		JUMPEXPORT(GLI_DRV_lSetCommonData)(name, ptr);
 	}
 
-	EXPORT NAKED BOOL GLI_DRV_lSetCommonFct(const char* szName, LPVOID)
+	EXPORT NAKED BOOL GLI_DRV_lSetCommonFct(const char* name, LPVOID function)
 	{
-		JUMP(EXPORT_GLI_DRV_lSetCommonFct);
+		JUMPEXPORT(GLI_DRV_lSetCommonFct);
 	}
 
-	EXPORT NAKED BOOL GLI_DRV_fnl_EnumModes(char* szDrvDspName, char* szDevName)
+	EXPORT BOOL GLI_DRV_fnl_EnumModes(char* szDrvDspName, char* szDevName)
 	{
-		JUMP(EXPORT_GLI_DRV_fnl_EnumModes)
+		AddDisplayMode(OptionScreenMode, OptionScreenWidth, OptionScreenHeight, OptionScreenDepth);
+		
+		return true;
 	}
 
-	EXPORT NAKED DWORD GLI_DRV_xInitDriver(HWND hWnd, BOOL bFullscreen, int xRight, int yBottom, int lBitDepth)
+	EXPORT NAKED BOOL GLI_DRV_xInitDriver(HWND hWnd, bool fullscreen, int width, int height, int depth)
 	{
-		JUMP(EXPORT_GLI_DRV_xInitDriver);
+		JUMPEXPORT(GLI_DRV_xInitDriver);
 	}
 
 	EXPORT NAKED void GLI_DRV_vCloseDriver()
 	{
-		JUMP(EXPORT_GLI_DRV_vCloseDriver);
+		JUMPEXPORT(GLI_DRV_vCloseDriver);
 	}
 
 	EXPORT NAKED BOOL GLI_DRV_bBeginScene()
 	{
-		JUMP(EXPORT_GLI_DRV_bBeginScene);
+		JUMPEXPORT(GLI_DRV_bBeginScene);
 	}
 
 	EXPORT NAKED BOOL GLI_DRV_bEndScene()
 	{
-		JUMP(EXPORT_GLI_DRV_bEndScene);
+		JUMPEXPORT(GLI_DRV_bEndScene);
 	}
 
 	EXPORT NAKED BOOL GLI_DRV_bLockDevice(DWORD* a1, DWORD* a2)
 	{
-		JUMP(EXPORT_GLI_DRV_bLockDevice);
+		JUMPEXPORT(GLI_DRV_bLockDevice);
 	}
 
 	EXPORT NAKED BOOL GLI_DRV_bUnlockDevice()
 	{
-		JUMP(EXPORT_GLI_DRV_bUnlockDevice);
+		JUMPEXPORT(GLI_DRV_bUnlockDevice);
 	}
 
 	EXPORT NAKED void GLI_DRV_vClearDevice(int a1, int a2, int a3)
 	{
-		JUMP(EXPORT_GLI_DRV_vClearDevice);
+		JUMPEXPORT(GLI_DRV_vClearDevice);
 	}
 
 	EXPORT NAKED void GLI_DRV_vFlipDevice(int waitFrames)
 	{
-		JUMP(EXPORT_GLI_DRV_vFlipDevice);
+		JUMPEXPORT(GLI_DRV_vFlipDevice);
 	}
 
-	EXPORT NAKED void GLI_DRV_vFlipDeviceWithSyncro()
+	EXPORT void GLI_DRV_vFlipDeviceWithSyncro()
 	{
-		JUMP(EXPORT_GLI_DRV_vFlipDeviceWithSyncro);
+		CALLEXPORT(GLI_DRV_vFlipDevice)(1);
 	}
 
 	EXPORT NAKED void GLI_DRV_vGetStats()
 	{
-		JUMP(EXPORT_GLI_DRV_vGetStats);
+		JUMPEXPORT(GLI_DRV_vGetStats);
 	}
 
 	EXPORT NAKED void GLI_DRV_vDownLoadTextures(int a1, int a2, int a3)
 	{
-		JUMP(EXPORT_GLI_DRV_vDownLoadTextures);
+		JUMPEXPORT(GLI_DRV_vDownLoadTextures);
 	}
 
 	EXPORT NAKED void GLI_DRV_vUnLoadTextures()
 	{
-		JUMP(EXPORT_GLI_DRV_vUnLoadTextures);
+		JUMPEXPORT(GLI_DRV_vUnLoadTextures);
 	}
 
 	EXPORT NAKED int GLI_DRV_lGetSizeOfTexture(void* a1)
 	{
-		JUMP(EXPORT_GLI_DRV_lGetSizeOfTexture);
+		JUMPEXPORT(GLI_DRV_lGetSizeOfTexture);
 	}
 
 	EXPORT NAKED void GLI_DRV_vDoOpaqueTextureSelection(int a1)
 	{
-		JUMP(EXPORT_GLI_DRV_vDoOpaqueTextureSelection);
+		JUMPEXPORT(GLI_DRV_vDoOpaqueTextureSelection);
 	}
 
 	EXPORT NAKED HANDLE GLI_DRV_hChangeMode(BOOL bFullscreen, int xRight, int yBottom, int bitDepth)
 	{
-		JUMP(EXPORT_GLI_DRV_hChangeMode);
+		JUMPEXPORT(GLI_DRV_hChangeMode);
 	}
 
 	EXPORT NAKED BOOL GLI_DRV_bWindowedModeIsOptimized()
 	{
-		JUMP(EXPORT_GLI_DRV_bWindowedModeIsOptimized);
+		JUMPEXPORT(GLI_DRV_bWindowedModeIsOptimized);
 	}
 
 	EXPORT NAKED void GLI_DRV_vOptimizedWindowedMode()
 	{
-		JUMP(EXPORT_GLI_DRV_vOptimizedWindowedMode);
+		JUMPEXPORT(GLI_DRV_vOptimizedWindowedMode);
 	}
 
 	EXPORT NAKED void GLI_DRV_vNonOptimizedWindowedMode()
 	{
-		JUMP(EXPORT_GLI_DRV_vNonOptimizedWindowedMode);
+		JUMPEXPORT(GLI_DRV_vNonOptimizedWindowedMode);
 	}
 
 	EXPORT NAKED BOOL GLI_DRV_bPrepareForGliWindowed(HWND hWnd)
 	{
-		JUMP(EXPORT_GLI_DRV_bPrepareForGliWindowed);
+		JUMPEXPORT(GLI_DRV_bPrepareForGliWindowed);
 	}
 
 	EXPORT NAKED void GLI_DRV_vPrepareForGliFullScreen(HWND hWnd)
 	{
-		JUMP(EXPORT_GLI_DRV_vPrepareForGliFullScreen);
+		JUMPEXPORT(GLI_DRV_vPrepareForGliFullScreen);
 	}
 
 	EXPORT NAKED void GLI_DRV_vActivateGli(HWND hWnd, BOOL a2)
 	{
-		JUMP(EXPORT_GLI_DRV_vActivateGli);
+		JUMPEXPORT(GLI_DRV_vActivateGli);
 	}
 
 	EXPORT NAKED void GLI_DRV_vReadaptDisplay()
 	{
-		JUMP(EXPORT_GLI_DRV_vReadaptDisplay);
+		JUMPEXPORT(GLI_DRV_vReadaptDisplay);
 	}
 
 	EXPORT NAKED void GLI_DRV_vAddBlackPolygon(int a1, int a2, int a3, int a4)
 	{
-		JUMP(EXPORT_GLI_DRV_vAddBlackPolygon);
+		JUMPEXPORT(GLI_DRV_vAddBlackPolygon);
 	}
 
 	EXPORT NAKED void GLI_DRV_vNoBlackPolygon()
 	{
-		JUMP(EXPORT_GLI_DRV_vNoBlackPolygon);
+		JUMPEXPORT(GLI_DRV_vNoBlackPolygon);
 	}
 
 	EXPORT NAKED void GLI_DRV_vSetZClip(float a1, int a2)
 	{
-		JUMP(EXPORT_GLI_DRV_vSetZClip);
+		JUMPEXPORT(GLI_DRV_vSetZClip);
 	}
 
 	EXPORT NAKED void GLI_DRV_vSetClipWindow(float a1, int a2, int a3, int a4, int a5)
 	{
-		JUMP(EXPORT_GLI_DRV_vSetClipWindow);
+		JUMPEXPORT(GLI_DRV_vSetClipWindow);
 	}
 
 	EXPORT NAKED void GLI_DRV_vSendSingleLineToClip(int a1, int a2, int a3, int a4, int a5)
 	{
-		JUMP(EXPORT_GLI_DRV_vSendSingleLineToClip);
+		JUMPEXPORT(GLI_DRV_vSendSingleLineToClip);
 	}
 
 	EXPORT NAKED void GLI_DRV_vSendSpriteToClip(int a1, int a2, int a3)
 	{
-		JUMP(EXPORT_GLI_DRV_vSendSpriteToClip);
+		JUMPEXPORT(GLI_DRV_vSendSpriteToClip);
 	}
 
 	EXPORT NAKED void GLI_DRV_vSendSpriteToClipWithColors(int a1, int a2, int a3, int a4)
 	{
-		JUMP(EXPORT_GLI_DRV_vSendSpriteToClipWithColors);
+		JUMPEXPORT(GLI_DRV_vSendSpriteToClipWithColors);
 	}
 
 	EXPORT NAKED void GLI_DRV_vSendSpriteToClipWithUV(int a1, int a2, int a3, int a4)
 	{
-		JUMP(EXPORT_GLI_DRV_vSendSpriteToClipWithUV);
+		JUMPEXPORT(GLI_DRV_vSendSpriteToClipWithUV);
 	}
 
 	EXPORT NAKED int GLI_DRV_xSendElementTIToClip_TRIANGLES(int a1, int a2)
 	{
-		JUMP(EXPORT_GLI_DRV_xSendElementTIToClip_TRIANGLES);
+		JUMPEXPORT(GLI_DRV_xSendElementTIToClip_TRIANGLES);
 	}
 
 	EXPORT NAKED int GLI_DRV_xSendSingleTriangleToClip_TRIANGLES(int a1, int a2, int a3)
 	{
-		JUMP(EXPORT_GLI_DRV_xSendSingleTriangleToClip_TRIANGLES);
+		JUMPEXPORT(GLI_DRV_xSendSingleTriangleToClip_TRIANGLES);
 	}
 
 	EXPORT NAKED DWORD GLI_DRV_xClearViewingList()
 	{
-		JUMP(EXPORT_GLI_DRV_xClearViewingList);
+		JUMPEXPORT(GLI_DRV_xClearViewingList);
 	}
 
 	EXPORT NAKED DWORD GLI_DRV_xSendListToViewport()
 	{
-		JUMP(EXPORT_GLI_DRV_xSendListToViewport);
+		JUMPEXPORT(GLI_DRV_xSendListToViewport);
 	}
 
 	EXPORT NAKED void GLI_DRV_vClearZBufferRegion()
 	{
-		JUMP(EXPORT_GLI_DRV_vClearZBufferRegion);
+		JUMPEXPORT(GLI_DRV_vClearZBufferRegion);
 	}
 
 	EXPORT NAKED void GLI_DRV_vComputeFogEffect(int a1)
 	{
-		JUMP(EXPORT_GLI_DRV_vComputeFogEffect);
+		JUMPEXPORT(GLI_DRV_vComputeFogEffect);
 	}
 
 	EXPORT NAKED void GLI_DRV_vWrite16bBitmapToBackBuffer(int a1, int a2, int a3, int a4, int a5, int a6, int a7)
 	{
-		JUMP(EXPORT_GLI_DRV_vWrite16bBitmapToBackBuffer);
+		JUMPEXPORT(GLI_DRV_vWrite16bBitmapToBackBuffer);
 	}
 }
 
@@ -292,13 +291,12 @@ void LoadOriginalDLL() {
 
 	if (hOrig == NULL) {
 		MessageBoxA(NULL, "Cannot load the original DLL, check the Mod Manager options", "Rayman2 Mod Manager", MB_OK | MB_ICONERROR);
-		ExitProcess(1);
+		ExitProcess(EXIT_FAILURE);
 	}
 
 	// Get pointer to the original functions to call them back
 
-	EXPORT_GLI_DRV_lGetDllInfo = (BOOL(*)(const char*, char*))GetProcAddress(hOrig, "GLI_DRV_lGetDllInfo");
-
+	GETEXPORT(GLI_DRV_lGetDllInfo);
 	GETEXPORT(GLI_DRV_lSetCommonFct);
 	GETEXPORT(GLI_DRV_lSetCommonData);
 	GETEXPORT(GLI_DRV_bBeginScene);

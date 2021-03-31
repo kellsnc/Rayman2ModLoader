@@ -29,9 +29,9 @@ namespace Rayman2ModManager
         public string GLI_Driver { get; set; } = "";
         [IniAlwaysInclude]
         public string GLI_Device { get; set; } = "";
-        [DefaultValue("1 - 800 x 600 x 16")]
+        [DefaultValue("1 - 1280 x 1024 x 16")]
         [IniAlwaysInclude]
-        public string GLI_Mode { get; set; } = "1 - 800 x 600 x 16";
+        public string GLI_Mode { get; set; } = "1 - 1280 x 1024 x 16";
         [DefaultValue("English")]
         [IniAlwaysInclude]
         public string Language { get; set; } = "English";

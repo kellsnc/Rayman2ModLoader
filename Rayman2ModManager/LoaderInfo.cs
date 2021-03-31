@@ -25,6 +25,9 @@ namespace Rayman2ModManager
 		[DefaultValue(false)]
 		public bool DebugFile { get; set; } = false;
 
+		[DefaultValue(true)]
+		public bool PauseWhenInactive { get; set; } = true;
+
 		[DefaultValue("Mods")]
 		[IniAlwaysInclude]
 		public string ModsPath { get; set; } = "Mods";

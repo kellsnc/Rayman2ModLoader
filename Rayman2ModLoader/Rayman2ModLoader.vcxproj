@@ -161,8 +161,9 @@
   <ItemGroup>
     <ClInclude Include="codes.h" />
     <ClInclude Include="events.h" />
-    <ClInclude Include="exports.h" />
+    <ClInclude Include="glide.h" />
     <ClInclude Include="filemap.hpp" />
+    <ClInclude Include="fixes.h" />
     <ClInclude Include="funchelper.h" />
     <ClInclude Include="replacefiles.h" />
     <ClInclude Include="framework.h" />
@@ -184,8 +185,9 @@
     <ClCompile Include="codes.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="events.cpp" />
-    <ClCompile Include="exports.cpp" />
+    <ClCompile Include="glide.cpp" />
     <ClCompile Include="filemap.cpp" />
+    <ClCompile Include="fixes.cpp" />
     <ClCompile Include="replacefiles.cpp" />
     <ClCompile Include="modhelpers.cpp" />
     <ClCompile Include="loader.cpp" />
