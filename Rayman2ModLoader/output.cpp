@@ -19,13 +19,13 @@ void __cdecl PrintDebug(const char* Format, ...) {
 	va_start(ap, Format);
 	result = vsnprintf(buf, result + 1, Format, ap);
 	va_end(ap);
-
+	
 	// todo: codepage conversion
 	if (DebugConsole == true) {
 		fputs(buf, stdout);
 		fflush(stdout);
 	}
-
+	
 	if (DebugFile) {
 		fputs(buf, DebugFile);
 		fflush(DebugFile);

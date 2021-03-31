@@ -71,7 +71,7 @@ namespace Rayman2ModManager
         private bool displayedManifestWarning = false;
         private bool updatingListView = false;
 
-        private const float modloaderver = 1.5f;
+        private const float modloaderver = 1.6f;
 
         Dictionary<string, Rayman2ModInfo> mods;
 
