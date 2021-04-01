@@ -15,7 +15,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
         break;
     case DLL_PROCESS_DETACH:
         DeleteOutput(); // Make sure the debug file is deleted before exiting.
-        TexturesDelete(); // Make sure textures are freed before exiting.
         break;
     }
 

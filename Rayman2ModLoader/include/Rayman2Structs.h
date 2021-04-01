@@ -1913,5 +1913,37 @@ struct __declspec(align(2)) struct_g_p_stNextPtrRelocInfo
     uint8_t byte5;
 };
 
+struct GFInfo
+{
+    int idk1;
+    FILE* file;
+    int idk2;
+    int size;
+    int idk3;
+    int idk4;
+    int idk5;
+    int idk6;
+    int idk7;
+    char* buffer;
+    int idk9;
+};
+
+struct __declspec(align(4)) CNTInfo
+{
+    FILE* file;
+    unsigned int folderCount;
+    int* fileCount;
+    unsigned __int8 sig0;
+    unsigned __int8 sig1;
+    unsigned __int8 xorKey;
+    unsigned __int8 version;
+    const char* folders;
+    void* files;
+    int idk3;
+    int idk4;
+    int idk5;
+    int idk6;
+};
+
 #pragma pack(pop)
 #endif

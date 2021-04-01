@@ -7,7 +7,7 @@
 #define RAYMAN2MODLOADER_MODINFO_H
 
 // API Version
-static const int ModLoaderVer = 2;
+static const int ModLoaderVer = 3;
 
 struct HelperFunctions {
 	// The version of the structure.
@@ -31,9 +31,6 @@ struct HelperFunctions {
 	// Mods will not be able to replace your file unless they name it like the destination file.
 	// Example: `_ReplaceFile("Data\\Game.dsb", "Data\\CustomGame.dsb");`
 	void (__cdecl* _ReplaceFile)(const char* src, const char* dst);
-
-	// Load a custom CNT file that allows for individual texture replacement
-	void* (__cdecl* FIL_fn_vOpenConcatFile_r)(const char* Str);
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);

@@ -123,6 +123,7 @@ DataPointer(char, bSomethingDone, 0x4E939B);
 DataPointer(tdstIntelligence_*, g_p_stIntelligence, 0x4E939C);
 DataPointer(char, checkByte, 0x4F6F68);
 DataPointer(int, COL_g_d_lTaggedFacesTable, 0x4FAABC);
+DataPointer(const char*, VignettePath, 0x4FB300); // Failsafe folder if texture not in Vignette.CNT
 DataPointer(int*, g_stErmTheLastErrorInfo, 0x4FB620);
 DataPointer(int, gs_hFirstSubMapPosition, 0x4FF760);
 DataPointer(int, g_hCharacterLauchingSoundEvents, 0x4FF764);
@@ -165,6 +166,7 @@ DataPointer(int, g_stBeginMapSoundEvent, 0x5013CC);
 DataPointer(int, g_hStaticCollisionGeoObj, 0x501404);
 DataPointer(char, _GEO_g_bDynamicAllocation, 0x501524);
 DataPointer(int, _GEO_g_stMyBlockInfo, 0x501530);
+DataPointer(const char*, TexturesPath, 0x501540); // Failsafe folder if texture not in Textures.CNT
 DataPointer(int*, g_GLI_iTexturesToCreate, 0x501644);
 DataPointer(int*, gs_aDEFTableOfTextureMemoryChannels, 0x501660);
 DataPointer(int, _GLI_BIG_GLOBALS, 0x5036AC);

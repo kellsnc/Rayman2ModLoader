@@ -1,5 +1,5 @@
 /**
- * SADX Mod Loader
+ * Rayman2 Mod Loader
  * File remapper.
  */
 
@@ -62,13 +62,7 @@ public:
 	 */
 	void scanFolder(const std::string& srcPath, int modIdx);
 
-	/**
-	 * Scans a texture folder to replace/add individual textures
-	 * @param srcPath Path of a texture folder.
-	 * @param modIdx Index of the current mod.
-	 * @param index Index of the current archive.
-     */
-	void scanTexturesFolder(const std::string& srcPath, int modIdx, int index);
+	void scanDLLFolder(const std::string& srcPath, int modIdx);
 
 protected:
 	/**
@@ -80,6 +74,8 @@ protected:
 	 * @param modIdx Index of the current mod.
 	 */
 	void scanFolder_int(const std::string& srcPath, int srcLen, int modIdx);
+
+	void scanDLLFolder_int(const std::string& srcPath, int srcLen, int modIdx);
 
 	/**
 	 * Set a replacement file in the map.

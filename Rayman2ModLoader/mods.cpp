@@ -149,7 +149,7 @@ int InitSingleMod(std::string modpath, std::string* foldername, int loadorder) {
 
 		// Check for folder file replacements.
 		ScanModFolder(modpath + "\\data", loadorder);
-		ScanModFolder(modpath + "\\dll", loadorder);
+		ScanModDLLFolder(modpath + "\\dll", loadorder);
 		
 		return 0;
 	}

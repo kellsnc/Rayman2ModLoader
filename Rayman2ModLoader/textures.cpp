@@ -7,81 +7,58 @@
 #include "CNTArchive.h"
 #include <algorithm>
 
-// This currently works by catching the cnt file about to be loaded
-// merge it with textures files loaded by the mod loader, save it as a
-// different file and redirect it. The new files are deleted on game exit.
-// Todo: rewrite the cnt file loading code, it currently crashes even with same output
+Trampoline* LoadGFFile_t = nullptr;
 
-std::vector<std::pair<std::string, CNTArchive*>> archivesReplacements;
-std::vector<std::string> filesToDelete;
+std::vector<std::string> TextureReplacementMap = {};
 
-int AddCNTArchiveToList(const std::string& path) {
-	archivesReplacements.emplace_back(path, new CNTArchive());
-	return archivesReplacements.size() - 1;
+void AddToTextureMap(const std::string& path) {
+	TextureReplacementMap.push_back(path);
 }
 
-void AddFileToReplacementArchive(const std::string& path, const int index) {
-	archivesReplacements[index].second->AddFile(path);
-}
+bool IsTextureReplaced(std::string optFolder, std::string file, std::string* replacedPath) {
+	std::string fullPath = optFolder + "\\" + file;
+	transform(fullPath.begin(), fullPath.end(), fullPath.begin(), ::tolower);
 
-void AddFileStreamToReplacementArchive(const std::string& path, const std::vector<char>& bytes, const int index) {
-	archivesReplacements[index].second->AddFile(path, bytes);
-}
+	// check if the texture in "optFolder\\file"  is being replaced by a mod
+	for (auto& replfile : TextureReplacementMap) {
+		std::string replfile_ = replfile;
+		std::size_t pos = replfile.find(".cnt");
 
-void* __cdecl FIL_fn_vOpenConcatFile_r(const char* Str) {
-	std::string inputPath = Str;
-	std::transform(inputPath.begin(), inputPath.end(), inputPath.begin(), ::tolower);
-
-	std::string outputPath = GetDirectory(Str) + "\\." + GetBaseName(Str);
-	std::transform(outputPath.begin(), outputPath.end(), outputPath.begin(), ::tolower);
-
-	if (FileExists(outputPath)) {
-		std::remove(outputPath.c_str());
-	}
-
-	// Check if the file has had external modifications
-	for (auto& archive : archivesReplacements) {
-		std::transform(archive.first.begin(), archive.first.end(), archive.first.begin(), ::tolower);
-
-		if (archive.first.find(inputPath) != std::string::npos) {
-			if (FileExists(outputPath)) {
-				inputPath = outputPath;
-			}
-			else {
-				filesToDelete.push_back(outputPath);
-			}
-
-			CNTArchive* cnt = new CNTArchive(inputPath);
-
-			cnt->Merge(*archive.second); // merge the new textures
-			cnt->SaveToFile(outputPath); // save file
-
-			// free allocated archive
-			delete archive.second; 
-			archive.second = nullptr;
+		// We provide support for folder names that contain ".CNT" (compatibility with older version)
+		if (pos != std::string::npos) {
+			replfile_.erase(pos, 4);
+		}
+		
+		// Check if the texture path corresponds
+		if (!fullPath.compare(replfile_)) {
+			std::string relPath = (std::string)rayman2_fileMap.replaceFile(replfile.c_str());
+			*replacedPath = relPath.substr(0, relPath.find(file) - 1).c_str();
+			return true;
 		}
 	}
-
-	return FIL_fn_vOpenConcatFile(outputPath.c_str());
+	
+	return false;
 }
 
-void TexturesDelete() {
-	for (auto& archive : archivesReplacements) {
-		if (archive.second) {
-			delete archive.second; // free allocated archive
-		}
+GFInfo* __cdecl LoadGFFile_r(CNTInfo* cnt, const char* optFolder, const char* gfName) {
+	std::string replacedPath; // The replaced texture folder path
+
+	// If the texture is being replaced, force LoadGFFile to look for textures in a folder
+	if (IsTextureReplaced((std::string)optFolder, (std::string)gfName, &replacedPath)) {
+		return T_TARGET_DYNAMIC(LoadGFFile)(nullptr, replacedPath.c_str(), gfName);
 	}
 
-	for (auto& path : filesToDelete) {
-		if (FileExists(path)) {
-			std::remove(path.c_str());
-		}
-	}
+	return T_TARGET_DYNAMIC(LoadGFFile)(cnt, optFolder, gfName);
 }
 
 void TexturesInit() {
-	if (archivesReplacements.size() > 0) {
-		WriteCall((void*)0x4250DF, FIL_fn_vOpenConcatFile_r);
-		WriteCall((void*)0x45ECCF, FIL_fn_vOpenConcatFile_r);
+	if (TextureReplacementMap.size() > 0) {
+
+		// Set the fail safe folder to look for textures
+		const char* texfolder = "Data\\Textures";
+		memcpy(&TexturesPath, texfolder, strlen(texfolder) + 1);
+
+		// Hook LoadGFFile
+		LoadGFFile_t = new Trampoline((int)LoadGFFile, (int)LoadGFFile + 0x6, LoadGFFile_r);
 	}
 }

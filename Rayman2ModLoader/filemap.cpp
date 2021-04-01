@@ -138,6 +138,11 @@ void FileMap::scanFolder(const string& srcPath, int modIdx)
 	scanFolder_int(srcPath, srcPath.length() + 1, modIdx);
 }
 
+void FileMap::scanDLLFolder(const string& srcPath, int modIdx)
+{
+	scanDLLFolder_int(srcPath, srcPath.length() + 1, modIdx);
+}
+
 /**
  * Recursively scan a directory and add all files to the replacement map.
  * Destination is always relative to Data/.
@@ -153,7 +158,7 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 	snprintf(path, sizeof(path), "%s\\*", srcPath.c_str());
 	HANDLE hFind = FindFirstFileA(path, &data);
 
-	// No files found.
+	// No file found.
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		return;
@@ -167,19 +172,11 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 			continue;
 		}
 
+		// Recursively scan this directory.
 		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 			const string newSrcPath = srcPath + '\\' + string(data.cFileName);
-
-			if (newSrcPath.substr(newSrcPath.length() - 5).find(".cnt") != std::string::npos) {
-				PrintDebug("[ModLoader] Scanning textures in \"%s\"\n", newSrcPath.c_str());
-				scanTexturesFolder(newSrcPath, modIdx, AddCNTArchiveToList(newSrcPath));
-			}
-			else {
-				// Recursively scan this directory.
-				scanFolder_int(newSrcPath, srcLen, modIdx);
-			}
-
+			scanFolder_int(newSrcPath, srcLen, modIdx);
 			continue;
 		}
 
@@ -198,24 +195,25 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 		}
 		
 		setReplaceFile(origFile, modFile, modIdx);
+
+		// If it's a GF file add it to the texture map
+		if (!_stricmp(".gf", PathFindExtensionA(data.cFileName)))
+		{
+			AddToTextureMap(origFile);
+		}
+
 	} while (FindNextFileA(hFind, &data) != 0);
 
 	FindClose(hFind);
 }
 
-/**
- * Scans a texture folder to replace/add individual textures
- * @param srcPath Path of a texture folder.
- * @param modIdx Index of the current mod.
- * @param index Index of the current archive.
- */
-void FileMap::scanTexturesFolder(const string& srcPath, int modIdx, int index) {
+void FileMap::scanDLLFolder_int(const string& srcPath, int srcLen, int modIdx) {
 	WIN32_FIND_DATAA data;
 	char path[MAX_PATH];
 	snprintf(path, sizeof(path), "%s\\*", srcPath.c_str());
 	HANDLE hFind = FindFirstFileA(path, &data);
 
-	// No files found.
+	// No file found.
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
 		return;
@@ -223,49 +221,18 @@ void FileMap::scanTexturesFolder(const string& srcPath, int modIdx, int index) {
 
 	do
 	{
-		// NOTE: This will hide *all* files starting with '.'.
-		if (data.cFileName[0] == '.')
-		{
-			continue;
-		}
+		// Create the mod filename and original filename.
+		string modFile = srcPath + '\\' + string(data.cFileName);
+		transform(modFile.begin(), modFile.end(), modFile.begin(), ::tolower);
+		
+		string origFile = "dll\\" + modFile.substr(srcLen);
 
-		string newSrcPath = srcPath + '\\' + string(data.cFileName);
+		setReplaceFile(origFile, modFile, modIdx);
 
-		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-		{
-			// Recursively scan this directory.
-			scanTexturesFolder(newSrcPath, modIdx, index);
-			continue;
-		}
-
-		// If it's a GF file add it directly
+		// If it's a GF file add it to the texture map
 		if (!_stricmp(".gf", PathFindExtensionA(data.cFileName)))
 		{
-			AddFileToReplacementArchive(newSrcPath, index);
-		}
-
-		// If it's a PNG file convert it first
-		if (!_stricmp(".png", PathFindExtensionA(data.cFileName)))
-		{
-			GraphicFile gf;
-			std::vector<char> bytes;
-
-			gf.ReadPNG(newSrcPath);
-			gf.GetRawData(bytes);
-			newSrcPath = newSrcPath.substr(0, newSrcPath.size() - 4) + ".gf";  // restore gf extension
-			AddFileStreamToReplacementArchive(newSrcPath, bytes, index);
-		}
-
-		// If it's a BMP file convert it first
-		if (!_stricmp(".bmp", PathFindExtensionA(data.cFileName)))
-		{
-			GraphicFile gf;
-			std::vector<char> bytes;
-
-			gf.ReadBMP(newSrcPath);
-			gf.GetRawData(bytes);
-			newSrcPath = newSrcPath.substr(0, newSrcPath.size() - 4) + ".gf"; // restore gf extension
-			AddFileStreamToReplacementArchive(newSrcPath, bytes, index);
+			AddToTextureMap(origFile);
 		}
 
 	} while (FindNextFileA(hFind, &data) != 0);

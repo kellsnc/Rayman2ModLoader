@@ -36,7 +36,7 @@ void __cdecl PrintDebug(const char* Format, ...) {
 
 void InitOutput(const IniGroup* loaderconfig) {
 	DebugConsole = loaderconfig->getBool("DebugConsole", false);
-
+	
 	// Open console
 	if (DebugConsole == true) {
 		AllocConsole();

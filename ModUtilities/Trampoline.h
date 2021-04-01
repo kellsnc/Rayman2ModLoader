@@ -2,8 +2,8 @@
 
 #include <WTypes.h>
 
-// TODO: Better documentation
-// TODO: Clearer member names
+#define T_TARGET_DYNAMIC(name) ((decltype(name##_r)*)name##_t->Target())
+#define T_TARGET_STATIC(name) ((decltype(name##_r)*)name##_t.Target())
 
 class Trampoline
 {

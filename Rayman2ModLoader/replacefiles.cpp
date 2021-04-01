@@ -95,3 +95,9 @@ void ScanModFolder(const std::string& str, int loadorder) {
 		rayman2_fileMap.scanFolder(str, loadorder);
 	}
 }
+
+void ScanModDLLFolder(const std::string& str, int loadorder) {
+	if (DirectoryExists(str)) {
+		rayman2_fileMap.scanDLLFolder(str, loadorder);
+	}
+}

@@ -29,6 +29,5 @@ const HelperFunctions helperFunctions = {
 	&SetWindowTitle,
 	&GetMainSavePath,
 	&GetReplaceablePath,
-	&_ReplaceFile,
-	&FIL_fn_vOpenConcatFile_r
+	&_ReplaceFile
 };
