@@ -1286,8 +1286,9 @@ FunctionPointer(char, makeSavePath, (const char* aDot, const char* saveName), 0x
 FunctionPointer(int, FileExistsAndGetLength, (const char* fileName), 0x492BF0);
 FunctionPointer(void*, FIL_fn_vOpenConcatFile, (const char* fileName), 0x493300);
 FunctionPointer(int, FIL_fn_vCloseConcatFile, (int a1), 0x493590);
-FunctionPointer(GFInfo*, LoadGFFile, (CNTInfo* cnt, const char* optFolder, const char* gfName), 0x4935C0);
-FunctionPointer(int, FIL_fn_vCloseFileInConcatFile, (int a1), 0x4938D0);
+FunctionPointer(GFInfo*, LoadGFFile, (CNTInfo* cnt, const char* optFolder, const char* gfName), 0x4935C0); // Seek texture in CNT if "cnt" not null, seek in optFolder if "cnt" null or texture not found
+FunctionPointer(void, FIL_fn_vCloseFileInConcatFile, (CNTInfo* cnt), 0x4938D0); // Close the file from memory if loaded from CNT, close the file handle if loaded from folder
+FunctionPointer(void, ReadGFFileInStruct, (CNTInfo* cnt, const char* optFolder, const char* gfName, TexOutputStruct* output), 0x493A40);
 FunctionPointer(DWORD, COL_lHaveITakeSThgIntoTheMug, (DNM_stMecObstacle* a_obstacle, HIE_tdstSuperObject* spo, int a3, int a4), 0x494290);
 FunctionPointer(int, fn_vCollideStaticCharacterWithStaticPhysicals, (int, int, int, int, int), 0x4943C0);
 FunctionPointer(int, fn_vNewTestStaticCollideFor2Characters, (int, int, int, int, int), 0x494420);

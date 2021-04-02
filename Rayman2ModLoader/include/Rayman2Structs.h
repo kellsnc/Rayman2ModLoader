@@ -301,10 +301,10 @@ struct GliTexture
     uint32_t something3;
     uint8_t something4_5[8];
     uint32_t something6;
-    uint16_t word18;
-    uint16_t word1A;
-    uint16_t word1C;
-    uint16_t word1E;
+    uint16_t Width;
+    uint16_t Height;
+    uint16_t DestWidth;
+    uint16_t DestHeight;
     uint8_t gap20[12];
     uint32_t dword2C;
     uint8_t gap30[21];
@@ -1368,7 +1368,7 @@ struct __declspec(align(8)) DNM_stDynamics
 
 struct StandardGame
 {
-    
+
 };
 
 struct SuperObjectInfo
@@ -1394,7 +1394,7 @@ struct SuperObject
     Matrix* matrix2;
 };
 
-typedef struct 
+typedef struct
 {
     float x;
     float y;
@@ -1928,7 +1928,7 @@ struct GFInfo
     int idk9;
 };
 
-struct __declspec(align(4)) CNTInfo
+struct CNTInfo
 {
     FILE* file;
     unsigned int folderCount;
@@ -1943,6 +1943,34 @@ struct __declspec(align(4)) CNTInfo
     int idk4;
     int idk5;
     int idk6;
+};
+
+struct TexOutputStruct
+{
+    uint32_t width;
+    uint32_t height;
+    uint32_t pixel_count;
+    uint32_t dwordC;
+    uint16_t colors;
+    uint8_t max_channel;
+    uint8_t channelCount;
+    uint8_t repByte;
+    uint8_t byte15;
+    uint8_t byte16;
+    uint8_t byte17;
+    uint8_t byte18;
+    uint8_t byte19;
+    char* data;
+    char* data_2;
+};
+
+struct gfFileHeader
+{
+    uint32_t magic;
+    uint32_t width;
+    uint32_t height;
+    uint8_t channelCount;
+    uint8_t repeatByte;
 };
 
 #pragma pack(pop)

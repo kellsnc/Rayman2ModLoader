@@ -44,6 +44,7 @@ public:
 	void ReadPNG(std::string path);
 	void ReadBMP(const char* path);
 	void ReadBMP(std::string path);
+	void Save(std::string path);
 
 	explicit GraphicFile();
 };

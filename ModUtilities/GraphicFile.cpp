@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #define GetPixel(a) (pixel + a) * channelCount + channel
+#define CharPtrAndLength(t) (char*)&t, sizeof(t)
 
 void ReadBytes(std::vector<char>& bytes, char* value, int amount) {
 	for (int i = 0; i < amount; ++i) {
@@ -15,12 +16,12 @@ void ReadBytes(std::vector<char>& bytes, char* value, int amount) {
 void GraphicFile::GetRawData(std::vector<char>& bytes) {
 	bytes.reserve(pixels.size()); // augment capacity to avoid multiple reallocations.
 
-	ReadBytes(bytes, (char*)&version, 0x4);
-	ReadBytes(bytes, (char*)&width, 0x4);
-	ReadBytes(bytes, (char*)&height, 0x4);
+	ReadBytes(bytes, CharPtrAndLength(version));
+	ReadBytes(bytes, CharPtrAndLength(width));
+	ReadBytes(bytes, CharPtrAndLength(height));
 	bytes.push_back(channelCount);
 	bytes.push_back(repByte);
-	
+
 	for (int channel = 0; channel < channelCount; ++channel) {
 		int pixel = 0;
 
@@ -40,10 +41,10 @@ void GraphicFile::GetRawData(std::vector<char>& bytes) {
 				while (pixel < pixels.size() / channelCount) {
 					curPix = pixels[GetPixel(0)];
 
-					if (curPix != repPix || repCount >= 0xFF || GetPixel(1) >= pixels.size() ) {
+					if (curPix != repPix || repCount >= 0xFF || GetPixel(1) >= pixels.size()) {
 						break;
 					}
-					
+
 					pixel++;
 					repCount++;
 				}
@@ -120,7 +121,7 @@ void GraphicFile::ReadPNG(const char* path) {
 	pixels.clear();
 
 	// lodepng::decode always outputs RGBA, this tells the actual number of channels
-	switch(state.info_png.color.colortype) {
+	switch (state.info_png.color.colortype) {
 	case LodePNGColorType::LCT_RGB:
 		channelCount = 3;
 		break;
@@ -177,6 +178,18 @@ void GraphicFile::ReadBMP(const char* path) {
 
 void GraphicFile::ReadBMP(std::string path) {
 	ReadBMP(path.c_str());
+}
+
+void GraphicFile::Save(std::string path) {
+	std::vector<char> output;
+
+	GetRawData(output);
+
+	std::ofstream file;
+
+	file.open(path, std::ios::out | std::ios::binary);
+	file.write(output.data(), output.size());
+	file.close();
 }
 
 GraphicFile::GraphicFile() { }
