@@ -24,7 +24,7 @@ bool IsTextureReplaced(std::string optFolder, std::string file, std::string* rep
 		std::string replfile_ = replfile;
 		std::size_t pos = replfile.find(".cnt");
 
-		// We provide support for folder names that contain ".CNT" (compatibility with older version)
+		// We provide support for folder names that contain ".CNT" (compatibility with older versions)
 		if (pos != std::string::npos) {
 			replfile_.erase(pos, 4);
 		}
@@ -43,7 +43,7 @@ bool IsTextureReplaced(std::string optFolder, std::string file, std::string* rep
 GFInfo* __cdecl LoadGFFile_r(CNTInfo* cnt, const char* optFolder, const char* gfName) {
 	std::string replacedPath; // The replaced texture folder path
 
-	// If the texture is being replaced, force LoadGFFile to look for textures in a folder
+	// If the texture is being replaced, force LoadGFFile to look for textures in the mod folder
 	if (IsTextureReplaced((std::string)optFolder, (std::string)gfName, &replacedPath)) {
 		return T_TARGET_DYNAMIC(LoadGFFile)(nullptr, replacedPath.c_str(), gfName);
 	}

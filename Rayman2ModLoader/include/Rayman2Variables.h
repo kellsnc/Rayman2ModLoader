@@ -245,7 +245,7 @@ DataPointer(int, levels0DatValue_3, 0x5117C0);
 DataPointer(int, SNA_g_dwNumberOfRelocationTableLoaded, 0x5117C4);
 DataPointer(char*, g_shouldRelocatePointer, 0x5117E0);
 DataPointer(char, g_bSaveLoadFix, 0x5121D6);
-DataPointer(int*, g_relocationTable, 0x5121E0);
+DataArray(void*, g_relocationTable, 0x5121E0, 128);
 DataPointer(FILE*, curOpenFile, 0x5149B8);
 DataPointer(HANDLE, curOpenFileHandle2, 0x5149BC);
 DataPointer(int, g_p_stAfterLastPtrRelocInfo, 0x5149C0);

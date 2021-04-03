@@ -185,14 +185,7 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 		transform(modFile.begin(), modFile.end(), modFile.begin(), ::tolower);
 
 		// Original filename.
-		string origFile;
-
-		if (modFile.find(".dll") != std::string::npos) {
-			origFile = "dll\\" + modFile.substr(srcLen);
-		}
-		else {
-			origFile = "data\\" + modFile.substr(srcLen);
-		}
+		string origFile = "data\\" + modFile.substr(srcLen);
 		
 		setReplaceFile(origFile, modFile, modIdx);
 
@@ -228,12 +221,6 @@ void FileMap::scanDLLFolder_int(const string& srcPath, int srcLen, int modIdx) {
 		string origFile = "dll\\" + modFile.substr(srcLen);
 
 		setReplaceFile(origFile, modFile, modIdx);
-
-		// If it's a GF file add it to the texture map
-		if (!_stricmp(".gf", PathFindExtensionA(data.cFileName)))
-		{
-			AddToTextureMap(origFile);
-		}
 
 	} while (FindNextFileA(hFind, &data) != 0);
 
