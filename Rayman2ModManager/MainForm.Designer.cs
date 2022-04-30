@@ -65,6 +65,7 @@ namespace Rayman2ModManager
             this.checkBoxLog = new System.Windows.Forms.CheckBox();
             this.checkBoxConsole = new System.Windows.Forms.CheckBox();
             this.graphicGroupBox = new System.Windows.Forms.GroupBox();
+            this.checkBoxFocus = new System.Windows.Forms.CheckBox();
             this.checkBoxFullScreen = new System.Windows.Forms.CheckBox();
             this.comboBoxParticules = new System.Windows.Forms.ComboBox();
             this.comboBoxTexMem = new System.Windows.Forms.ComboBox();
@@ -93,7 +94,6 @@ namespace Rayman2ModManager
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verLabel = new System.Windows.Forms.Label();
-            this.checkBoxFocus = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.modTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMods)).BeginInit();
@@ -538,6 +538,17 @@ namespace Rayman2ModManager
             this.graphicGroupBox.TabStop = false;
             this.graphicGroupBox.Text = "Graphics";
             // 
+            // checkBoxFocus
+            // 
+            this.checkBoxFocus.AutoSize = true;
+            this.checkBoxFocus.Location = new System.Drawing.Point(132, 140);
+            this.checkBoxFocus.Name = "checkBoxFocus";
+            this.checkBoxFocus.Size = new System.Drawing.Size(201, 26);
+            this.checkBoxFocus.TabIndex = 17;
+            this.checkBoxFocus.Text = "Pause when inactive";
+            this.toolTip.SetToolTip(this.checkBoxFocus, "Whether the game freezes when the window is out of focus.");
+            this.checkBoxFocus.UseVisualStyleBackColor = true;
+            // 
             // checkBoxFullScreen
             // 
             this.checkBoxFullScreen.AutoSize = true;
@@ -813,6 +824,7 @@ namespace Rayman2ModManager
             // 
             // verLabel
             // 
+            this.verLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.verLabel.AutoSize = true;
             this.verLabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.verLabel.Location = new System.Drawing.Point(8, 715);
@@ -820,17 +832,6 @@ namespace Rayman2ModManager
             this.verLabel.Size = new System.Drawing.Size(59, 20);
             this.verLabel.TabIndex = 4;
             this.verLabel.Text = "version";
-            // 
-            // checkBoxFocus
-            // 
-            this.checkBoxFocus.AutoSize = true;
-            this.checkBoxFocus.Location = new System.Drawing.Point(132, 140);
-            this.checkBoxFocus.Name = "checkBoxFocus";
-            this.checkBoxFocus.Size = new System.Drawing.Size(201, 26);
-            this.checkBoxFocus.TabIndex = 17;
-            this.checkBoxFocus.Text = "Pause when inactive";
-            this.toolTip.SetToolTip(this.checkBoxFocus, "Whether the game freezes when the window is out of focus.");
-            this.checkBoxFocus.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
